@@ -26,14 +26,15 @@ namespace CoachFrika.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> ContactUs(ContactUs model)
         {
-            if (!ModelState.IsValid)
-            { //checking model state
+            //if (!ModelState.IsValid)
+            //{ //checking model state
 
-                return RedirectToAction("Index");
-            }
+            //    return RedirectToAction("Index");
+            //}
             // sending email
             var mailSubject = _emailConfig.MailTopic;
                 var mailto = _emailConfig.MailTo.ToList();
@@ -42,23 +43,22 @@ namespace CoachFrika.Controllers
 
             //inserting variable
             var messageToParse = new Dictionary<string, string>
-                    {
-                        { "{Fullname}", model.FullName},
-                        { "{Phonenumber}", model.PhoneNumber},
-                        { "{Email}", model.Email},
-                        { "{Message}", model.Message},
-                        { "{logo}", logoUrl},
-                    };
+            {
+                { "{Fullname}", model.FullName},
+                { "{Phonenumber}", model.PhoneNumber},
+                { "{Email}", model.Email},
+                { "{Message}", model.Message},
+                { "{logo}", logoUrl},
+            };
 
-                //  email notification
-                var messageBody = body.ParseTemplate(messageToParse);
-                var message = new Message(mailto, mailSubject, messageBody);
-                await _emailService.SendEmail(message);
-         
-          
+            //  email notification
+            var messageBody = body.ParseTemplate(messageToParse);
+            var message = new Message(mailto, mailSubject, messageBody);
+            await _emailService.SendEmail(message);
             return RedirectToAction("Index");
-
         }
+
+       
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
