@@ -57,9 +57,10 @@ namespace CoachFrika.Services
             //send email
             using var client = new MailKit.Net.Smtp.SmtpClient();
 
-                await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port, SecureSocketOptions.None);
+                await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port, SecureSocketOptions.StartTls);
                 await client.AuthenticateAsync(_emailConfig.UserName, _emailConfig.Password);
                 await client.SendAsync(emailMessage);
+                await client.DisconnectAsync(true);
 
             return "sent";
 
