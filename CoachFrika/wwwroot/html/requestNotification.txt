@@ -1,0 +1,21 @@
+﻿<tr>
+	<td class="title-36 a-center pb-15" style="font-size:20px; text-align:center !important; line-height:40px; color:green; font-family:'PT Sans', Arial, sans-serif; min-width:auto !important; text-align:center; padding-bottom: 15px;">
+		<p> <b>Welcome to CoachFrika!</b></p>
+	</td>
+</tr>
+<tr>
+	<td class="text-16 lh-26 a-center pb-25" style="font-size:16px; color:#6e6e6e; font-family:'PT Sans', Arial, sans-serif; min-width:auto !important; line-height: 26px; text-align:center; padding-bottom: 25px;">
+		<p style="text-align:left;">This is to notify you that <b>{Fullname}</b></p>
+		<br/>
+		<p style="text-align:left;">has requsted for {} plan below is the Details. Kindly follow up</p>
+		
+		<p style="text-align:left;"><b> Name :{Fullname} </b></p>
+		<p style="text-align:left;"><b> Email :{Email} </b></p>
+		<p style="text-align:left;"><b> PhoneNumber :{Phone} </b></p>
+		<p style="text-align:left;"><b> Scholl :{School} </b></p>
+		<p style="text-align:left;"><b> Address :{Address} </b></p>
+		
+		<br/>
+		
+	</td>
+</tr>

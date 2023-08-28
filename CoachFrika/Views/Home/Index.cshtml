@@ -237,9 +237,10 @@
         <div style=" display:flex; justify-content: space-between">
             <div class="testimonial_box" style="display:flex; flex-direction:column; justify-content:space-between; margin:20px; padding:20px;  width: 30%">
                 <div>
-                    <b>
-                        Silver Plan: $15 per month
-                    </b>  <br />
+                    <h3>
+                        <b> Silver Plan: $15 per month</b>
+                    </h3>  
+                    <br />
                     <p>
                         ○ Access to coaching sessions
                     </p>  <p>
@@ -259,9 +260,10 @@
             <div class="testimonial_box" style="display:flex; flex-direction:column;justify-content:space-between; margin:20px; padding:20px; width: 30%">
                 <div>
 
-                    <b>
-                        Gold Plan: $25 per month
-                    </b>  <br />
+                    <h3>
+                        <b>Gold Plan: $25 per month</b>
+                    </h3> 
+                    <br />
                     <p>
                         ○ Access to coaching sessions
                     </p>  <p>
@@ -281,9 +283,9 @@
             </div>
             <div class="testimonial_box" style="display:flex; flex-direction:column;justify-content:space-between;  margin:20px; padding:20px; width: 30%">
                 <div>
-                    <b>
-                        Platinum Plan: $30 per month
-                    </b>
+                    <h3>
+                        <b>Platinum Plan:$30 per month</b>
+                    </h3>
                     <br />
                     <p>
                         ○ Access to coaching sessions
@@ -509,15 +511,16 @@
     </div>
     <!-- copyright section end -->
     <!-- Modal -->
-    <div class="modal fade" style="width:100% !impotant" ; id="SubplanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="width:100% !impotant" role="document">
+    <div class="modal fade" background-color:blue"  id="SubplanModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg "  role="document">
             <div class="modal-content">
 
                 <div class="modal-body">
                     <div class="col-md-12 ">
-                        <p class="contact_text"> Reach out to CoachFrika today... </p>
+
+                        <p class="contact_text center"> Kindly filling correct informations </p>
                         <div class="">
-                            @using (Html.BeginForm("ContactUs", "Home", FormMethod.Post))
+                            @using (Html.BeginForm("RequestPlan", "Home", FormMethod.Post))
                             {
                                 @Html.AntiForgeryToken()
 
@@ -534,7 +537,7 @@
                                         @Html.TextBoxFor(model => model.SchoolAddress, new { placeholder = "School Location (City/Town, State)",@class="form-control" })
                                         @Html.ValidationMessageFor(model => model.SchoolAddress, "", new { @class = "text-danger" })
                                     </div>
-                                    <div class="mail_text formrow">
+                                    <div class="mail_text formrow" style="margin-top:-5px">
                                         <div class="mail_text">
                                             @Html.TextBoxFor(model => model.PhoneNumber, new { placeholder = "Contact Number",@class="form-control" })
                                             @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
@@ -545,34 +548,34 @@
                                         </div>
                                     </div>
 
-                                    <div class="mail_text formrow">
+                                    <div class="mail_text formrow" style="margin-top:-10px">
                                         <div class="mail_text">
                                             @Html.TextBoxFor(model => model.YearsOfExperience, new { placeholder = "Years of Teaching Experience",@class="form-control" })
                                             @Html.ValidationMessageFor(model => model.YearsOfExperience, "", new { @class = "text-danger" })
                                         </div>
-                                        <div class="">
-                                            @Html.DropDownListFor(m => m.Plan, new SelectList(Enum.GetValues(typeof(CoachFrika.Enums.Plans))),"Select Plan", new { @class = "form-control" })
+                                        <div class="mail_text">
+                                            @Html.DropDownListFor(m => m.Plan, new SelectList(Enum.GetValues(typeof(CoachFrika.Enums.Plans))),"Select Plan", new { @class = "form-control" ,style= "height: 32px"})
 
                                            
                                         </div>
                                     </div>
 
-                                    <div class="mail_text formrow">
+                                    <div class="mail_text formrow" style="margin-top:-10px">
                                         <div class="mail_text">
-                                            @Html.TextBoxFor(model => model.AreaofInterest, new { placeholder = "Choose Your Area of Interest",@class="form-control" })
-                                            @Html.ValidationMessageFor(model => model.AreaofInterest, "", new { @class = "text-danger" })
-                                        </div>
+                                            @Html.DropDownListFor(m => m.AreaofInterest, new SelectList(Enum.GetValues(typeof(CoachFrika.Enums.AreaofInterest))), "Choose Your Area of Interest", new { @class = "form-control",style= "height: 32px" })
+                                         </div>
+                                       
                                         <div class="mail_text">
-                                            @Html.DropDownListFor(m => m.Referral, new SelectList(Enum.GetValues(typeof(CoachFrika.Enums.Referral))),"How did you hear about Us?", new { @class = "form-control" })
-  </div>
+                                            @Html.DropDownListFor(m => m.Referral, new SelectList(Enum.GetValues(typeof(CoachFrika.Enums.Referral))),"How did you hear about Us?", new { @class = "form-control",style= "height: 32px" })
+                                         </div>
                                     </div>
                                     <div class="mail_text">
                                         @Html.TextAreaFor(m => m.WhyInterested,new { placeholder = "Why are you interested in this program?",@class="form-control" })
                                         @Html.ValidationMessageFor(model => model.WhyInterested, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
-                                <div class="sss" style="width: 100%; margin: 20px; float:right">
-                                    <input type="submit" value="Send" style="width: 200px; margin: 20px; height: 50px; background-color:forestgreen; color: white" />
+                                <div class="sss" style="width: 100%; margin: 20px; ">
+                                    <input type="submit" value="Send" style="width: 200px;float:right; margin: 20px; height: 50px; background-color:forestgreen; color: white" />
                                 </div>
 
                                 // form is postback to /Home/Enroll
