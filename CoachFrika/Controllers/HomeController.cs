@@ -36,8 +36,8 @@ namespace CoachFrika.Controllers
             }
             // sending email
             var mailSubject = _emailConfig.MailTopic;
-                var mailto = _emailConfig.MailTo.ToList();
-                var body = await _emailService.ReadTemplate("emailrecieved");
+            var mailto = _emailConfig.MailTo.ToList();
+            var body = await _emailService.ReadTemplate("emailrecieved");
             var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
 
             //inserting variable
@@ -50,12 +50,45 @@ namespace CoachFrika.Controllers
                         { "{logo}", logoUrl},
                     };
 
-                //  email notification
-                var messageBody = body.ParseTemplate(messageToParse);
-                var message = new Message(mailto, mailSubject, messageBody);
-                await _emailService.SendEmail(message);
-         
-          
+            //  email notification
+            var messageBody = body.ParseTemplate(messageToParse);
+            var message = new Message(mailto, mailSubject, messageBody);
+            await _emailService.SendEmail(message);
+
+
+            return RedirectToAction("Index");
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> RequestPlan(ContactUs model)
+        {
+            if (!ModelState.IsValid)
+            { //checking model state
+
+                return RedirectToAction("Index");
+            }
+            // sending email
+            var mailSubject = _emailConfig.MailTopic;
+            var mailto = _emailConfig.MailTo.ToList();
+            var body = await _emailService.ReadTemplate("emailrecieved");
+            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+
+            //inserting variable
+            var messageToParse = new Dictionary<string, string>
+                    {
+                        { "{Fullname}", model.FullName},
+                        { "{Phonenumber}", model.PhoneNumber},
+                        { "{Email}", model.Email},
+                        { "{Message}", model.Message},
+                        { "{logo}", logoUrl},
+                    };
+
+            //  email notification
+            var messageBody = body.ParseTemplate(messageToParse);
+            var message = new Message(mailto, mailSubject, messageBody);
+            await _emailService.SendEmail(message);
+
+
             return RedirectToAction("Index");
 
         }
