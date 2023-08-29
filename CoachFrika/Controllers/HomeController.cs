@@ -41,16 +41,16 @@ namespace CoachFrika.Controllers
         [HttpPost]
         public async Task<IActionResult> ContactUs(ContactUs model)
         {
-            if (!ModelState.IsValid)
-            { //checking model state
+            //if (!ModelState.IsValid)
+            //{ //checking model state
 
-                return RedirectToAction("Index");
-            }
-            var range = "Sheet2A1:D5";
-            var valueRange = new ValueRange
-            {
-                Values = GoogleMapper.MapToRangeContactData(model)
-            };
+            //    return RedirectToAction("Index");
+            //}
+            //var range = "Sheet2!A1:D5";
+            //var valueRange = new ValueRange
+            //{
+            //    Values = GoogleMapper.MapToRangeContactData(model)
+            //};
 
             var appendRequest = _googleSheetValues.Append(valueRange, SPREADSHEET_ID, range);
             appendRequest.ValueInputOption = AppendRequest.ValueInputOptionEnum.USERENTERED;
