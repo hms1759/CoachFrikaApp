@@ -52,9 +52,9 @@ namespace CoachFrika.Controllers
             //    Values = GoogleMapper.MapToRangeContactData(model)
             //};
 
-            var appendRequest = _googleSheetValues.Append(valueRange, SPREADSHEET_ID, range);
-            appendRequest.ValueInputOption = AppendRequest.ValueInputOptionEnum.USERENTERED;
-            appendRequest.Execute();
+            //var appendRequest = _googleSheetValues.Append(valueRange, SPREADSHEET_ID, range);
+            //appendRequest.ValueInputOption = AppendRequest.ValueInputOptionEnum.USERENTERED;
+            //appendRequest.Execute();
             // sending email
             var mailSubject = _emailConfig.ContactTopic;
             var mailto = _emailConfig.MailTo.ToList();
