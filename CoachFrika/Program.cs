@@ -10,7 +10,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddTransient<IEmailService, EmailService>(); //add email configuration
 builder.Services.Configure<EmailConfigSettings>(builder.Configuration.GetSection("EmailConfig"));
-
+builder.Services.AddSingleton(typeof(GoogleSheetsHelper));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

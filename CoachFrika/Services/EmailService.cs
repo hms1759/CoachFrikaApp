@@ -1,4 +1,5 @@
-﻿using CoachFrika.Models;
+﻿using CoachFrika.Controllers;
+using CoachFrika.Models;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -10,9 +11,11 @@ namespace CoachFrika.Services
     public class EmailService : IEmailService
     {
         private readonly EmailConfigSettings _emailConfig;
-        public EmailService(IOptions<EmailConfigSettings> emailConfig)
+        private readonly ILogger<EmailService> _logger;
+        public EmailService(IOptions<EmailConfigSettings> emailConfig, ILogger<EmailService> logger)
         {
             _emailConfig = emailConfig.Value;
+            _logger = logger;
         }
 
         public Task<string> ReadTemplate(string messageType)

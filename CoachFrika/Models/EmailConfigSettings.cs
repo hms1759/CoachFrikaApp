@@ -17,6 +17,8 @@ namespace CoachFrika.Models
         public string? Password { get; set; }
         public bool UseSSL { get; set; }
         public bool UseStartTls { get; set; }
-        public string? MailTopic { get; set; }
+        public string? ContactTopic { get; set; }
+        public string? RequestTopic { get; set; }
+        public string? NotificationTopic { get; set; }
     }
 }
