@@ -1188,6 +1188,17 @@ textarea#comment::placeholder {
         margin: 10px;
     }
     .plans{
-        margin:0px -60px;
+        margin:0px -50px;
+    }
+    .plan_pad {
+        height: 50rem;
+    }
+}
+
+@media (min-width: 767px) and (max-width: 900px) {
+   
+
+    .plans {
+        margin: 0px -60px;
     }
 }
