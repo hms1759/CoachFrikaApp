@@ -39,12 +39,12 @@ html {
 
 body {
     color: #666666;
-    font-size: 14px;
-    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-family: Georgia, serif !important;
     line-height: 1.80857;
     font-weight: normal;
     overflow-x: hidden !important;
-    margin: 0px 15px;
+    margin: 0px 10px;
 }
 
 
@@ -191,9 +191,10 @@ img {
 .navbar-form input {
     border: none !important;
 }
-.nav-btn{
-    float:right;
-    padding-right:30px
+
+.nav-btn {
+    float: right;
+    padding-right: 30px
 }
 
 .badge {
@@ -219,6 +220,11 @@ button {
 
 .padding_0 {
     padding: 0px;
+}
+
+.top_plan {
+    width: 100%;
+    font-size: 36px !important;
 }
 
 .layout_padding {
@@ -291,6 +297,8 @@ button {
     background: #fff;
     padding: 20px;
     box-shadow: 2px 2px 2px green;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 .banner_taital {
@@ -311,7 +319,7 @@ button {
 .banner_text {
     width: 100%;
     float: left;
-    font-size: 16px;
+    font-size: 18px;
     color: #000;
     margin: 0px;
 }
@@ -398,7 +406,7 @@ button {
     width: 100%;
     float: left;
     padding-top: 70px;
-    padding-bottom: 90px;
+    padding-bottom: 10px;
 }
 
 .about_image {
@@ -426,29 +434,18 @@ button {
     font-size: 40px;
     color: #0f0f0f;
     font-weight: bold;
-    font-family: 'Roboto', sans-serif;
 }
 
-    .about_taital::after {
-        content: '';
-        position: absolute;
-        width: 193px;
-        height: 2px;
-        background-color: #252525;
-        left: initial;
-        right: 0px;
-        top: 44%;
-        z-index: -1;
-    }
 
 .about_text {
     width: 100%;
     float: left;
-    font-size: 16px;
+    font-size: 18px;
     color: #0f0f0f;
-    margin: 0px;
+    margin: 20px;
     font-weight: 500;
-    font-family: 'Roboto', sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 .lorem_text {
@@ -472,23 +469,25 @@ button {
     width: 170px;
     float: left;
     padding: 10px;
+    background-color: yellowgreen;
+    color: black;
 }
 
     .read_bt a {
         width: 100%;
         float: left;
         font-size: 16px;
-        color: #ffffff;
-        background-color: #181818;
+        color: forestgreen;
+        background-color: green;
         text-align: center;
         padding: 10px 0px;
-        font-family: 'Roboto', sans-serif;
     }
 
-        .read_bt a:hover {
-            color: #ffffff;
-            background-color: #13a25d;
-        }
+    .read_bt:hover {
+        color: white !important;
+        background-color: forestgreen;
+        border: 1px solid black;
+    }
 
 /* about section end */
 
@@ -512,26 +511,18 @@ button {
     font-family: 'Roboto', sans-serif;
 }
 
-    .services_taital::after {
-        content: '';
-        position: absolute;
-        width: 193px;
-        height: 2px;
-        background-color: #0f0f0f;
-        left: initial;
-        right: 0px;
-        top: 44%;
-    }
 
 .services_section_2 {
     width: 100%;
     float: left;
     padding-bottom: 50px;
 }
-.formrow{
-    display:flex;
-    justify-content:space-between
+
+.formrow {
+    display: flex;
+    justify-content: space-between
 }
+
 .icon_box {
     width: 70px;
     padding: 10px;
@@ -715,16 +706,6 @@ button {
     font-family: 'Roboto', sans-serif;
 }
 
-    .contact_taital::after {
-        content: '';
-        position: absolute;
-        width: 193px;
-        height: 2px;
-        background-color: #ffffff;
-        left: initial;
-        right: 0px;
-        top: 44%;
-    }
 
 .contact_text {
     width: 100%;
@@ -851,8 +832,96 @@ textarea#comment::placeholder {
 .testimonial_box {
     width: 100%;
     background-color: #ffffff;
-    padding: 55px 30px 100px 30px;
+    padding: 55px 20px 100px 20px;
     box-shadow: 0px 2px 12px 10px black;
+}
+
+
+
+.testB {
+    box-shadow: 0px 2px 12px 10px black;
+    transition: 1.3s ease-in-out;
+    background-color: white;
+    width: 31%;
+    height:60rem;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform .05s;
+    font-size: 18px !important; /* Animation */
+}
+
+    .testB:hover {
+        transform: scale(1.3);
+    }
+
+.plan_text {
+    margin: 10px 0px;
+}
+
+.buy_bt {
+    height:5rem;
+    padding: 10px;
+    background-color: forestgreen;
+    width: 100%
+}
+
+.planCard {
+}
+
+.plan_price {
+    font-size: 36px;
+    text-align: center;
+    font-weight: 600;
+    margin-top: 20px;
+    height:13rem;
+}
+.plan_pad {
+    padding: 0px 15px;
+    height: 43rem;
+}
+.plan_price_text {
+    color: lightgrey;
+    font-size: 18px;
+    font-family: 'Brush Script MT', cursive !important;
+}
+
+.plan_pad_silver {
+    position: relative;
+    overflow:hidden
+}
+
+
+/*.Silver {
+    background-color: #989898
+
+}*/
+.plan_color{
+    color:white;
+}
+.silver {
+    background-image: url('../images/silverplan.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    overflow: hidden
+}
+.gold {
+    background-image: url('../images/goldplan.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    overflow: hidden
+}
+
+
+.plat {
+    background-image: url('../images/platplan.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    overflow: hidden
 }
 
 .jonimo_text {
@@ -861,16 +930,16 @@ textarea#comment::placeholder {
     text-transform: uppercase;
     color: #13a25d;
     font-weight: bold;
-    font-family: 'Roboto', sans-serif;
 }
 
 .dummy_text {
     width: 100%;
-    font-size: 16px;
+    font-size: 18px;
     color: #000;
     margin: 0px;
     padding-top: 20px;
-    font-family: 'Roboto', sans-serif;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 .jonimo_taital_main {
@@ -945,15 +1014,16 @@ textarea#comment::placeholder {
 }
 
 
-.footer_section ul {
-    margin: 0px;
-    padding: 0px;
-}
+    .footer_section ul {
+        margin: 0px;
+        padding: 0px;
+    }
 
-.footer_section li {
-    float: left;
-    padding-right: 15px;
-}
+    .footer_section li {
+        float: left;
+        padding-right: 15px;
+    }
+
 .location_main {
     width: 100%;
     display: flex;
