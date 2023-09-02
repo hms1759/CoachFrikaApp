@@ -174,7 +174,10 @@ img {
     padding: 12px 40px;
     font-size: 16px;
 }
-
+.plans {
+    display: flex;
+    justify-content: space-between
+}
 .lead {
     font-size: 18px;
     line-height: 30px;
@@ -836,14 +839,17 @@ textarea#comment::placeholder {
     box-shadow: 0px 2px 12px 10px black;
 }
 
-
+.plans {
+    display: flex;
+    justify-content: space-between
+}
 
 .testB {
     box-shadow: 0px 2px 12px 10px black;
     transition: 1.3s ease-in-out;
     background-color: white;
     width: 31%;
-    height:60rem;
+    height: 60rem;
     margin: 20px;
     display: flex;
     flex-direction: column;
@@ -863,7 +869,7 @@ textarea#comment::placeholder {
 .buy_bt {
     height:5rem;
     padding: 10px;
-    background-color: forestgreen;
+    background-color: limegreen;
     width: 100%
 }
 
@@ -1161,3 +1167,27 @@ textarea#comment::placeholder {
 
 
 /* copyright section end */
+
+
+@media (min-width: 200px) and (max-width: 575px) {
+
+    .plans {
+        flex-direction: column;
+    }
+
+    .testB {
+        width: 100%;
+        height: 60rem;
+        margin: 10px;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+    .testB {
+        height: 60rem;
+        margin: 10px;
+    }
+    .plans{
+        margin:0px -60px;
+    }
+}
