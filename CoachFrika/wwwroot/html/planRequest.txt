@@ -1,6 +1,6 @@
 ﻿<tr>
 	<td class="title-36 a-center pb-15" style="font-size:20px; text-align:center !important; line-height:40px; color:green; font-family:'PT Sans', Arial, sans-serif; min-width:auto !important; text-align:center; padding-bottom: 15px;">
-		<p> <b>Welcome to CoachFrika!</b></p>
+		<p> <b>Welcome to Coachfrika!</b></p>
 	</td>
 </tr>
 <tr>
@@ -8,11 +8,11 @@
 		<p style="text-align:left;">Hi <b>{Fullname}</b></p>
 		<br/>
 		<p style="text-align:left;">Thank you for choosen Coachfrika</p>
-		<p style="text-align:left;">One of our correspondant will get in touch withing 24hours</p>
+		<p style="text-align:left;">One of our correspondant will get in touch within 24hours</p>
 		
 		<br/>
 		<p style="text-align:left;">For more enquiry please call 0806767767</p>
-		<p style="text-align:left;">  or reachout to us through our email coachfrika.com</p>
+		<p style="text-align:left;">  or reachout to us through our email info@coachfrika.org or Admin@coachfrika.com</p>
 		
 	</td>
 </tr>

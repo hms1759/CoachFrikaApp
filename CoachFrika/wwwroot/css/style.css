@@ -1173,12 +1173,16 @@ textarea#comment::placeholder {
 
     .plans {
         flex-direction: column;
+        width: 95%;
     }
 
     .testB {
         width: 100%;
         height: 60rem;
         margin: 10px;
+    }
+    .about_text{
+        margin:0px;
     }
 }
 
@@ -1189,5 +1193,30 @@ textarea#comment::placeholder {
     }
     .plans{
         margin:0px -60px;
+    }
+    .dummy_text .plan_text .about_text {
+        font-size: 14px !important;
+    }
+    .jonimo_text {
+        font-size: 16px !important;
+    }
+    .contact_taital {
+        font-size: 18px !important;
+    }
+    .copyright_text {
+        font-size: 16px !important;
+    }
+    .testimonial_text {
+        font-size: 18px !important;
+    }
+    .testimonial_taital .top_plan {
+        font-size: 24px !important;
+    }
+    .plan_price {
+        font-size: 26px !important;
+        text-align: center;
+        font-weight: 500  !important;
+        margin-top: 10px !important;
+        height: 10rem !important;
     }
 }

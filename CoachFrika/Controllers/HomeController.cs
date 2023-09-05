@@ -120,7 +120,8 @@ namespace CoachFrika.Controllers
             var messagebodyToParse = new Dictionary<string, string>
                     {
                         { "{Fullname}", model.FullName},
-                        { "{Phonenumber}", model.PhoneNumber},
+                        { "{Phone}", model.PhoneNumber},
+                        { "{Plan}", model.Plan.ToString()},
                         { "{Email}", model.Email},
                         { "{School}", model.SchoolAddress},
                         { "{Address}", model.SchoolName},
