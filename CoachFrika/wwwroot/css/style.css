@@ -191,14 +191,6 @@ img {
     box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);
 }
 
-.navbar-form input {
-    border: none !important;
-}
-
-.nav-btn {
-    float: right;
-    padding-right: 30px
-}
 
 .badge {
     font-weight: 500;
@@ -227,7 +219,10 @@ button {
 
 .top_plan {
     width: 100%;
-    font-size: 36px !important;
+    font-size: 36px ;
+}
+.top_logo{
+    height:70px;
 }
 
 .layout_padding {
@@ -236,13 +231,39 @@ button {
 }
 
 /* header section start */
-
-.header_section {
+.top_nav{
     width: 100%;
-    background-image: url(../images/banner-bg.jpg);
+    background-color: white;
+    color: white;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 30px;
+    margin:0px 
+}
+.top_btn {
+    display: flex;
+    color: #f2f2f2;
+    background-color: white;
+    text-align: center;
+    margin: 0px 10px;
+}
+.top_link {
+    padding: 2px 15px;
+    font-size: 18px;
+    color: forestgreen;
+    font-weight: 500;
+}
+
+.top_link:hover {
+    border: 1px solid forestgreen;
+}
+.banner_section {
+    width: 100%;
     background-size: cover;
     background-repeat: no-repeat;
     height: auto;
+    background-image: url('../images/banner-bg.jpg');
     background-size: 100%;
 }
 
@@ -254,25 +275,6 @@ button {
     padding: 20px 60px 17px 70px;
 }
 
-.navbar-expand-lg .navbar-nav .nav-link {
-    padding-right: 15px;
-    padding-left: 15px;
-    font-size: 18px;
-    color: #acabab;
-    text-transform: uppercase;
-}
-
-.navbar-light .navbar-nav .nav-link:focus,
-.navbar-light .navbar-nav .nav-link:hover {
-    color: #070707;
-}
-
-.navbar-light .navbar-nav .active > .nav-link,
-.navbar-light .navbar-nav .nav-link.active,
-.navbar-light .navbar-nav .nav-link.show,
-.navbar-light .navbar-nav .show > .nav-link {
-    color: #070707;
-}
 
 .logo {
     width: 50%;
@@ -1168,55 +1170,151 @@ textarea#comment::placeholder {
 
 /* copyright section end */
 
-
-@media (min-width: 200px) and (max-width: 575px) {
-
-    .plans {
-        flex-direction: column;
-        width: 95%;
+@media screen and (max-width: 375px) {
+    .top_link {
+        padding: 2px 2px !important;
     }
 
-    .testB {
-        width: 100%;
-        height: 60rem;
-        margin: 10px;
-    }
-    .about_text{
-        margin:0px;
+    .top_logo {
+       margin-left:-10px;
+       width:150px;
     }
 }
 
-@media (min-width: 576px) and (max-width: 767px) {
-    .testB {
-        height: 60rem;
-        margin: 10px;
+    @media screen and (max-width: 575px) {
+        .top_btn {
+            margin: 0px;
+        }
+
+            .top_link {
+            padding: 2px 2px;
+            font-size: 12px;
+        }
+
+        .plans {
+            flex-direction: column;
+            width: 95%;
+            margin: 0px;
+        }
+
+        .top_nav {
+            padding: 0px 10px;
+        }
+
+        .testB {
+            width: 100%;
+            height: 60rem;
+            margin: 10px;
+        }
+
+        .about_text {
+            font-size: 14px;
+        }
+
+        .about_taital {
+            font-size: 24px;
+        }
+
+        .top_logo {
+            height: 50px;
+        }
     }
-    .plans{
-        margin:0px -60px;
+
+    @media screen and (min-width: 720px) and (max-width: 867px) {
+        .plans {
+            margin: 0px -70px;
+        }
+
+        .top_logo {
+            height: 50px;
+        }
     }
-    .dummy_text .plan_text .about_text {
-        font-size: 14px !important;
+
+    @media screen and (min-width: 868px) and (max-width: 950px) {
+        .plans {
+            margin: 0px -80px;
+        }
+
+        .top_link {
+            padding: 2px 10px;
+            font-size: 14px;
+        }
     }
-    .jonimo_text {
-        font-size: 16px !important;
+
+    @media screen and (min-width: 576px) and (max-width: 767px) {
+
+        .testB {
+            width: 45%;
+            height: 45rem;
+            margin: 10px;
+        }
+
+        .top_nav {
+            padding: 5px;
+        }
+
+        .navbar-nav {
+            margin: 0px 5px;
+        }
+
+        .plans {
+            margin: 0px -40px;
+        }
+
+        .dummy_text {
+            font-size: 14px;
+        }
+
+        .plan_text {
+            font-size: 17px;
+        }
+
+        .about_text {
+            font-size: 14px;
+        }
+
+        .jonimo_text {
+            font-size: 16px;
+        }
+
+        .contact_taital {
+            font-size: 18px;
+        }
+
+        .copyright_text {
+            font-size: 16px;
+        }
+
+        .testimonial_text {
+            font-size: 18px;
+        }
+
+        .testimonial_taital {
+            font-size: 24px;
+        }
+
+        .top_plan {
+            font-size: 34px;
+        }
+
+        .plan_price {
+            font-size: 26px;
+            text-align: center;
+            font-weight: 500;
+            margin-top: 10px;
+            height: 10rem;
+        }
+
+        .plan_text {
+            margin: 10px 0px;
+            font-size: 14px;
+        }
+
+        .top_plan {
+            font-size: 26px;
+        }
+
+        .layout_padding {
+            padding-bottom: 5px;
+        }
     }
-    .contact_taital {
-        font-size: 18px !important;
-    }
-    .copyright_text {
-        font-size: 16px !important;
-    }
-    .testimonial_text {
-        font-size: 18px !important;
-    }
-    .testimonial_taital .top_plan {
-        font-size: 24px !important;
-    }
-    .plan_price {
-        font-size: 26px !important;
-        text-align: center;
-        font-weight: 500  !important;
-        margin-top: 10px !important;
-        height: 10rem !important;
-    }
-}
