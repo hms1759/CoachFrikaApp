@@ -1185,13 +1185,17 @@ textarea#comment::placeholder {
         .top_btn {
             margin: 0px;
         }
-
+        .copyright_text {
+            font-size: 12px;
+        }
             .top_link {
             padding: 2px 2px;
             font-size: 12px;
         }
-
-        .plans {
+        .banner_main {
+            width: 60%;
+        }
+            .plans {
             flex-direction: column;
             width: 95%;
             margin: 0px;
@@ -1209,6 +1213,7 @@ textarea#comment::placeholder {
 
         .about_text {
             font-size: 14px;
+            margin:0px;
         }
 
         .about_taital {
@@ -1218,7 +1223,22 @@ textarea#comment::placeholder {
         .top_logo {
             height: 50px;
         }
-    }
+        .contact_taital {
+            width: 50%;
+            float: left;
+            font-size: 30px;
+        }
+        .about_taital {
+            width: 50%;
+        }
+        .container-fluid {
+            display: none;
+        }
+        .banner_section {
+           padding-bottom: 80px;
+            border-bottom: 30px solid #13a25d;
+        }
+        }
 
     @media screen and (min-width: 720px) and (max-width: 867px) {
         .plans {
@@ -1228,7 +1248,37 @@ textarea#comment::placeholder {
         .top_logo {
             height: 50px;
         }
-    }
+        .banner_main {
+            width: 32%;
+            float: left;
+            background: #fff;
+            padding: 7px;
+        }
+        .banner_taital {
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+        .banner_taital1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        .banner_text {
+            font-size: 14px;
+        }
+        .btn_main {
+            padding-top: 10px;
+        }
+        .contact_bt {
+            font-size: 12px;
+            border-radius: 10px;
+            padding: 5px !important;
+        }
+        .read_bt {
+            font-size: 12px;
+            margin-left: 10px;
+            padding: 5px !important;
+        }
+        }
 
     @media screen and (min-width: 868px) and (max-width: 950px) {
         .plans {
