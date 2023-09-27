@@ -25,4 +25,10 @@
     <Folder Include="logs\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\images\twitter-icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
