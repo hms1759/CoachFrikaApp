@@ -174,10 +174,12 @@ img {
     padding: 12px 40px;
     font-size: 16px;
 }
+
 .plans {
     display: flex;
     justify-content: space-between
 }
+
 .lead {
     font-size: 18px;
     line-height: 30px;
@@ -219,10 +221,11 @@ button {
 
 .top_plan {
     width: 100%;
-    font-size: 36px ;
+    font-size: 36px;
 }
-.top_logo{
-    height:70px;
+
+.top_logo {
+    height: 70px;
 }
 
 .layout_padding {
@@ -270,10 +273,11 @@ button {
     font-size: 16px;
     padding: 16px 32px;
 }
-    .event_section {
-        display: flex;
-        justify-content: space-between;
-    }
+
+.event_section {
+    display: flex;
+    justify-content: space-between;
+}
 /* header section start */
 .top_nav {
     width: 100%;
@@ -285,6 +289,7 @@ button {
     padding: 0px 30px;
     margin: 0px
 }
+
 .top_btn {
     display: flex;
     color: #f2f2f2;
@@ -292,6 +297,7 @@ button {
     text-align: center;
     margin: 0px 10px;
 }
+
 .top_link {
     padding: 2px 15px;
     font-size: 18px;
@@ -299,9 +305,10 @@ button {
     font-weight: 500;
 }
 
-.top_link:hover {
-    border: 1px solid forestgreen;
-}
+    .top_link:hover {
+        border: 1px solid forestgreen;
+    }
+
 .banner_section {
     width: 100%;
     background-size: cover;
@@ -913,7 +920,7 @@ textarea#comment::placeholder {
 }
 
 .buy_bt {
-    height:5rem;
+    height: 5rem;
     padding: 10px;
     background-color: limegreen;
     width: 100%
@@ -927,12 +934,14 @@ textarea#comment::placeholder {
     text-align: center;
     font-weight: 600;
     margin-top: 20px;
-    height:13rem;
+    height: 13rem;
 }
+
 .plan_pad {
     padding: 0px 15px;
     height: 43rem;
 }
+
 .plan_price_text {
     color: lightgrey;
     font-size: 18px;
@@ -941,7 +950,7 @@ textarea#comment::placeholder {
 
 .plan_pad_silver {
     position: relative;
-    overflow:hidden
+    overflow: hidden
 }
 
 
@@ -949,9 +958,10 @@ textarea#comment::placeholder {
     background-color: #989898
 
 }*/
-.plan_color{
-    color:white;
+.plan_color {
+    color: white;
 }
+
 .silver {
     background-image: url('../images/silverplan.jpg');
     background-repeat: no-repeat;
@@ -959,6 +969,7 @@ textarea#comment::placeholder {
     background-size: cover;
     overflow: hidden
 }
+
 .gold {
     background-image: url('../images/goldplan.jpg');
     background-repeat: no-repeat;
@@ -1062,7 +1073,7 @@ textarea#comment::placeholder {
     background-color: forestgreen;
     height: auto;
     padding: 20px;
-    display:flex;
+    display: flex;
     justify-content: space-around
 }
 
@@ -1221,196 +1232,210 @@ textarea#comment::placeholder {
     }
 
     .top_logo {
-       margin-left:-10px;
-       width:150px;
+        margin-left: -10px;
+        width: 150px;
     }
 }
 
-    @media screen and (max-width: 575px) {
-        .top_btn {
-            margin: 0px;
-        }
-        .copyright_text {
-            font-size: 12px;
-        }
-            .top_link {
-            padding: 2px 2px;
-            font-size: 12px;
-        }
-
-        .banner_main {
-            width: 60%;
-        }
-            .plans {
-            flex-direction: column;
-            width: 95%;
-            margin: 0px;
-        }
-
-        .top_nav {
-            padding: 0px 10px;
-        }
-
-        .testB {
-            width: 100%;
-            height: 60rem;
-            margin: 10px;
-        }
-
-        .about_text {
-            font-size: 14px;
-            margin:0px;
-        }
-
-        .about_taital {
-            font-size: 24px;
-        }
-
-        .top_logo {
-            height: 50px;
-        }
-        .contact_taital {
-            width: 50%;
-            float: left;
-            font-size: 30px;
-        }
-        .about_taital {
-            width: 50%;
-        }
-        .container-fluid {
-            display: none;
-        }
-        .banner_section {
-           padding-bottom: 80px;
-            border-bottom: 30px solid #13a25d;
-        }
-        }
-
-    @media screen and (min-width: 720px) and (max-width: 867px) {
-        .plans {
-            margin: 0px -70px;
-        }
-
-        .top_logo {
-            height: 50px;
-        }
-        .banner_main {
-            width: 32%;
-            float: left;
-            background: #fff;
-            padding: 7px;
-        }
-        .banner_taital {
-            font-size: 26px;
-            margin-bottom: 5px;
-        }
-        .banner_taital1 {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-        .banner_text {
-            font-size: 14px;
-        }
-        .btn_main {
-            padding-top: 10px;
-        }
-        .contact_bt {
-            font-size: 12px;
-            border-radius: 10px;
-            padding: 5px !important;
-        }
-        .read_bt {
-            font-size: 12px;
-            margin-left: 10px;
-            padding: 5px !important;
-        }
-        }
-
-    @media screen and (min-width: 868px) and (max-width: 950px) {
-        .plans {
-            margin: 0px -80px;
-        }
-
-        .top_link {
-            padding: 2px 10px;
-            font-size: 14px;
-        }
+@media screen and (max-width: 575px) {
+    .top_btn {
+        margin: 0px;
     }
 
-    @media screen and (min-width: 576px) and (max-width: 767px) {
-
-        .testB {
-            width: 45%;
-            height: 45rem;
-            margin: 10px;
-        }
-
-        .top_nav {
-            padding: 5px;
-        }
-
-        .navbar-nav {
-            margin: 0px 5px;
-        }
-
-        .plans {
-            margin: 0px -40px;
-        }
-
-        .dummy_text {
-            font-size: 14px;
-        }
-
-        .plan_text {
-            font-size: 17px;
-        }
-
-        .about_text {
-            font-size: 14px;
-        }
-
-        .jonimo_text {
-            font-size: 16px;
-        }
-
-        .contact_taital {
-            font-size: 18px;
-        }
-
-        .copyright_text {
-            font-size: 16px;
-        }
-
-        .testimonial_text {
-            font-size: 18px;
-        }
-
-        .testimonial_taital {
-            font-size: 24px;
-        }
-
-        .top_plan {
-            font-size: 34px;
-        }
-
-        .plan_price {
-            font-size: 26px;
-            text-align: center;
-            font-weight: 500;
-            margin-top: 10px;
-            height: 10rem;
-        }
-
-        .plan_text {
-            margin: 10px 0px;
-            font-size: 14px;
-        }
-
-        .top_plan {
-            font-size: 26px;
-        }
-
-        .layout_padding {
-            padding-bottom: 5px;
-        }
+    .copyright_text {
+        font-size: 12px;
     }
+
+    .top_link {
+        padding: 2px 2px;
+        font-size: 12px;
+    }
+
+    .banner_main {
+        width: 60%;
+    }
+
+    .plans {
+        flex-direction: column;
+        width: 95%;
+        margin: 0px;
+    }
+
+    .top_nav {
+        padding: 0px 10px;
+    }
+
+    .testB {
+        width: 100%;
+        height: 60rem;
+        margin: 10px;
+    }
+
+    .about_text {
+        font-size: 14px;
+        margin: 0px;
+    }
+
+    .about_taital {
+        font-size: 24px;
+    }
+
+    .top_logo {
+        height: 50px;
+    }
+
+    .contact_taital {
+        width: 50%;
+        float: left;
+        font-size: 30px;
+    }
+
+    .about_taital {
+        width: 50%;
+    }
+
+    .container-fluid {
+        display: none;
+    }
+
+    .banner_section {
+        padding-bottom: 80px;
+        border-bottom: 30px solid #13a25d;
+    }
+}
+
+@media screen and (min-width: 720px) and (max-width: 867px) {
+    .plans {
+        margin: 0px -70px;
+    }
+
+    .top_logo {
+        height: 50px;
+    }
+
+    .banner_main {
+        width: 32%;
+        float: left;
+        background: #fff;
+        padding: 7px;
+    }
+
+    .banner_taital {
+        font-size: 26px;
+        margin-bottom: 5px;
+    }
+
+    .banner_taital1 {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    .banner_text {
+        font-size: 14px;
+    }
+
+    .btn_main {
+        padding-top: 10px;
+    }
+
+    .contact_bt {
+        font-size: 12px;
+        border-radius: 10px;
+        padding: 5px !important;
+    }
+
+    .read_bt {
+        font-size: 12px;
+        margin-left: 10px;
+        padding: 5px !important;
+    }
+}
+
+@media screen and (min-width: 868px) and (max-width: 950px) {
+    .plans {
+        margin: 0px -80px;
+    }
+
+    .top_link {
+        padding: 2px 10px;
+        font-size: 14px;
+    }
+}
+
+@media screen and (min-width: 576px) and (max-width: 767px) {
+
+    .testB {
+        width: 45%;
+        height: 45rem;
+        margin: 10px;
+    }
+
+    .top_nav {
+        padding: 5px;
+    }
+
+    .navbar-nav {
+        margin: 0px 5px;
+    }
+
+    .plans {
+        margin: 0px -40px;
+    }
+
+    .dummy_text {
+        font-size: 14px;
+    }
+
+    .plan_text {
+        font-size: 17px;
+    }
+
+    .about_text {
+        font-size: 14px;
+    }
+
+    .jonimo_text {
+        font-size: 16px;
+    }
+
+    .contact_taital {
+        font-size: 18px;
+    }
+
+    .copyright_text {
+        font-size: 16px;
+    }
+
+    .testimonial_text {
+        font-size: 18px;
+    }
+
+    .testimonial_taital {
+        font-size: 24px;
+    }
+
+    .top_plan {
+        font-size: 34px;
+    }
+
+    .plan_price {
+        font-size: 26px;
+        text-align: center;
+        font-weight: 500;
+        margin-top: 10px;
+        height: 10rem;
+    }
+
+    .plan_text {
+        margin: 10px 0px;
+        font-size: 14px;
+    }
+
+    .top_plan {
+        font-size: 26px;
+    }
+
+    .layout_padding {
+        padding-bottom: 5px;
+    }
+}
