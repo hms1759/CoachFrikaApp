@@ -1,10 +1,19 @@
 using CoachFrika.Extensions;
 using CoachFrika.Models;
 using CoachFrika.Services;
+using coachfrikaaaa.Common;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args)
-        .ConfigureSerilog(); 
+        .ConfigureSerilog();
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer("DBConnectionString"));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
