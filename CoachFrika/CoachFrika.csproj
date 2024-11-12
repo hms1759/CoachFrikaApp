@@ -11,6 +11,10 @@
     <PackageReference Include="MailKit" Version="4.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
     <PackageReference Include="MimeKit" Version="4.1.0" />
     <PackageReference Include="Serilog" Version="3.0.1" />
@@ -21,7 +25,8 @@
 
   <ItemGroup>
     <Folder Include="APIs\Controllers\" />
-    <Folder Include="APIs\Domin\" />
+    <Folder Include="APIs\Domin\Services\" />
+    <Folder Include="APIs\Domin\IServices\" />
     <Folder Include="APIs\ViewModel\" />
     <Folder Include="logs\" />
   </ItemGroup>
