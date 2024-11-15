@@ -12,8 +12,8 @@ using coachfrikaaaa.Common;
 namespace CoachFrika.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241112075557_first")]
-    partial class first
+    [Migration("20241115083512_initiate")]
+    partial class initiate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -242,6 +242,10 @@ namespace CoachFrika.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -293,6 +297,8 @@ namespace CoachFrika.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -374,6 +380,46 @@ namespace CoachFrika.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<string>("FacebookUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("InstagramUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("SecurityAnswer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityQuestion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TweeterUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasDiscriminator().HasValue("CoachFrikaUsers");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Coaches", b =>
