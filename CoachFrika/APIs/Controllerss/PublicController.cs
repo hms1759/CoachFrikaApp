@@ -9,15 +9,30 @@ namespace CoachFrika.APIs.Controllerss
     [ApiController]
     public class PublicController : ControllerBase
     {
-        private readonly IPublicService _publicService;
-        public PublicController(IPublicService publicService)
+        private readonly ILogicService _publicService;
+        public PublicController(ILogicService publicService)
         {
             _publicService = publicService;
         }
-        [HttpPost("GetLandingPage")]
+        [HttpGet("GetLandingPage")]
         public async Task<IActionResult> GetPublicCount()
         {
             var result = await _publicService.GetPublicCount();
+            return Ok(result);
+        }
+        [HttpPost("NewSubscription")]
+        public async Task<IActionResult> NewSubscription([FromBody] SubscriptionDto model)
+        {
+            var result = await _publicService.NewSubscription(model);
+            return Ok(result);
+        }
+
+        [HttpPost("ContactUs")]
+        public async Task<IActionResult> NewSubscription([FromBody] ContactUsDto model)
+        {
+            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+            model.logoUrl = logoUrl;
+            var result = await _publicService.ContactUs(model);
             return Ok(result);
         }
     }

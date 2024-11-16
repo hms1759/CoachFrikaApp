@@ -28,7 +28,7 @@ builder.Services.AddIdentity<CoachFrikaUsers, IdentityRole>()
 
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddTransient<IPublicService, PublicService>();
+builder.Services.AddTransient<ILogicService, LogicService>();
 builder.Services.AddTransient<IWebHelpers, WebHelpers>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IAccountService, AccountService>();

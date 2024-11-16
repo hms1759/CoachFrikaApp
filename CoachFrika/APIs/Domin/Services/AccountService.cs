@@ -96,8 +96,7 @@ namespace CoachFrika.APIs.Domin.Services
                 UserName = model.Email,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
+                FullName = model.FullName,
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -173,11 +172,10 @@ namespace CoachFrika.APIs.Domin.Services
             var body = $"Your password has been reset. Your new password is: {newPassword}";
 
             var bodyTemplate = await _emailService.ReadTemplate("forgetPassword");
-            var fullName = $"{user.FirstName} {user.LastName}";
             //inserting variable
             var messageToParse = new Dictionary<string, string>
                     {
-                        { "{Fullname}", fullName},
+                        { "{Fullname}", user.FullName},
                         { "{Message}", body},
                         { "{logo}", logoUrl},
                     };

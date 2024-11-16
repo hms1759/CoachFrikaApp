@@ -6,6 +6,7 @@ namespace CoachFrika.Common.Extension
     public interface IWebHelpers
     {
         public string CurrentUser();
+        public string CurrentUserId();
     }
     public class WebHelpers : IWebHelpers
     {
@@ -28,6 +29,11 @@ namespace CoachFrika.Common.Extension
             }
            
             return name;
+        }
+
+        public string CurrentUserId()
+        {
+            throw new NotImplementedException();
         }
     }
 }

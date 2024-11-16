@@ -12,6 +12,12 @@ namespace coachfrikaaaa.Common
         public DbSet<Coaches> Coaches { get; set; }
         public DbSet<ContactUs> ContactUs { get; set; }
         public DbSet<CoachFrikaUsers> CoachFrikaUsers { get; set; }
+        public DbSet<Schools> Schools { get; set; }
+        public DbSet<NewsSubscription> NewsSubscription { get; set; }
+        public DbSet<Subjects> Subjects { get; set; }
+        public DbSet<Courses> Courses { get; set; }
+        public DbSet<Batches> Batches { get; set; }
+        public DbSet<Schedules> Schedules { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -24,8 +30,7 @@ namespace coachfrikaaaa.Common
             // Custom configurations for CoachFrikaUsers (derived from IdentityUser)
             modelBuilder.Entity<CoachFrikaUsers>(entity =>
             {
-                entity.Property(c => c.FirstName).HasMaxLength(50);
-                entity.Property(c => c.LastName).HasMaxLength(50);
+                entity.Property(c => c.FullName).HasMaxLength(50);
                 entity.Property(c => c.TweeterUrl).HasMaxLength(250);
                 entity.Property(c => c.LinkedInUrl).HasMaxLength(250);
                 entity.Property(c => c.InstagramUrl).HasMaxLength(250);
