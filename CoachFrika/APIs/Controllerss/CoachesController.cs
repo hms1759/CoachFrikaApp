@@ -60,7 +60,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _service.CreateSchedule(model);
             return Ok(result);
         }
-        [HttpGet("GetBatches")]
+        [HttpGet("GetMySchedule")]
         public IActionResult GetMySchedule()
         {
             var result = _service.GetMySchedule();
