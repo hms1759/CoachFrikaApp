@@ -29,5 +29,18 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.SignUp(model);
             return Ok(result);
         }
+        [HttpPost("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword([FromBody] string email)
+        {
+            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+            var result = await _accountService.ForgetPassword(email, logoUrl);
+            return Ok(result);
+        }
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+            var result = await _accountService.ChangePassword(model);
+            return Ok(result);
+        }
     }
 }

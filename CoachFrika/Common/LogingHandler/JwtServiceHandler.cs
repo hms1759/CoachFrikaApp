@@ -31,10 +31,10 @@ namespace CoachFrika.Common.LogingHandler
 
                 // Create claims for the user
                 var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim(ClaimTypes.NameIdentifier, user.Id)
-                    };
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id)
+                };
 
                 // Add each role as a claim
                 foreach (var role in roles)

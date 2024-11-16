@@ -1,9 +1,14 @@
 ﻿using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common.AppUser;
+using CoachFrika.Common.Extension;
+using CoachFrika.Extensions;
+using CoachFrika.Models;
+using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 using System.Text.RegularExpressions;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
 
@@ -14,12 +19,15 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly UserManager<CoachFrikaUsers> _userManager;
         private readonly SignInManager<CoachFrikaUsers> _signInManager;
         private readonly IJwtService _jwtService;
-
-        public AccountService(UserManager<CoachFrikaUsers> userManager, SignInManager<CoachFrikaUsers> signInManager, IJwtService jwtService)
+        public readonly IEmailService _emailService;
+        public readonly IWebHelpers _webHelpers;
+        public AccountService(UserManager<CoachFrikaUsers> userManager, SignInManager<CoachFrikaUsers> signInManager, IJwtService jwtService, IEmailService emailService, IWebHelpers webHelpers)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
+            _emailService = emailService;
+            _webHelpers = webHelpers;
         }
 
         public async Task<string> Login(LoginDto login)
@@ -129,5 +137,124 @@ namespace CoachFrika.APIs.Domin.Services
             var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
             return emailRegex.IsMatch(email);
         }
+
+        public async Task<string> ForgetPassword(string email,string logoUrl)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.");
+            }
+
+            var defaultPassword = GeneratePassword();
+
+            var resetResult = await _userManager.RemovePasswordAsync(user);
+            if (!resetResult.Succeeded)
+            {
+                throw new InvalidOperationException("Failed to remove the old password.");
+            }
+
+            var result = await _userManager.AddPasswordAsync(user, defaultPassword);
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException("Failed to set the new password.");
+            }
+
+            // Optionally send the password via email
+            await SendPasswordResetEmail(user, defaultPassword, logoUrl);
+
+            return defaultPassword; // Or don't return the password, depending on your security requirements
+        }
+
+        private async Task SendPasswordResetEmail(CoachFrikaUsers user, string newPassword,string logoUrl)
+        {
+            // Use an email service (SMTP, SendGrid, etc.) to send the new password to the user
+            var subject = "Your password has been reset";
+            var body = $"Your password has been reset. Your new password is: {newPassword}";
+
+            var bodyTemplate = await _emailService.ReadTemplate("forgetPassword");
+            var fullName = $"{user.FirstName} {user.LastName}";
+            //inserting variable
+            var messageToParse = new Dictionary<string, string>
+                    {
+                        { "{Fullname}", fullName},
+                        { "{Message}", body},
+                        { "{logo}", logoUrl},
+                    };
+
+            //  email notification
+            var messageBody = bodyTemplate.ParseTemplate(messageToParse);
+            var message = new Message(new List<string> { user.Email }, subject, messageBody);
+          
+            await _emailService.SendEmail(message);
+        }
+
+        public string GeneratePassword(int length = 12)
+        {
+            // Character sets for password generation
+            const string lowerCaseChars = "abcdefghijklmnopqrstuvwxyz";
+            const string upperCaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string digits = "0123456789";
+            const string specialChars = "!@#$%^&*()-_+=<>?";
+
+            // Ensure the password meets the minimum length of 8 characters
+            if (length < 8)
+            {
+                throw new ArgumentException("Password length must be at least 8 characters.");
+            }
+
+            var random = new Random();
+
+            // Ensure that we have at least one character from each category
+            var password = new StringBuilder();
+            password.Append(lowerCaseChars[random.Next(lowerCaseChars.Length)]);
+            password.Append(upperCaseChars[random.Next(upperCaseChars.Length)]);
+            password.Append(digits[random.Next(digits.Length)]);
+            password.Append(specialChars[random.Next(specialChars.Length)]);
+
+            // Fill the rest of the password length with random characters from all sets
+            var allChars = lowerCaseChars + upperCaseChars + digits + specialChars;
+            for (int i = password.Length; i < length; i++)
+            {
+                password.Append(allChars[random.Next(allChars.Length)]);
+            }
+
+            // Shuffle the characters to randomize the order
+            var shuffledPassword = password.ToString()
+                .OrderBy(c => random.Next())
+                .ToArray();
+
+            return new string(shuffledPassword);
+        }
+
+        public async Task<string> ChangePassword(ChangePasswordDto model)
+        {
+            var email = _webHelpers.CurrentUser();
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.");
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(email, model.OldPassword, false, false);
+            if (!result.Succeeded)
+            {
+                throw new NotImplementedException("Invalid credentials");
+            }
+            var resetResult = await _userManager.RemovePasswordAsync(user);
+            if (!resetResult.Succeeded)
+            {
+                throw new InvalidOperationException("Failed to remove the old password.");
+            }
+
+            var resultss = await _userManager.AddPasswordAsync(user, model.NewPassword);
+            if (!resultss.Succeeded)
+            {
+                throw new InvalidOperationException("Failed to set the new password.");
+            }
+
+            return "Password successfully changed"; // Or don't return the password, depending on your security requirements
+        }
+
     }
 }

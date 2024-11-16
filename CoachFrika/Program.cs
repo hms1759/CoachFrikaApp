@@ -2,6 +2,7 @@ using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.Domin.Services;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
+using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
 using CoachFrika.Services;
@@ -26,6 +27,9 @@ builder.Services.AddIdentity<CoachFrikaUsers, IdentityRole>()
     .AddDefaultTokenProviders();
 
 
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IPublicService, PublicService>();
+builder.Services.AddTransient<IWebHelpers, WebHelpers>();
 builder.Services.AddTransient<IJwtService, JwtService>();
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IEmailService, EmailService>(); // Add email service

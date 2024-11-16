@@ -20,4 +20,18 @@
         public string? Token { get; set; }
         public string? ExpiredTime { get; set; }
     }
+
+    public class ChangePasswordDto
+    {
+        public string? OldPassword { get; set; }
+        public string? NewPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
+    }
+    public class PublicCountDto
+    {
+        public int CoachesCount { get; set; }
+        public int TeachersCount { get; set; }
+        public int StudentCount { get; set; }
+        public int SchoolCount { get; set; }
+    }
 }
