@@ -1,6 +1,7 @@
 ﻿using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.Domin.Services;
 using CoachFrika.APIs.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,14 +9,15 @@ namespace CoachFrika.APIs.Controllerss
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class UserAccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        public AccountController(IAccountService accountService)
+        public UserAccountController(IAccountService accountService)
         {
             _accountService = accountService;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
@@ -23,17 +25,19 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("SignUp")]
         public async Task<IActionResult> SignUp([FromBody] SignpUpDto model)
         {
             var result = await _accountService.SignUp(model);
             return Ok(result);
         }
-        [HttpPost("ForgetPassword")]
-        public async Task<IActionResult> ForgetPassword([FromBody] string email)
+        [AllowAnonymous]
+        [HttpPut("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword([FromBody] SubscriptionDto model)
         {
             var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
-            var result = await _accountService.ForgetPassword(email, logoUrl);
+            var result = await _accountService.ForgetPassword(model.Email, logoUrl);
             return Ok(result);
         }
         [HttpPost("ChangePassword")]

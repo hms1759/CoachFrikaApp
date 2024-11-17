@@ -56,7 +56,7 @@ namespace CoachFrika.Services
             emailMessage.Subject = message.Subject;
             content.HtmlBody = message.Body;
             emailMessage.Body = content.ToMessageBody();
-
+            try {
             //send email
             using var client = new MailKit.Net.Smtp.SmtpClient();
 
@@ -66,7 +66,12 @@ namespace CoachFrika.Services
                 await client.DisconnectAsync(true);
 
             return "sent";
-
+            }
+            catch (Exception ex)
+            {
+                var error = ex.ToString();
+                return null;
+            }
         }
     }
 }

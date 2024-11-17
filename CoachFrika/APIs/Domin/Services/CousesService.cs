@@ -34,8 +34,11 @@ namespace CoachFrika.APIs.Domin.Services
             _webHelpers = webHelpers;
         }
 
-        public async Task<string> CreateCourse(CreateCoursesDto model)
+        public async Task<BaseResponse<string>> CreateCourse(CreateCoursesDto model)
         {
+
+            var res = new BaseResponse<string>();
+            res.Status = true;
             try
             {
                 var dto = new Courses();
@@ -44,17 +47,21 @@ namespace CoachFrika.APIs.Domin.Services
                 var schRepository = _unitOfWork.GetRepository<Courses>();
                 await schRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
-                return "Successful";
+                return res;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }
 
-        public async Task<string> CreateBatches(BatchesDto model)
+        public async Task<BaseResponse<string>> CreateBatches(BatchesDto model)
         {
+            var res = new BaseResponse<string>();
+            res.Status = true;
             try
             {
                 var dto = new Batches();
@@ -62,37 +69,48 @@ namespace CoachFrika.APIs.Domin.Services
                 var schRepository = _unitOfWork.GetRepository<Batches>();
                 await schRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
-                return "Successful";
+                return res;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }
 
-        public List<CoursesViewModel> GetCourses()
+        public BaseResponse<List<CoursesViewModel>> GetCourses()
         {
-            try
-            {
-                var cos = from course in _context.Courses.AsNoTracking()
+
+            var res = new BaseResponse<List<CoursesViewModel>>();
+            res.Status = true;
+            try { 
+            var cos = from course in _context.Courses.AsNoTracking()
                           select new CoursesViewModel
                           {
                               Id = course.Id,
                               CourseTitle = course.CourseTitle
                           };
-                return cos.ToList();
+                var rr =  cos.ToList();
+                res.Data = rr;
+                return res;
             }
             catch (Exception ex)
             {
-            throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
 
         }
 
-        public List<BatchesViewModel> GetBatches()
+        public BaseResponse<List<BatchesViewModel>> GetBatches()
         {
+
+            var res = new BaseResponse<List<BatchesViewModel>>();
+            res.Status = true;
             try
             {
                 var bat = from batche in _context.Batches.AsNoTracking()
@@ -101,20 +119,25 @@ namespace CoachFrika.APIs.Domin.Services
                               Id = batche.Id,
                               Title = batche.Title
                           };
-                return bat.ToList();
+                var rr = bat.ToList();
+                res.Data = rr;
+                return res;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }
 
-        public async Task<string> CreateSchedule(SchedulesDto model)
+        public async Task<BaseResponse<string>> CreateSchedule(SchedulesDto model)
         {
+            var res = new BaseResponse<string>();
+            res.Status = true;
             try
             {
-
                 var BatchRepository = _unitOfWork.GetRepository<Batches>();
                 var checkBatch = await BatchRepository.GetByIdAsync(model.BatcheId);
                 if (checkBatch == null)
@@ -139,26 +162,36 @@ namespace CoachFrika.APIs.Domin.Services
                 var schRepository = _unitOfWork.GetRepository<Schedules>();
                 await schRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
-                return "Successful";
+
+                return res;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }
-        public List<Schedules> GetMySchedule()
+        public BaseResponse<List<Schedules>> GetMySchedule()
         {
+            var res = new BaseResponse<List<Schedules>>();
+            res.Status = true;
             try
-            { var user = _webHelpers.CurrentUser();
+            {
+                var user = _webHelpers.CurrentUser();
                 var bat = from Schedule in _context.Schedules
                           where Schedule.CreatedBy == user
                           select Schedule;
-                return bat.ToList();
+                var rr = bat.ToList();
+                res.Data = rr;
+                return res;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }

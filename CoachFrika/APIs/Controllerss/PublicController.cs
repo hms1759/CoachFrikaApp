@@ -1,5 +1,6 @@
 ﻿using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace CoachFrika.APIs.Controllerss
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class PublicController : ControllerBase
     {
         private readonly ILogicService _publicService;
@@ -14,7 +16,7 @@ namespace CoachFrika.APIs.Controllerss
         {
             _publicService = publicService;
         }
-        [HttpGet("GetLandingPage")]
+        [HttpGet("GetLandingPageCount")]
         public async Task<IActionResult> GetPublicCount()
         {
             var result = await _publicService.GetPublicCount();

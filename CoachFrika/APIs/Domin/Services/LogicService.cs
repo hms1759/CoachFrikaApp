@@ -34,8 +34,10 @@ namespace CoachFrika.APIs.Domin.Services
             _webHelpers = webHelpers;
         }
 
-        public async Task<string> ContactUs(ContactUsDto model)
+        public async Task<BaseResponse<string>> ContactUs(ContactUsDto model)
         {
+            var res = new BaseResponse<string>();
+            res.Status = true;
             try
             {
                 var dto = new coachfrikaaaa.APIs.Entity.ContactUs();
@@ -63,36 +65,55 @@ namespace CoachFrika.APIs.Domin.Services
                 //  email notification
                 var messageBody = body.ParseTemplate(messageToParse);
                 var message = new Message(mailto, mailSubject, messageBody);
-                await _emailService.SendEmail(message);
+                //await _emailService.SendEmail(message);
 
-                return "Successful";
+                return res;
             }
             catch (Exception ex)
-            {
-                throw new NotImplementedException(ex.Message);
+            {res.Message  = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }
 
-        public async Task<PublicCountDto> GetPublicCount()
+        public async Task<BaseResponse<PublicCountDto>> GetPublicCount()
         {
-            var schcount = await _context.Schools.ToListAsync();
-            var usercount = await _context.CoachFrikaUsers.Where(x => x.Role == 1 || x.Role == 0).ToListAsync();
-            //if (usercount.Count() >1)
-            //    throw new NotImplementedException("User not found");
-            var dto = new PublicCountDto();
-            // Get count of users with Coach role
-            dto.CoachesCount = usercount.Where(x => x.Role == 1).Count();
-            // Get count of users with Teacher role
-            var Teachers = usercount.Where(x => x.Role == 0).ToList();
-            dto.TeachersCount = Teachers.Count;
-            dto.StudentCount = Teachers.Sum(x => x.NumbersOfStudents);
-            dto.SchoolCount = schcount.Count;
-            return dto;
+
+            var res = new BaseResponse<PublicCountDto>();
+            res.Status = true;
+            try
+            {
+                var schcount = await _context.Schools.ToListAsync();
+                var usercount = await _context.CoachFrikaUsers.Where(x => x.Role == 1 || x.Role == 0).ToListAsync();
+                //if (usercount.Count() >1)
+                //    throw new NotImplementedException("User not found");
+                var dto = new PublicCountDto();
+                // Get count of users with Coach role
+                dto.CoachesCount = usercount.Where(x => x.Role == 1).Count();
+                // Get count of users with Teacher role
+                var Teachers = usercount.Where(x => x.Role == 0).ToList();
+                dto.TeachersCount = Teachers.Count;
+                dto.StudentCount = Teachers.Sum(x => x.NumbersOfStudents);
+                dto.SchoolCount = schcount.Count;
+                res.Data = dto;
+                return res;
+            }
+
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
         }
 
-        public async Task<string> NewSubscription(SubscriptionDto modle)
+        public async Task<BaseResponse<string>> NewSubscription(SubscriptionDto modle)
         {
+
+            var res = new BaseResponse<string>();
+            res.Status = true;
             try
             {
                 var dto = new NewsSubscription();
@@ -100,17 +121,22 @@ namespace CoachFrika.APIs.Domin.Services
                 var newsRepository = _unitOfWork.GetRepository<NewsSubscription>();
                 await newsRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
-                return "Successful";
+                res.Message = "Successful";
+                return res;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }
 
-        public async Task<string> CreateSchool(string school)
+        public async Task<BaseResponse<string>> CreateSchool(string school)
         {
+            var res = new BaseResponse<string>();
+            res.Status = true;
             try
             {
                 var dto = new Schools();
@@ -118,16 +144,22 @@ namespace CoachFrika.APIs.Domin.Services
                 var schRepository = _unitOfWork.GetRepository<Schools>();
                 await schRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
-                return "Successful";
+                res.Message = "Successful";
+                return res;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }
-        public async Task<string> CreateSubject(List<string> sub)
+        public async Task<BaseResponse<string>> CreateSubject(List<string> sub)
         {
+
+            var res = new BaseResponse<string>();
+            res.Status = true;
             try
             {
                 var subRepository = _unitOfWork.GetRepository<Subjects>();
@@ -141,33 +173,47 @@ namespace CoachFrika.APIs.Domin.Services
                 }
                 await subRepository.AddRangeAsync(dtoList);
                 await _unitOfWork.SaveChangesAsync();
-                return "Successful";
+                res.Message = "Successful";
+                return res;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }
 
-        public async Task<TeachersDTo> GetUserById(Guid Id)
+        public async Task<BaseResponse<TeachersDTo>> GetUserById(Guid Id)
         {
+
+            var res = new BaseResponse<TeachersDTo>();
+            res.Status = true;
             var userRepo = _unitOfWork.GetRepository<CoachFrikaUsers>();
             var user = await userRepo.GetByIdAsync(Id);
-            return await GetUserByMail(user?.Email);
+            var rr = await GetUserByEmail(user?.Email);
+             res.Data = rr;
+            return res;
         }
 
-        public async Task<TeachersDTo> GetUserDetails()
+        public async Task<BaseResponse<TeachersDTo>> GetUserDetails()
         {
+
+            var res = new BaseResponse<TeachersDTo>();
+            res.Status = true;
             var email = _webHelpers.CurrentUser();
-            return await GetUserByMail(email);
+            var rr = await GetUserByEmail(email);
+            res.Data = rr;
+            return res;
         }
-        public async Task<TeachersDTo> GetUserByMail(string email)
+        public async Task<TeachersDTo> GetUserByEmail(string email)
         {
             var year = DateTime.Now.Year;
             try
             {
 
+                var role = _webHelpers.CurrentUserRole();
                 var user = from users in _context.CoachFrikaUsers
                            join sch in _context.Schools on users.SchoolId equals sch.Id
                            where users.Email.ToLower() == email.Trim().ToLower()
@@ -189,6 +235,21 @@ namespace CoachFrika.APIs.Domin.Services
                            };
 
                 var teacherDto = await user.FirstOrDefaultAsync();
+
+                if (role.Contains(AppRoles.Coach))
+                {
+                    var Id = _webHelpers.CurrentUserId();
+                    var teacher = from Courses in _context.Courses
+                                  join bat in _context.Batches on Courses.Id equals bat.CourseId
+                                  join teach in _context.CoachFrikaUsers on bat.TeachersId.ToString() equals teach.Id
+                                  where Courses.CoachId == Id
+                                  select new TeachersDTo
+                               {
+                                   Id = teach.Id,
+                                   FullName = teach.FullName
+                               };
+                    teacherDto.NumbersOfStudents =  teacher.ToList().Count();
+                }
                 return teacherDto;
             }
             catch (Exception ex)
@@ -197,37 +258,51 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        public string?[] GetSchool()
+        public BaseResponse<string?[]> GetSchool()
         {
+            var res = new BaseResponse<string?[]>();
+            res.Status = true;
             var schs = from sch in _context.Schools
                        select sch;
-            var scharray =schs.Select(x => x.School).ToArray();
-            return scharray;
+            var scharray = schs.Select(x => x.School).ToArray();
+            res.Data = scharray;
+            return res;
         }
 
-        public string?[] GetSubject()
+        public BaseResponse<string?[]> GetSubject()
         {
+            var res = new BaseResponse<string?[]>();
+            res.Status = true;
             var schs = from sch in _context.Subjects
                        select sch;
             var scharray = schs.Select(x => x.SubjectName).ToArray();
-            return scharray;
+            res.Data = scharray;
+            return res;
         }
-        public List<Schedules> GetMySchedule()
+        public BaseResponse<List<Schedules>> GetMySchedule()
         {
+
+            var res = new BaseResponse<List<Schedules>>();
+            res.Status = true;
             try
             {
                 var userEmail = _webHelpers.CurrentUser();
 
                 var Schedul = from Sche in _context.Schedules
-                          join bat in _context.Batches on Sche.BatcheId equals bat.Id
-                          join user in _context.CoachFrikaUsers on bat.TeachersId equals user.Id
-                          where user.Email == userEmail
+                              join bat in _context.Batches on Sche.BatcheId equals bat.Id
+                              join user in _context.CoachFrikaUsers on bat.TeachersId.ToString() equals user.Id
+                              where user.Email == userEmail
                               select Sche;
-                return Schedul.ToList();
+                var rr = Schedul.ToList();
+                res.Message = "Successful";
+                res.Data = rr;
+                return res;
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
             }
         }

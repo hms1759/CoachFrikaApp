@@ -1,11 +1,13 @@
 ﻿using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.ViewModel;
+using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
 using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
+using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -30,88 +32,118 @@ namespace CoachFrika.APIs.Domin.Services
             _webHelpers = webHelpers;
         }
 
-        public async Task<string> Login(LoginDto login)
+        public async Task<BaseResponse<LoginDetails>> Login(LoginDto login)
         {
-
-            // If sign-in is successful, generate JWT token
-            var user = await _userManager.FindByNameAsync(login.Email);
-            if (user == null)
+            var res = new BaseResponse<LoginDetails>();
+            res.Status = true;
+            try
             {
-                throw new NotImplementedException("User not found.");
+                // If sign-in is successful, generate JWT token
+                var user = await _userManager.FindByNameAsync(login.Email);
+                if (user == null)
+                {
+                    throw new NotImplementedException("User not found.");
+                }
+                var result = await _signInManager.PasswordSignInAsync(login.Email, login.Password, false, false);
+                if (!result.Succeeded)
+                {
+                    throw new NotImplementedException("Invalid credentials");
+                }
+                // Get the roles of the user
+                var roles = await _userManager.GetRolesAsync(user);
+                var details = new LoginDetails();
+                details.Token = await _jwtService.GenerateToken(user, roles);
+                details.Roles = roles.ToList();
+              
+                res.Data = details;
+                return res;
             }
-            var result = await _signInManager.PasswordSignInAsync(login.Email, login.Password, false, false);
-            if (!result.Succeeded)
-            {
-                throw new NotImplementedException("Invalid credentials");
-            }
-            // Get the roles of the user
-            var roles = await _userManager.GetRolesAsync(user);
 
-            return await _jwtService.GenerateToken(user, roles);
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
         }
-        public async Task<SignpUpDto> SignUp(SignpUpDto model)
+        public async Task<BaseResponse<SignpUpDto>> SignUp(SignpUpDto model)
         {
-            // Check if the email already exists
-            var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
-            if (existingUserByEmail != null)
+            var res = new BaseResponse<SignpUpDto>();
+            res.Status = true;
+            try
             {
-                throw new ArgumentException("An account with this email already exists.");
-            }
-
-            // Validate phone number format
-            if (!string.IsNullOrEmpty(model.PhoneNumber))
-            {
-                var phoneNumberValid = ValidatePhoneNumber(model.PhoneNumber);
-                if (!phoneNumberValid)
+                // Check if the email already exists
+                var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUserByEmail != null)
                 {
-                    throw new ArgumentException("Phone number must be in the format: 08068783985");
+                    throw new ArgumentException("An account with this email already exists.");
                 }
 
-                // Check if the phone number already exists
-                var existingUserByPhone = await _userManager.Users
-                    .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
-                if (existingUserByPhone != null)
+                // Validate phone number format
+                if (!string.IsNullOrEmpty(model.PhoneNumber))
                 {
-                    throw new ArgumentException("An account with this phone number already exists.");
+                    var phoneNumberValid = ValidatePhoneNumber(model.PhoneNumber);
+                    if (!phoneNumberValid)
+                    {
+                        throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                    }
+
+                    // Check if the phone number already exists
+                    var existingUserByPhone = await _userManager.Users
+                        .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
+                    if (existingUserByPhone != null)
+                    {
+                        throw new ArgumentException("An account with this phone number already exists.");
+                    }
                 }
+
+                // Validate email format
+                var emailValid = ValidateEmail(model.Email);
+                if (!emailValid)
+                {
+                    throw new ArgumentException("Invalid email format.");
+                }
+
+                // Validate password using a regular expression
+                var passwordValid = ValidatePassword(model.Password);
+                if (!passwordValid)
+                {
+                    throw new ArgumentException("Password must be at least 8 characters long, include at least one uppercase letter, one digit, and one special character.");
+                }
+
+                // Create a new user
+                var user = new CoachFrikaUsers
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    FullName = model.FullName,
+                    Role = model.isCoach ? 1 : 0,
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    // Assign Role
+                    await _userManager.AddToRoleAsync(user, model.isCoach ? AppRoles.Coach : AppRoles.Teacher);
+                }
+                else
+                {
+                    // Return the error messages from Identity
+                    throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+                res.Data = model;
+                return res;
             }
 
-            // Validate email format
-            var emailValid = ValidateEmail(model.Email);
-            if (!emailValid)
+            catch (Exception ex)
             {
-                throw new ArgumentException("Invalid email format.");
-            }
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
 
-            // Validate password using a regular expression
-            var passwordValid = ValidatePassword(model.Password);
-            if (!passwordValid)
-            {
-                throw new ArgumentException("Password must be at least 8 characters long, include at least one uppercase letter, one digit, and one special character.");
             }
-
-            // Create a new user
-            var user = new CoachFrikaUsers
-            {
-                UserName = model.Email,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                FullName = model.FullName,
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-                // Assign Role
-                await _userManager.AddToRoleAsync(user, model.isCoach ? AppRoles.Coach : AppRoles.Teacher);
-            }
-            else
-            {
-                // Return the error messages from Identity
-                throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
-            }
-
-            return model;
         }
 
         // Helper method to validate password
@@ -137,35 +169,47 @@ namespace CoachFrika.APIs.Domin.Services
             return emailRegex.IsMatch(email);
         }
 
-        public async Task<string> ForgetPassword(string email,string logoUrl)
+        public async Task<BaseResponse<string>> ForgetPassword(string email, string logoUrl)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
             {
-                throw new ArgumentException("User not found.");
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    throw new ArgumentException("User not found.");
+                }
+
+                var defaultPassword = GeneratePassword();
+
+                var resetResult = await _userManager.RemovePasswordAsync(user);
+                if (!resetResult.Succeeded)
+                {
+                    throw new InvalidOperationException("Failed to remove the old password.");
+                }
+
+                var result = await _userManager.AddPasswordAsync(user, defaultPassword);
+                if (!result.Succeeded)
+                {
+                    throw new InvalidOperationException("Failed to set the new password.");
+                }
+
+                // Optionally send the password via email
+                await SendPasswordResetEmail(user, defaultPassword, logoUrl);
+                res.Message = "Successful";
+                return res;
             }
-
-            var defaultPassword = GeneratePassword();
-
-            var resetResult = await _userManager.RemovePasswordAsync(user);
-            if (!resetResult.Succeeded)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("Failed to remove the old password.");
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
             }
-
-            var result = await _userManager.AddPasswordAsync(user, defaultPassword);
-            if (!result.Succeeded)
-            {
-                throw new InvalidOperationException("Failed to set the new password.");
-            }
-
-            // Optionally send the password via email
-            await SendPasswordResetEmail(user, defaultPassword, logoUrl);
-
-            return defaultPassword; // Or don't return the password, depending on your security requirements
         }
 
-        private async Task SendPasswordResetEmail(CoachFrikaUsers user, string newPassword,string logoUrl)
+        private async Task SendPasswordResetEmail(CoachFrikaUsers user, string newPassword, string logoUrl)
         {
             // Use an email service (SMTP, SendGrid, etc.) to send the new password to the user
             var subject = "Your password has been reset";
@@ -183,7 +227,7 @@ namespace CoachFrika.APIs.Domin.Services
             //  email notification
             var messageBody = bodyTemplate.ParseTemplate(messageToParse);
             var message = new Message(new List<string> { user.Email }, subject, messageBody);
-          
+
             await _emailService.SendEmail(message);
         }
 
@@ -225,33 +269,46 @@ namespace CoachFrika.APIs.Domin.Services
             return new string(shuffledPassword);
         }
 
-        public async Task<string> ChangePassword(ChangePasswordDto model)
+        public async Task<BaseResponse<string>> ChangePassword(ChangePasswordDto model)
         {
-            var email = _webHelpers.CurrentUser();
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
             {
-                throw new ArgumentException("User not found.");
-            }
+                var email = _webHelpers.CurrentUser();
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    throw new ArgumentException("User not found.");
+                }
 
-            var result = await _signInManager.PasswordSignInAsync(email, model.OldPassword, false, false);
-            if (!result.Succeeded)
-            {
-                throw new NotImplementedException("Invalid credentials");
-            }
-            var resetResult = await _userManager.RemovePasswordAsync(user);
-            if (!resetResult.Succeeded)
-            {
-                throw new InvalidOperationException("Failed to remove the old password.");
-            }
+                var result = await _signInManager.PasswordSignInAsync(email, model.OldPassword, false, false);
+                if (!result.Succeeded)
+                {
+                    throw new NotImplementedException("Invalid credentials");
+                }
+                var resetResult = await _userManager.RemovePasswordAsync(user);
+                if (!resetResult.Succeeded)
+                {
+                    throw new InvalidOperationException("Failed to remove the old password.");
+                }
 
-            var resultss = await _userManager.AddPasswordAsync(user, model.NewPassword);
-            if (!resultss.Succeeded)
-            {
-                throw new InvalidOperationException("Failed to set the new password.");
-            }
+                var resultss = await _userManager.AddPasswordAsync(user, model.NewPassword);
+                if (!resultss.Succeeded)
+                {
+                    throw new InvalidOperationException("Failed to set the new password.");
+                }
 
-            return "Password successfully changed"; // Or don't return the password, depending on your security requirements
+                res.Message = "Successful";
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
         }
 
     }

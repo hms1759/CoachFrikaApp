@@ -1,23 +1,28 @@
 ﻿using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.ViewModel;
+using CoachFrika.Common;
+using CoachFrika.Common.AppUser;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoachFrika.APIs.Controllerss
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
-    public class TeachersController : ControllerBase
+    public class TeachersController : BaseController
     {
         private readonly ILogicService _service;
         public TeachersController(ILogicService service)
         {
             _service = service;
         }
+
         [HttpGet("GetSchool")]
         public IActionResult GetSchool()
-        {
-            var result =  _service.GetSchool();
+        { 
+              var result =  _service.GetSchool();
             return Ok(result);
         }
         [HttpGet("GetSubject")]

@@ -1,4 +1,7 @@
-﻿using System.Security.Claims;
+﻿using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Xml.Linq;
 
 namespace CoachFrika.Common.Extension
 {
@@ -7,6 +10,7 @@ namespace CoachFrika.Common.Extension
     {
         public string CurrentUser();
         public string CurrentUserId();
+        public string CurrentUserRole();
     }
     public class WebHelpers : IWebHelpers
     {
@@ -19,21 +23,46 @@ namespace CoachFrika.Common.Extension
         }
         public string CurrentUser()
         {
-            string name ="";
-            ClaimsIdentity user = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
+            string name = "";
+            ClaimsIdentity currentUser = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
 
-            if (user.Name == null)
+            if (currentUser.Claims != null)
             {
-                var email = user.FindFirst("unique_name");
-                name = email?.Value;
+                name = currentUser.FindFirst(ClaimTypes.Name)?.Value;
+                return name;
             }
-           
-            return name;
+
+            throw new NotImplementedException("User not found");
         }
 
         public string CurrentUserId()
         {
-            throw new NotImplementedException();
+            string nameIdentifier = "";
+            ClaimsIdentity currentUser = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
+
+            if (currentUser.Claims != null)
+            {
+                nameIdentifier = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                return nameIdentifier;
+            }
+            throw new NotImplementedException("User not found");
         }
+
+        public string CurrentUserRole()
+        {
+            string role = "";
+
+            ClaimsIdentity currentUser = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
+
+            if (currentUser.Claims != null)
+            {
+                var roles = currentUser.FindFirst(ClaimTypes.Role)?.Value;
+                role = roles != null && roles.Any() ? string.Join(", ", roles) : null;
+                return role;
+            }
+
+            throw new NotImplementedException("User not found");
+        }
+
     }
 }

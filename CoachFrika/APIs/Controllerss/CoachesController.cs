@@ -1,13 +1,17 @@
 ﻿using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.ViewModel;
+using CoachFrika.Common;
+using CoachFrika.Common.AppUser;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoachFrika.APIs.Controllerss
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Coach},{AppRoles.SuperAdmin}")]
     [ApiController]
-    public class CoachesController : ControllerBase
+    public class CoachesController : BaseController
     {
         private readonly ICousesService _service;
         private readonly ILogicService _logicService;
