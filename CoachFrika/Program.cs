@@ -25,8 +25,8 @@ var builder = WebApplication.CreateBuilder(args)
 ConfigureServices(builder.Services, builder.Configuration);
 var app = builder.Build();
 
-//// Seed roles and users
-//await SeedDataAsync(app);
+//Seed roles and users
+await SeedDataAsync(app);
 
 // Configure HTTP request pipeline
 ConfigureApp(app);

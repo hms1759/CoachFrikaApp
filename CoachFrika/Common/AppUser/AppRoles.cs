@@ -41,7 +41,8 @@ namespace CoachFrika.Common.AppUser
                 {
                     UserName = "admin@admin.com",
                     Email = "admin@admin.com",
-                    FullName = "Admin User"
+                    FullName = "Admin User",
+                    Role = 1
                 };
 
                 var result = await userManager.CreateAsync(user, "AdminP@ssw0rd");

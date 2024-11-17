@@ -28,10 +28,7 @@ namespace CoachFrika.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CourseId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("CourseId1")
+                    b.Property<Guid?>("CourseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedBy")
@@ -55,7 +52,10 @@ namespace CoachFrika.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TeachersId")
+                    b.Property<Guid?>("TeachersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TeachersId1")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Title")
@@ -63,9 +63,9 @@ namespace CoachFrika.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseId1");
+                    b.HasIndex("CourseId");
 
-                    b.HasIndex("TeachersId");
+                    b.HasIndex("TeachersId1");
 
                     b.ToTable("Batches");
                 });
@@ -698,11 +698,11 @@ namespace CoachFrika.Migrations
                 {
                     b.HasOne("coachfrikaaaa.APIs.Entity.Courses", "Course")
                         .WithMany()
-                        .HasForeignKey("CourseId1");
+                        .HasForeignKey("CourseId");
 
                     b.HasOne("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", "Teachers")
                         .WithMany()
-                        .HasForeignKey("TeachersId");
+                        .HasForeignKey("TeachersId1");
 
                     b.Navigation("Course");
 

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CoachFrika.Migrations
 {
-    public partial class initiate : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -352,9 +352,9 @@ namespace CoachFrika.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TeachersId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CourseId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CourseId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TeachersId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TeachersId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CourseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -367,13 +367,13 @@ namespace CoachFrika.Migrations
                 {
                     table.PrimaryKey("PK_Batches", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Batches_AspNetUsers_TeachersId",
-                        column: x => x.TeachersId,
+                        name: "FK_Batches_AspNetUsers_TeachersId1",
+                        column: x => x.TeachersId1,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Batches_Courses_CourseId1",
-                        column: x => x.CourseId1,
+                        name: "FK_Batches_Courses_CourseId",
+                        column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id");
                 });
@@ -457,14 +457,14 @@ namespace CoachFrika.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Batches_CourseId1",
+                name: "IX_Batches_CourseId",
                 table: "Batches",
-                column: "CourseId1");
+                column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Batches_TeachersId",
+                name: "IX_Batches_TeachersId1",
                 table: "Batches",
-                column: "TeachersId");
+                column: "TeachersId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Coaches_IdentityUserId1",
