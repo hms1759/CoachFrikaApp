@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Serilog;
 using System.Text;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
 
@@ -24,11 +23,10 @@ var builder = WebApplication.CreateBuilder(args)
 
 // Add services to the container
 ConfigureServices(builder.Services, builder.Configuration);
-builder.Host.UseSerilog();
 var app = builder.Build();
 
-// Seed roles and users
-await SeedDataAsync(app);
+//// Seed roles and users
+//await SeedDataAsync(app);
 
 // Configure HTTP request pipeline
 ConfigureApp(app);
