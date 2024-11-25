@@ -162,17 +162,14 @@ async Task SeedDataAsync(WebApplication app)
 // --- Configure HTTP Request Pipeline ---
 void ConfigureApp(WebApplication app)
 {
-    // Enable Swagger only in Development
-    if (app.Environment.IsDevelopment())
-    {
+  
         app.UseSwagger(); // Enable Swagger UI
         app.UseSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "CoachFrika API v1");
             options.RoutePrefix = "swagger"; // Swagger UI at /swagger
         });
-    }
-
+   
     app.UseHttpsRedirection();
     app.UseRouting();
     app.UseStaticFiles();
