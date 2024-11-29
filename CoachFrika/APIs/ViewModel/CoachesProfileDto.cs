@@ -1,20 +1,44 @@
 ﻿using CoachFrika.Common.Enum;
-using coachfrikaaaa.Common;
-using Microsoft.AspNetCore.Identity;
+using coachfrikaaaa.APIs.Entity;
 
-namespace coachfrikaaaa.APIs.Entity
+namespace CoachFrika.APIs.ViewModel
 {
-    public class CoachFrikaUsers : IdentityUser
+    public class SocialMediaDto
     {
+        public string? TweeterUrl { get; set; }
+        public string? LinkedInUrl { get; set; }
+        public string? InstagramUrl { get; set; }
+        public string? FacebookUrl { get; set; }
+    }
+    public class TitleDto
+    {
+        public string? ProfessionalTitle { get; set; }
+        public string? Title { get; set; }
+    }
+    public class PhoneYearsDto
+    {
+        public string? PhoneNumber { get; set; }
+        public int YearOfExperience { get; set; }
+    }
+    public class DescriptionDto
+    {
+        public string? StateOfOrigin { get; set; }
+        public string? Nationality { get; set; }
+        public string? Description { get; set; }
+    }
+
+    public class SubscriptionsDto
+    {
+        public Subscriptions Subscription { get; set; }
+    }
+    public class ProfileDto {
+
         public string? FullName { get; set; }
         public string? TweeterUrl { get; set; }
         public string? LinkedInUrl { get; set; }
         public string? InstagramUrl { get; set; }
         public string? FacebookUrl { get; set; }
-        public bool IsDeleted { get; set; }
         public int Role { get; set; }
-        public string? SecurityQuestion { get; set; }
-        public string? SecurityAnswer { get; set; }
         public string? StateOfOrigin { get; set; }
         public string? ProfessionalTitle { get; set; }
         public string? Nationality { get; set; }
@@ -32,4 +56,4 @@ namespace coachfrikaaaa.APIs.Entity
         public Guid? SchoolId { get; set; }
         public Schools? School { get; set; }
     }
-}
+    }

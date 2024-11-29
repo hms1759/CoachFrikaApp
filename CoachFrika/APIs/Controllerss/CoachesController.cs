@@ -13,61 +13,40 @@ namespace CoachFrika.APIs.Controllerss
     [ApiController]
     public class CoachesController : BaseController
     {
-        private readonly ICousesService _service;
-        private readonly ILogicService _logicService;
-        public CoachesController(ICousesService service, ILogicService logicService)
+        private readonly ICoachesService _coachesService;
+        public CoachesController(ICoachesService coachesService)
         {
-            _service = service;
-            _logicService = logicService;
-        }
-        [HttpPost("CreateCourse")]
-        public async Task<IActionResult> CreateCourse(CreateCoursesDto model)
-        {
-            var result = await _service.CreateCourse(model);
-            return Ok(result);
-        }
-        [HttpPost("CreateBatches")]
-        public async Task<IActionResult> CreateBatches(BatchesDto model)
-        {
-            var result = await _service.CreateBatches(model);
-            return Ok(result);
+            _coachesService = coachesService;
         }
 
-        [HttpGet("GetCoachesById")]
-        public async Task<IActionResult> GetCoachesById([FromQuery] Guid userId)
+        [HttpPost("CreateStage1")]
+        public async Task<IActionResult> CreateStage1(TitleDto model)
         {
-            var result = await _logicService.GetUserById(userId);
+            var result = await _coachesService.CreateStage1(model);
             return Ok(result);
         }
-        [HttpGet("GetCoachesDetails")]
-        public async Task<IActionResult> GetCoachesDetails()
+        [HttpPost("CreateStage2")]
+        public async Task<IActionResult> CreateStage2(PhoneYearsDto model)
         {
-            var result = await _logicService.GetUserDetails();
+            var result = await _coachesService.CreateStage2(model);
             return Ok(result);
         }
-        [HttpGet("GetCourse")]
-        public IActionResult GetCourse()
+        [HttpPost("CreateStage3")]
+        public async Task<IActionResult> CreateStage3(DescriptionDto model)
         {
-            var result =  _service.GetCourses();
+            var result = await _coachesService.CreateStage3(model);
             return Ok(result);
         }
-        [HttpGet("GetBatches")]
-        public IActionResult GetBatches()
+        [HttpPost("CreateStage4")]
+        public async Task<IActionResult> CreateStage4(SocialMediaDto model)
         {
-            var result = _service.GetBatches();
+            var result = await _coachesService.CreateStage4(model);
             return Ok(result);
         }
-
-        [HttpPost("CreateSchedule")]
-        public async Task<IActionResult> CreateSchedule(SchedulesDto model)
+        [HttpPost("CreateStage5")]
+        public async Task<IActionResult> CreateStage5(SubscriptionsDto model)
         {
-            var result = await _service.CreateSchedule(model);
-            return Ok(result);
-        }
-        [HttpGet("GetMySchedule")]
-        public IActionResult GetMySchedule()
-        {
-            var result = _service.GetMySchedule();
+            var result = await _coachesService.CreateStage5(model);
             return Ok(result);
         }
     }

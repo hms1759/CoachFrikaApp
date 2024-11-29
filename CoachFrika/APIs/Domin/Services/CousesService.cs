@@ -33,7 +33,7 @@ namespace CoachFrika.APIs.Domin.Services
             _emailService = emailService;
             _webHelpers = webHelpers;
         }
-
+    
         public async Task<BaseResponse<string>> CreateCourse(CreateCoursesDto model)
         {
 

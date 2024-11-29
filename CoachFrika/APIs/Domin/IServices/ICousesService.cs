@@ -6,6 +6,7 @@ namespace CoachFrika.APIs.Domin.IServices
 {
     public interface ICousesService
     {
+
         Task<BaseResponse<string>> CreateCourse(CreateCoursesDto model);
         Task<BaseResponse<string>> CreateBatches(BatchesDto model);
         BaseResponse<List<CoursesViewModel>> GetCourses();

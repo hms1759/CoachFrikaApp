@@ -58,11 +58,25 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<IJwtService, JwtService>();
     services.AddTransient<IAccountService, AccountService>();
     services.AddTransient<IEmailService, EmailService>();
+    services.AddTransient<ICoachesService, CoachesService>();
     services.Configure<EmailConfigSettings>(configuration.GetSection("EmailConfig"));
     services.AddSingleton<GoogleSheetsHelper>();
+    services.AddTransient<IPaystackService, PaystackService>(sp =>
+    {
+        var httpClient = sp.GetRequiredService<HttpClient>();
+        var secretKey = builder.Configuration["Paystack:SecretKey"];  // assuming you're using appsettings.json
+        return new PaystackService(httpClient, secretKey);
+    });
 
     // Controllers with authorization
     services.AddControllersWithViews();
+    services.AddCors(c =>
+    {
+        c.AddPolicy("AllowOrigin", options => options
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+    });
 
     // JWT Authentication
     ConfigureJwtAuthentication(services, configuration);
@@ -173,6 +187,7 @@ void ConfigureApp(WebApplication app)
     app.UseHttpsRedirection();
     app.UseRouting();
     app.UseStaticFiles();
+    app.UseCors("AllowOrigin");
 
     app.UseAuthentication();  // Enable authentication middleware
     app.UseAuthorization();   // Enable authorization middleware

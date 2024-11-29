@@ -231,8 +231,7 @@ namespace CoachFrika.APIs.Domin.Services
                                NumbersOfStudents = users.NumbersOfStudents,
                                YearOfExperience = year - users.YearStartExperience.Year,
                                School = sch.School,
-                               Subjects = users.Subjects.Select(x => x.SubjectName).ToArray()
-                           };
+                                  };
 
                 var teacherDto = await user.FirstOrDefaultAsync();
 

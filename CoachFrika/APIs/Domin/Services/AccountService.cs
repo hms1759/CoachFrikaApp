@@ -48,12 +48,16 @@ namespace CoachFrika.APIs.Domin.Services
                 {
                     throw new NotImplementedException("Invalid credentials");
                 }
+
                 // Get the roles of the user
                 var roles = await _userManager.GetRolesAsync(user);
                 var details = new LoginDetails();
                 details.Token = await _jwtService.GenerateToken(user, roles);
                 details.Roles = roles.ToList();
-              
+                var dd = user.Map<CoachFrikaUsers, ProfileDto>();
+
+
+
                 res.Data = details;
                 return res;
             }
@@ -155,7 +159,7 @@ namespace CoachFrika.APIs.Domin.Services
         }
 
         // Helper method to validate phone number format (e.g., 08068783985)
-        private bool ValidatePhoneNumber(string phoneNumber)
+        public bool ValidatePhoneNumber(string phoneNumber)
         {
             var phoneRegex = new Regex(@"^0\d{10}$");  // Starts with '0' followed by 10 digits
             return phoneRegex.IsMatch(phoneNumber);
