@@ -22,7 +22,7 @@ namespace CoachFrika.APIs.ViewModel
         public string? Token { get; set; }
         public string? ExpiredTime { get; set; }
         public List<string>? Roles { get; set; }
-        public CoachFrikaUsers? Profile { get; set; }
+        public ProfileDto? Profile { get; set; }
     }
 
     public class ChangePasswordDto

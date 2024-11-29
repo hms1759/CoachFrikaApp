@@ -229,7 +229,7 @@ namespace CoachFrika.APIs.Domin.Services
                                Title = users.Title,
                                Description = users.Description,
                                NumbersOfStudents = users.NumbersOfStudents,
-                               YearOfExperience = year - users.YearStartExperience.Year,
+                               //YearOfExperience = year - users.YearStartExperience.Year,
                                School = sch.School,
                                   };
 

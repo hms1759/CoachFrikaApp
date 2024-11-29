@@ -2,6 +2,7 @@ using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.Domin.Services;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
+using CoachFrika.Common.AutoMapper;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
@@ -50,6 +51,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         options.AccessDeniedPath = ""; // Customize access denied path if needed
     });
 
+    // Register AutoMapper
+    builder.Services.AddAutoMapper(typeof(AutoMapperClass));
     // Service injections
     services.AddHttpContextAccessor();
     services.AddTransient<IUnitOfWork, UnitOfWork>();

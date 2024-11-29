@@ -1,4 +1,5 @@
-﻿using CoachFrika.APIs.Domin.IServices;
+﻿using AutoMapper;
+using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
@@ -22,13 +23,15 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly IJwtService _jwtService;
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
-        public AccountService(UserManager<CoachFrikaUsers> userManager, SignInManager<CoachFrikaUsers> signInManager, IJwtService jwtService, IEmailService emailService, IWebHelpers webHelpers)
+        private readonly IMapper _mapper;
+        public AccountService(UserManager<CoachFrikaUsers> userManager, SignInManager<CoachFrikaUsers> signInManager, IJwtService jwtService, IEmailService emailService, IWebHelpers webHelpers, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
             _emailService = emailService;
             _webHelpers = webHelpers;
+            _mapper = mapper;
         }
 
         public async Task<BaseResponse<LoginDetails>> Login(LoginDto login)
@@ -54,7 +57,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var details = new LoginDetails();
                 details.Token = await _jwtService.GenerateToken(user, roles);
                 details.Roles = roles.ToList();
-                var dd = user.Map<CoachFrikaUsers, ProfileDto>();
+                details.Profile = _mapper.Map<ProfileDto>(user);
 
 
 
