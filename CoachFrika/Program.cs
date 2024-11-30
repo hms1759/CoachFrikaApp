@@ -25,9 +25,12 @@ var builder = WebApplication.CreateBuilder(args)
 // Add services to the container
 ConfigureServices(builder.Services, builder.Configuration);
 var app = builder.Build();
-
-//Seed roles and users
-await SeedDataAsync(app);
+try
+{
+    //Seed roles and users
+    await SeedDataAsync(app);
+}
+catch { }
 
 // Configure HTTP request pipeline
 ConfigureApp(app);
