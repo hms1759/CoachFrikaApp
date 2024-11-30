@@ -12,8 +12,8 @@ using coachfrikaaaa.Common;
 namespace CoachFrika.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241130091843_aad")]
-    partial class aad
+    [Migration("20241130140835_update")]
+    partial class update
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,49 +23,6 @@ namespace CoachFrika.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Batches", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("TeachersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TeachersId1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeachersId1");
-
-                    b.ToTable("Batches");
-                });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Coaches", b =>
                 {
@@ -321,12 +278,6 @@ namespace CoachFrika.Migrations
                     b.Property<DateTime>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("IdentityUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("IdentityUserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -346,8 +297,6 @@ namespace CoachFrika.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdentityUserId1");
 
                     b.ToTable("Teachers");
                 });
@@ -642,15 +591,6 @@ namespace CoachFrika.Migrations
                     b.HasDiscriminator().HasValue("CoachFrikaUsers");
                 });
 
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Batches", b =>
-                {
-                    b.HasOne("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", "Teachers")
-                        .WithMany()
-                        .HasForeignKey("TeachersId1");
-
-                    b.Navigation("Teachers");
-                });
-
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schedule", b =>
                 {
                     b.HasOne("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", "Coach")
@@ -658,15 +598,6 @@ namespace CoachFrika.Migrations
                         .HasForeignKey("CoachId");
 
                     b.Navigation("Coach");
-                });
-
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Teachers", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
-                        .WithMany()
-                        .HasForeignKey("IdentityUserId1");
-
-                    b.Navigation("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
