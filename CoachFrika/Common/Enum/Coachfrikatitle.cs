@@ -21,4 +21,10 @@
         past,
         missed
     }
+
+    public enum Programtype
+    {
+        Onetime,
+
+    }
 }

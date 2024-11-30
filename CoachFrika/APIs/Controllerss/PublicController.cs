@@ -30,11 +30,19 @@ namespace CoachFrika.APIs.Controllerss
         }
 
         [HttpPost("ContactUs")]
-        public async Task<IActionResult> NewSubscription([FromBody] ContactUsDto model)
+        public async Task<IActionResult> ContactUs([FromBody] ContactUsDto model)
         {
             var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
             model.logoUrl = logoUrl;
             var result = await _publicService.ContactUs(model);
+            return Ok(result);
+        }
+        [HttpPost("SchoolEnrollment")]
+        public async Task<IActionResult> SchoolEnroll([FromBody] SchoolEnrollmentDto model)
+        {
+            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+            model.logoUrl = logoUrl;
+            var result = await _publicService.SchoolEnrollment(model);
             return Ok(result);
         }
     }

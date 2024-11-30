@@ -23,16 +23,14 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly AppDbContext _context;
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
-        public readonly IAccountService _accountService;
         private readonly UserManager<CoachFrikaUsers> _userManager;
         public CoachesService(IUnitOfWork unitOfWork, 
             AppDbContext context,  
-            IWebHelpers webHelpers, IAccountService accountService,
+            IWebHelpers webHelpers,
             UserManager<CoachFrikaUsers> userManager)
         {
             _context = context;
             _webHelpers = webHelpers;
-            _accountService = accountService;
             _userManager = userManager;
         }
         public async Task<BaseResponse<string>> CreateStage1(TitleDto model)
@@ -79,7 +77,7 @@ namespace CoachFrika.APIs.Domin.Services
                     return res;
                 }
              
-                    var phoneNumberValid = _accountService.ValidatePhoneNumber(model.PhoneNumber);
+                    var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
                     if (!phoneNumberValid)
                     {
                         throw new ArgumentException("Phone number must be in the format: 0800 000 0000");

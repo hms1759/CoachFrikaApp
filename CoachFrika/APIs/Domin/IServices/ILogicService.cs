@@ -10,7 +10,7 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<PublicCountDto>> GetPublicCount();
         Task<BaseResponse<string>> NewSubscription(SubscriptionDto modle);
         Task<BaseResponse<string>> ContactUs(ContactUsDto modle);
-        Task<BaseResponse<string>> CreateSchool(string modle);
+        Task<BaseResponse<string>> SchoolEnrollment(SchoolEnrollmentDto modle);
         Task<BaseResponse<string>> CreateSubject(List<string> sub);
         Task<BaseResponse<TeachersDTo>> GetUserById(Guid modle);
         Task<BaseResponse<TeachersDTo>> GetUserDetails();

@@ -29,7 +29,5 @@ namespace coachfrikaaaa.APIs.Entity
         public Coaches? Coach { get; set; }
         public Guid? TeacherId { get; set; }
         public Teachers? Teacher { get; set; }
-        public Guid? SchoolId { get; set; }
-        public Schools? School { get; set; }
     }
 }

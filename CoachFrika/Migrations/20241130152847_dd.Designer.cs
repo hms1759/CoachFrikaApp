@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using coachfrikaaaa.Common;
 
@@ -11,9 +12,10 @@ using coachfrikaaaa.Common;
 namespace CoachFrika.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241130152847_dd")]
+    partial class dd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,15 +196,6 @@ namespace CoachFrika.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ContactPersonEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactPersonName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactPersonPhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -214,9 +207,6 @@ namespace CoachFrika.Migrations
 
                     b.Property<DateTime>("DeletedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Goals")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HeadTeacherEmail")
                         .HasColumnType("nvarchar(max)");
@@ -239,9 +229,6 @@ namespace CoachFrika.Migrations
                     b.Property<int>("NumbersOfTeachers")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Programtype")
-                        .HasColumnType("int");
-
                     b.Property<string>("SchoolAddress")
                         .HasColumnType("nvarchar(max)");
 
@@ -253,6 +240,9 @@ namespace CoachFrika.Migrations
 
                     b.Property<string>("SchoolPhoneNumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Subscriptions")
+                        .HasColumnType("int");
 
                     b.Property<bool>("isSubscribed")
                         .HasColumnType("bit");

@@ -32,9 +32,7 @@ namespace CoachFrika.Common.AutoMapper
                 CoachId = coachFrikaUser.CoachId,
                 Coach = coachFrikaUser.Coach,
                 TeacherId = coachFrikaUser.TeacherId,
-                Teacher = coachFrikaUser.Teacher,
-                SchoolId = coachFrikaUser.SchoolId,
-                School = coachFrikaUser.School
+                Teacher = coachFrikaUser.Teacher
             };
         }
 
@@ -64,9 +62,7 @@ namespace CoachFrika.Common.AutoMapper
                 CoachId = profileDto.CoachId,
                 Coach = profileDto.Coach,
                 TeacherId = profileDto.TeacherId,
-                Teacher = profileDto.Teacher,
-                SchoolId = profileDto.SchoolId,
-                School = profileDto.School
+                Teacher = profileDto.Teacher
             };
         }
     }

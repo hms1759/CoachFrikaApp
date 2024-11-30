@@ -9,6 +9,5 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<LoginDetails>> Login(LoginDto login);
        Task<BaseResponse<string>> ForgetPassword(string email, string url);
        Task<BaseResponse<string>> ChangePassword(ChangePasswordDto model);
-        bool ValidatePhoneNumber(string phoneNumber);
     }
 }

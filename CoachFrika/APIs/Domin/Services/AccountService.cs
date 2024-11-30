@@ -88,7 +88,7 @@ namespace CoachFrika.APIs.Domin.Services
                 // Validate phone number format
                 if (!string.IsNullOrEmpty(model.PhoneNumber))
                 {
-                    var phoneNumberValid = ValidatePhoneNumber(model.PhoneNumber);
+                    var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
                     if (!phoneNumberValid)
                     {
                         throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
@@ -104,14 +104,14 @@ namespace CoachFrika.APIs.Domin.Services
                 }
 
                 // Validate email format
-                var emailValid = ValidateEmail(model.Email);
+                var emailValid = Validators.ValidateEmail(model.Email);
                 if (!emailValid)
                 {
                     throw new ArgumentException("Invalid email format.");
                 }
 
                 // Validate password using a regular expression
-                var passwordValid = ValidatePassword(model.Password);
+                var passwordValid = Validators.ValidatePassword(model.Password);
                 if (!passwordValid)
                 {
                     throw new ArgumentException("Password must be at least 8 characters long, include at least one uppercase letter, one digit, and one special character.");
@@ -151,28 +151,6 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        // Helper method to validate password
-        private bool ValidatePassword(string password)
-        {
-            // Password must be at least 8 characters long, with at least one uppercase letter,
-            // one digit, one special character, and must be alphanumeric
-            var passwordRegex = new Regex(@"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
-            return passwordRegex.IsMatch(password);
-        }
-
-        // Helper method to validate phone number format (e.g., 08068783985)
-        public bool ValidatePhoneNumber(string phoneNumber)
-        {
-            var phoneRegex = new Regex(@"^0\d{10}$");  // Starts with '0' followed by 10 digits
-            return phoneRegex.IsMatch(phoneNumber);
-        }
-
-        // Helper method to validate email format
-        private bool ValidateEmail(string email)
-        {
-            var emailRegex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-            return emailRegex.IsMatch(email);
-        }
 
         public async Task<BaseResponse<string>> ForgetPassword(string email, string logoUrl)
         {

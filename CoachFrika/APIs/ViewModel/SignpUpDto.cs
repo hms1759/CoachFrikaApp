@@ -1,4 +1,6 @@
-﻿using coachfrikaaaa.APIs.Entity;
+﻿using CoachFrika.Common.Enum;
+using coachfrikaaaa.APIs.Entity;
+using coachfrikaaaa.Common;
 using System.Text.Json.Serialization;
 
 namespace CoachFrika.APIs.ViewModel
@@ -48,6 +50,18 @@ namespace CoachFrika.APIs.ViewModel
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? Message { get; set; }
+        [JsonIgnore]
+        public string? logoUrl { get; set; }
+    }
+    public class SchoolEnrollmentDto
+    {
+        public string? SchoolName { get; set; }
+        public string? SchoolAddress { get; set; }
+        public string? ContactPersonEmail { get; set; }
+        public string? ContactPersonName { get; set; }
+        public string? ContactPersonPhoneNumber { get; set; }
+        public int NumbersOfTeachers { get; set; }
+        public Subscriptions? Subscriptions { get; set; }
         [JsonIgnore]
         public string? logoUrl { get; set; }
     }

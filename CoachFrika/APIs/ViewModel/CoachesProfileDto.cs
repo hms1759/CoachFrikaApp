@@ -31,7 +31,8 @@ namespace CoachFrika.APIs.ViewModel
     {
         public Subscriptions Subscription { get; set; }
     }
-    public class ProfileDto {
+    public class ProfileDto
+    {
 
         public string? FullName { get; set; }
         public string? TweeterUrl { get; set; }
@@ -53,7 +54,5 @@ namespace CoachFrika.APIs.ViewModel
         public Coaches? Coach { get; set; }
         public Guid? TeacherId { get; set; }
         public Teachers? Teacher { get; set; }
-        public Guid? SchoolId { get; set; }
-        public Schools? School { get; set; }
     }
-    }
+}

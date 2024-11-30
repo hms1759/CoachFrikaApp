@@ -31,12 +31,12 @@ namespace CoachFrika.APIs.Controllerss
             var result =  _service.GetSubject();
             return Ok(result);
         }
-        [HttpPost("CreateSchool")]
-        public async Task<IActionResult> CreateSchool(string school)
-        {
-            var result = await _service.CreateSchool(school);
-            return Ok(result);
-        }
+        //[HttpPost("CreateSchool")]
+        //public async Task<IActionResult> CreateSchool(string school)
+        //{
+        //    var result = await _service.CreateSchool(school);
+        //    return Ok(result);
+        //}
         [HttpPost("CreateSubject")]
         public async Task<IActionResult> CreateSubject(List<string> school)
         {

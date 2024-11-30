@@ -33,6 +33,63 @@ namespace CoachFrika.APIs.Domin.Services
             _emailService = emailService;
             _webHelpers = webHelpers;
         }
+        
+        public async Task<BaseResponse<string>> SchoolEnrollment(SchoolEnrollmentDto model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var dto = new coachfrikaaaa.APIs.Entity.SchoolEnrollmentRequest();
+                
+                var phoneNumberValid = Validators.ValidatePhoneNumber(model.ContactPersonPhoneNumber);
+                if (!phoneNumberValid)
+                {
+                    throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                }
+                // Validate email format
+                var emailValid = Validators.ValidateEmail(model.ContactPersonEmail);
+                if (!emailValid)
+                {
+                    throw new ArgumentException("Invalid email format.");
+                }
+                dto.ContactPersonEmail = model.ContactPersonEmail;
+                dto.ContactPersonPhoneNumber = model.ContactPersonPhoneNumber;
+
+                dto.SchoolName = model.SchoolName;
+                dto.SchoolAddress = model.SchoolAddress;
+                var newsRepository = _unitOfWork.GetRepository<coachfrikaaaa.APIs.Entity.SchoolEnrollmentRequest>();
+                await newsRepository.AddAsync(dto);
+                await _unitOfWork.SaveChangesAsync();
+                var mailSubject = _emailConfig.ContactTopic;
+                var mailto = _emailConfig.MailTo.ToList();
+                var body = await _emailService.ReadTemplate("emailrecieved");
+
+                //inserting variable
+                var messageToParse = new Dictionary<string, string>
+                    {
+                        { "{Fullname}", model.ContactPersonName},
+                        { "{Phonenumber}", model.ContactPersonPhoneNumber},
+                        { "{Email}", model.ContactPersonEmail},
+                        { "{Message}", $"The {model.SchoolName} has request for enrollment"},
+                        { "{logo}", model.logoUrl},
+                    };
+
+                //  email notification
+                var messageBody = body.ParseTemplate(messageToParse);
+                var message = new Message(mailto, mailSubject, messageBody);
+                //await _emailService.SendEmail(message);
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+        }
 
         public async Task<BaseResponse<string>> ContactUs(ContactUsDto model)
         {
@@ -40,6 +97,18 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
+
+                var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
+                if (!phoneNumberValid)
+                {
+                    throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                }
+                // Validate email format
+                var emailValid = Validators.ValidateEmail(model.Email);
+                if (!emailValid)
+                {
+                    throw new ArgumentException("Invalid email format.");
+                }
                 var dto = new coachfrikaaaa.APIs.Entity.ContactUs();
                 dto.Email = model.Email;
                 dto.FullName = model.FullName;
@@ -70,7 +139,8 @@ namespace CoachFrika.APIs.Domin.Services
                 return res;
             }
             catch (Exception ex)
-            {res.Message  = ex.Message;
+            {
+                res.Message = ex.Message;
                 res.Status = false;
                 return res;
 
@@ -84,7 +154,7 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var schcount = await _context.Schools.ToListAsync();
+                var schcount = await _context.SchoolEnrollmentRequest.Where(x=> x.isSubscribed).ToListAsync();
                 var usercount = await _context.CoachFrikaUsers.Where(x => x.Role == 1 || x.Role == 0).ToListAsync();
                 //if (usercount.Count() >1)
                 //    throw new NotImplementedException("User not found");
@@ -109,15 +179,20 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        public async Task<BaseResponse<string>> NewSubscription(SubscriptionDto modle)
+        public async Task<BaseResponse<string>> NewSubscription(SubscriptionDto model)
         {
 
             var res = new BaseResponse<string>();
             res.Status = true;
             try
-            {
+            { // Validate email format
+                var emailValid = Validators.ValidateEmail(model.Email);
+                if (!emailValid)
+                {
+                    throw new ArgumentException("Invalid email format.");
+                }
                 var dto = new NewsSubscription();
-                dto.Email = modle.Email;
+                dto.Email = model.Email;
                 var newsRepository = _unitOfWork.GetRepository<NewsSubscription>();
                 await newsRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
@@ -132,30 +207,7 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
-
-        public async Task<BaseResponse<string>> CreateSchool(string school)
-        {
-            var res = new BaseResponse<string>();
-            res.Status = true;
-            try
-            {
-                var dto = new Schools();
-                dto.School = school;
-                var schRepository = _unitOfWork.GetRepository<Schools>();
-                await schRepository.AddAsync(dto);
-                await _unitOfWork.SaveChangesAsync();
-                res.Message = "Successful";
-                return res;
-            }
-            catch (Exception ex)
-            {
-                res.Message = ex.Message;
-                res.Status = false;
-                return res;
-
-            }
-        }
-        public async Task<BaseResponse<string>> CreateSubject(List<string> sub)
+   public async Task<BaseResponse<string>> CreateSubject(List<string> sub)
         {
 
             var res = new BaseResponse<string>();
@@ -215,7 +267,7 @@ namespace CoachFrika.APIs.Domin.Services
 
                 var role = _webHelpers.CurrentUserRole();
                 var user = from users in _context.CoachFrikaUsers
-                           join sch in _context.Schools on users.SchoolId equals sch.Id
+                           //join sch in _context.Schools on users.SchoolId equals sch.Id
                            where users.Email.ToLower() == email.Trim().ToLower()
                            select new TeachersDTo
                            {
@@ -230,7 +282,7 @@ namespace CoachFrika.APIs.Domin.Services
                                Description = users.Description,
                                NumbersOfStudents = users.NumbersOfStudents,
                                //YearOfExperience = year - users.YearStartExperience.Year,
-                               School = sch.School,
+                               //School = sch.School,
                                   };
 
                 var teacherDto = await user.FirstOrDefaultAsync();
@@ -261,10 +313,10 @@ namespace CoachFrika.APIs.Domin.Services
         {
             var res = new BaseResponse<string?[]>();
             res.Status = true;
-            var schs = from sch in _context.Schools
+            var schs = from sch in _context.SchoolEnrollmentRequest
                        select sch;
-            var scharray = schs.Select(x => x.School).ToArray();
-            res.Data = scharray;
+           // var scharray = schs.Select(x => x.School).ToArray();
+            res.Data = null;
             return res;
         }
 
