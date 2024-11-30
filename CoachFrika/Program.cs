@@ -51,8 +51,6 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         options.AccessDeniedPath = ""; // Customize access denied path if needed
     });
 
-    // Register AutoMapper
-    builder.Services.AddAutoMapper(typeof(AutoMapperClass));
     // Service injections
     services.AddHttpContextAccessor();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -64,12 +62,13 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<ICoachesService, CoachesService>();
     services.Configure<EmailConfigSettings>(configuration.GetSection("EmailConfig"));
     services.AddSingleton<GoogleSheetsHelper>();
-    services.AddTransient<IPaystackService, PaystackService>(sp =>
-    {
-        var httpClient = sp.GetRequiredService<HttpClient>();
-        var secretKey = builder.Configuration["Paystack:SecretKey"];  // assuming you're using appsettings.json
-        return new PaystackService(httpClient, secretKey);
-    });
+    //services.AddTransient<IPaystackService, PaystackService>();
+    //services.AddTransient<IPaystackService, PaystackService>(sp =>
+    //{
+    //    var httpClient = sp.GetRequiredService<HttpClient>();
+    //    var secretKey = builder.Configuration["Paystack:SecretKey"];  // assuming you're using appsettings.json
+    //    return new PaystackService(httpClient, secretKey);
+    //});
 
     // Controllers with authorization
     services.AddControllersWithViews();
