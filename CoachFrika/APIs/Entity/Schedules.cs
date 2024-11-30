@@ -11,7 +11,5 @@ namespace coachfrikaaaa.APIs.Entity
         public DateTime? Schedule { get; set; }
         public Guid? BatcheId { get; set; }
         public Batches? Batche { get; set; }
-        public Guid? CourseId { get; set; }
-        public Courses? Course { get; set; }
     }
 }

@@ -9,4 +9,16 @@
         Phenomenal,
         Transformational
     }
+    public enum DurationType
+    {
+        Minute,
+        Hour
+    }
+    public enum ScheduleStatus
+    {
+        ongoing,
+        comingsoon,
+        past,
+        missed
+    }
 }

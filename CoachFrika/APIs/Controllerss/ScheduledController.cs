@@ -11,23 +11,30 @@ namespace CoachFrika.APIs.Controllerss
     [Route("api/[controller]")]
     [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Coach},{AppRoles.SuperAdmin}")]
     [ApiController]
-    public class CourseCntroller : BaseController
+    public class ScheduledController : BaseController
     {
         private readonly ICousesService _service;
         private readonly ILogicService _logicService;
         private readonly ICoachesService _coachesService;
-        public CourseCntroller(ICousesService service, ILogicService logicService, ICoachesService coachesService)
+        public ScheduledController(ICousesService service, ILogicService logicService, ICoachesService coachesService)
         {
             _service = service;
             _logicService = logicService;
             _coachesService = coachesService;
         }
-        [HttpPost("CreateCourse")]
-        public async Task<IActionResult> CreateCourse(CreateCoursesDto model)
+        [HttpPost("CreateSchedule")]
+        public async Task<IActionResult> CreateSchedule(CreateScheduleDto model)
         {
-            var result = await _service.CreateCourse(model);
+            var result = await _service.CreateSchedule(model);
             return Ok(result);
         }
+        [HttpGet("GetSchedule")]
+        public IActionResult GetSchedule([FromQuery]GetSchedules query)
+        {
+            var result = _service.GetSchedule(query);
+            return Ok(result);
+        }
+
         [HttpPost("CreateBatches")]
         public async Task<IActionResult> CreateBatches(BatchesDto model)
         {
@@ -45,12 +52,6 @@ namespace CoachFrika.APIs.Controllerss
         public async Task<IActionResult> GetCoachesDetails()
         {
             var result = await _logicService.GetUserDetails();
-            return Ok(result);
-        }
-        [HttpGet("GetCourse")]
-        public IActionResult GetCourse()
-        {
-            var result =  _service.GetCourses();
             return Ok(result);
         }
         [HttpGet("GetBatches")]

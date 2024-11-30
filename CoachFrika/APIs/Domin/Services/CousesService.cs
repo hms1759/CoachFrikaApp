@@ -34,17 +34,19 @@ namespace CoachFrika.APIs.Domin.Services
             _webHelpers = webHelpers;
         }
     
-        public async Task<BaseResponse<string>> CreateCourse(CreateCoursesDto model)
+        public async Task<BaseResponse<string>> CreateSchedule(CreateScheduleDto model)
         {
 
             var res = new BaseResponse<string>();
             res.Status = true;
             try
             {
-                var dto = new Courses();
-                dto.CourseTitle = model.CourseTitle;
-                dto.CourseIntro = model.CourseIntro;
-                var schRepository = _unitOfWork.GetRepository<Courses>();
+                var dto = new Schedule();
+                dto.Title = model.Title;
+                dto.Focus = model.Focus;
+                dto.StartDate = model.Scheduled;
+                dto.EndDate =model.DurationType == Common.Enum.DurationType.Hour ?  model.Scheduled.AddHours(model.Duration): model.Scheduled.AddMinutes(model.Duration);
+                var schRepository = _unitOfWork.GetRepository<Schedule>();
                 await schRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
                 return res;
@@ -56,6 +58,33 @@ namespace CoachFrika.APIs.Domin.Services
                 return res;
 
             }
+        }
+
+        public BaseResponse<List<CoursesViewModel>> GetSchedule(GetSchedules query)
+        {
+
+            var res = new BaseResponse<List<CoursesViewModel>>();
+            res.Status = true;
+            try
+            {
+                var cos = from course in _context.Courses.AsNoTracking()
+                          select new CoursesViewModel
+                          {
+                              Id = course.Id,
+                              CourseTitle = course.CourseTitle
+                          };
+                var rr = cos.ToList();
+                res.Data = rr;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
         }
 
         public async Task<BaseResponse<string>> CreateBatches(BatchesDto model)
@@ -158,7 +187,7 @@ namespace CoachFrika.APIs.Domin.Services
                 dto.MaterialUrl= model.MaterialUrl;
                 dto.Schedule = model.Schedule;
                 dto.BatcheId = model.BatcheId;
-                dto.CourseId = model.CourseId;
+                //dto.CourseId = model.CourseId;
                 var schRepository = _unitOfWork.GetRepository<Schedules>();
                 await schRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
