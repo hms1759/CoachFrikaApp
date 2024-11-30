@@ -15,12 +15,10 @@ namespace CoachFrika.APIs.Controllerss
     {
         private readonly ICousesService _service;
         private readonly ILogicService _logicService;
-        private readonly ICoachesService _coachesService;
-        public ScheduledController(ICousesService service, ILogicService logicService, ICoachesService coachesService)
+        public ScheduledController(ICousesService service, ILogicService logicService)
         {
             _service = service;
             _logicService = logicService;
-            _coachesService = coachesService;
         }
         [HttpPost("CreateSchedule")]
         public async Task<IActionResult> CreateSchedule(CreateScheduleDto model)

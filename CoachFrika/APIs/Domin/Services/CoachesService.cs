@@ -20,19 +20,17 @@ namespace CoachFrika.APIs.Domin.Services
 {
     public class CoachesService : ICoachesService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly AppDbContext _context;
-        private readonly EmailConfigSettings _emailConfig;
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
         public readonly IAccountService _accountService;
         private readonly UserManager<CoachFrikaUsers> _userManager;
-        public CoachesService(IUnitOfWork unitOfWork, IOptions<EmailConfigSettings> emailConfig, AppDbContext context, IEmailService emailService, IWebHelpers webHelpers, IAccountService accountService, UserManager<CoachFrikaUsers> userManager)
+        public CoachesService(IUnitOfWork unitOfWork, 
+            AppDbContext context,  
+            IWebHelpers webHelpers, IAccountService accountService,
+            UserManager<CoachFrikaUsers> userManager)
         {
-            _unitOfWork = unitOfWork;
             _context = context;
-            _emailConfig = emailConfig.Value;
-            _emailService = emailService;
             _webHelpers = webHelpers;
             _accountService = accountService;
             _userManager = userManager;
