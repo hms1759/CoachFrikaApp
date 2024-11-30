@@ -35,12 +35,12 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
-        [HttpPost("CreateBatches")]
-        public async Task<IActionResult> CreateBatches(BatchesDto model)
-        {
-            var result = await _service.CreateBatches(model);
-            return Ok(result);
-        }
+        //[HttpPost("CreateBatches")]
+        //public async Task<IActionResult> CreateBatches(BatchesDto model)
+        //{
+        //    var result = await _service.CreateBatches(model);
+        //    return Ok(result);
+        //}
 
         [HttpGet("GetCoachesById")]
         public async Task<IActionResult> GetCoachesById([FromQuery] Guid userId)
@@ -54,12 +54,12 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _logicService.GetUserDetails();
             return Ok(result);
         }
-        [HttpGet("GetBatches")]
-        public IActionResult GetBatches()
-        {
-            var result = _service.GetBatches();
-            return Ok(result);
-        }
+        //[HttpGet("GetBatches")]
+        //public IActionResult GetBatches()
+        //{
+        //    var result = _service.GetBatches();
+        //    return Ok(result);
+        //}
 
         //[HttpPost("CreateSchedule")]
         //public async Task<IActionResult> CreateSchedule(SchedulesDto model)

@@ -15,7 +15,7 @@ namespace coachfrikaaaa.Common
         public DbSet<Schools> Schools { get; set; }
         public DbSet<NewsSubscription> NewsSubscription { get; set; }
         public DbSet<Subjects> Subjects { get; set; }
-        public DbSet<Batches> Batches { get; set; }
+        //public DbSet<Batches> Batches { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

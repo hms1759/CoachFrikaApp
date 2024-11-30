@@ -87,27 +87,27 @@ namespace CoachFrika.APIs.Domin.Services
 
         }
 
-        public async Task<BaseResponse<string>> CreateBatches(BatchesDto model)
-        {
-            var res = new BaseResponse<string>();
-            res.Status = true;
-            try
-            {
-                var dto = new Batches();
-                dto.Title = model.Title;
-                var schRepository = _unitOfWork.GetRepository<Batches>();
-                await schRepository.AddAsync(dto);
-                await _unitOfWork.SaveChangesAsync();
-                return res;
-            }
-            catch (Exception ex)
-            {
-                res.Message = ex.Message;
-                res.Status = false;
-                return res;
+        //public async Task<BaseResponse<string>> CreateBatches(BatchesDto model)
+        //{
+        //    var res = new BaseResponse<string>();
+        //    res.Status = true;
+        //    try
+        //    {
+        //        var dto = new Batches();
+        //        dto.Title = model.Title;
+        //        var schRepository = _unitOfWork.GetRepository<Batches>();
+        //        await schRepository.AddAsync(dto);
+        //        await _unitOfWork.SaveChangesAsync();
+        //        return res;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        res.Message = ex.Message;
+        //        res.Status = false;
+        //        return res;
 
-            }
-        }
+        //    }
+        //}
 
         public BaseResponse<List<CoursesViewModel>> GetCourses()
         {
@@ -142,14 +142,14 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var bat = from batche in _context.Batches.AsNoTracking()
-                          select new BatchesViewModel
-                          {
-                              Id = batche.Id,
-                              Title = batche.Title
-                          };
-                var rr = bat.ToList();
-                res.Data = rr;
+                //var bat = from batche in _context.Batches.AsNoTracking()
+                //          select new BatchesViewModel
+                //          {
+                //              Id = batche.Id,
+                //              Title = batche.Title
+                //          };
+                //var rr = bat.ToList();
+                //res.Data = rr;
                 return res;
             }
             catch (Exception ex)
@@ -161,47 +161,47 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        public async Task<BaseResponse<string>> CreateSchedule(SchedulesDto model)
-        {
-            var res = new BaseResponse<string>();
-            res.Status = true;
-            try
-            {
-                var BatchRepository = _unitOfWork.GetRepository<Batches>();
-                var checkBatch = await BatchRepository.GetByIdAsync(model.BatcheId);
-                if (checkBatch == null)
-                {
-                    throw new NotImplementedException($"Batch with {model.BatcheId} not found");
+        //public async Task<BaseResponse<string>> CreateSchedule(SchedulesDto model)
+        //{
+        //    var res = new BaseResponse<string>();
+        //    res.Status = true;
+        //    try
+        //    {
+        //        var BatchRepository = _unitOfWork.GetRepository<Batches>();
+        //        var checkBatch = await BatchRepository.GetByIdAsync(model.BatcheId);
+        //        if (checkBatch == null)
+        //        {
+        //            throw new NotImplementedException($"Batch with {model.BatcheId} not found");
 
-                }
-                var courseRepository = _unitOfWork.GetRepository<Batches>();
-                var courseBatch = await courseRepository.GetByIdAsync(model.CourseId);
-                if (courseBatch == null)
-                {
-                    throw new NotImplementedException($"Course with {model.CourseId} not found");
+        //        }
+        //        var courseRepository = _unitOfWork.GetRepository<Batches>();
+        //        var courseBatch = await courseRepository.GetByIdAsync(model.CourseId);
+        //        if (courseBatch == null)
+        //        {
+        //            throw new NotImplementedException($"Course with {model.CourseId} not found");
 
-                }
-                var dto = new Schedules();
-                dto.Description = model.Description;
-                dto.Subject = model.Subject;
-                dto.MaterialUrl= model.MaterialUrl;
-                dto.Schedule = model.Schedule;
-                dto.BatcheId = model.BatcheId;
-                //dto.CourseId = model.CourseId;
-                var schRepository = _unitOfWork.GetRepository<Schedules>();
-                await schRepository.AddAsync(dto);
-                await _unitOfWork.SaveChangesAsync();
+        //        }
+        //        var dto = new Schedules();
+        //        dto.Description = model.Description;
+        //        dto.Subject = model.Subject;
+        //        dto.MaterialUrl= model.MaterialUrl;
+        //        dto.Schedule = model.Schedule;
+        //        dto.BatcheId = model.BatcheId;
+        //        //dto.CourseId = model.CourseId;
+        //        var schRepository = _unitOfWork.GetRepository<Schedules>();
+        //        await schRepository.AddAsync(dto);
+        //        await _unitOfWork.SaveChangesAsync();
 
-                return res;
-            }
-            catch (Exception ex)
-            {
-                res.Message = ex.Message;
-                res.Status = false;
-                return res;
+        //        return res;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        res.Message = ex.Message;
+        //        res.Status = false;
+        //        return res;
 
-            }
-        }
+        //    }
+        //}
         public BaseResponse<List<Schedules>> GetMySchedule()
         {
             var res = new BaseResponse<List<Schedules>>();

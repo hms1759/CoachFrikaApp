@@ -9,10 +9,9 @@ namespace CoachFrika.APIs.Domin.IServices
 
         Task<BaseResponse<string>> CreateSchedule(CreateScheduleDto model);
         BaseResponse<List<CoursesViewModel>> GetSchedule(GetSchedules query);
-        Task<BaseResponse<string>> CreateBatches(BatchesDto model);
+        //Task<BaseResponse<string>> CreateBatches(BatchesDto model);
         BaseResponse<List<CoursesViewModel>> GetCourses();
-        BaseResponse<List<BatchesViewModel>> GetBatches();
-        Task<BaseResponse<string>> CreateSchedule(SchedulesDto model);
+        //BaseResponse<List<BatchesViewModel>> GetBatches();
         BaseResponse<List<Schedules>> GetMySchedule();
     }
 }

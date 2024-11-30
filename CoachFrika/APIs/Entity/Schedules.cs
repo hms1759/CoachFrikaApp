@@ -9,7 +9,7 @@ namespace coachfrikaaaa.APIs.Entity
         public string? Subject { get; set; }
         public string? MaterialUrl { get; set; }
         public DateTime? Schedule { get; set; }
-        public Guid? BatcheId { get; set; }
-        public Batches? Batche { get; set; }
+        //public Guid? BatcheId { get; set; }
+        //public Batches? Batche { get; set; }
     }
 }

@@ -8,7 +8,5 @@ namespace coachfrikaaaa.APIs.Entity
         public string? School { get; set; }
         public int NumbersOfStudents { get; set; }
         public int YearOfExperience { get; set; }
-        public Guid IdentityUserId { get; set; }
-        public IdentityUser? IdentityUser { get; set; }
     }
 }
