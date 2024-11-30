@@ -61,17 +61,17 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
-        [HttpPost("CreateSchedule")]
-        public async Task<IActionResult> CreateSchedule(SchedulesDto model)
-        {
-            var result = await _service.CreateSchedule(model);
-            return Ok(result);
-        }
-        [HttpGet("GetMySchedule")]
-        public IActionResult GetMySchedule()
-        {
-            var result = _service.GetMySchedule();
-            return Ok(result);
-        }
+        //[HttpPost("CreateSchedule")]
+        //public async Task<IActionResult> CreateSchedule(SchedulesDto model)
+        //{
+        //    var result = await _service.CreateSchedule(model);
+        //    return Ok(result);
+        //}
+        //[HttpGet("GetMySchedule")]
+        //public IActionResult GetMySchedule()
+        //{
+        //    var result = _service.GetMySchedule();
+        //    return Ok(result);
+        //}
     }
 }
