@@ -238,16 +238,16 @@ namespace CoachFrika.APIs.Domin.Services
                 if (role.Contains(AppRoles.Coach))
                 {
                     var Id = _webHelpers.CurrentUserId();
-                    var teacher = from Courses in _context.Courses
-                                  join bat in _context.Batches on Courses.Id equals bat.CourseId
-                                  join teach in _context.CoachFrikaUsers on bat.TeachersId.ToString() equals teach.Id
-                                  where Courses.CoachId == Id
-                                  select new TeachersDTo
-                               {
-                                   Id = teach.Id,
-                                   FullName = teach.FullName
-                               };
-                    teacherDto.NumbersOfStudents =  teacher.ToList().Count();
+                    //var teacher = from Courses in _context.Schedule
+                    //              join bat in _context.Batches on Courses.Id equals bat.CourseId
+                    //              join teach in _context.CoachFrikaUsers on bat.TeachersId.ToString() equals teach.Id
+                    //              where Courses.CoachId == Id
+                    //              select new TeachersDTo
+                    //           {
+                    //               Id = teach.Id,
+                    //               FullName = teach.FullName
+                    //           };
+                    //teacherDto.NumbersOfStudents =  teacher.ToList().Count();
                 }
                 return teacherDto;
             }
@@ -287,14 +287,14 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 var userEmail = _webHelpers.CurrentUser();
 
-                var Schedul = from Sche in _context.Schedules
-                              join bat in _context.Batches on Sche.BatcheId equals bat.Id
-                              join user in _context.CoachFrikaUsers on bat.TeachersId.ToString() equals user.Id
-                              where user.Email == userEmail
-                              select Sche;
-                var rr = Schedul.ToList();
+                //var Schedul = from Sche in _context.Schedules
+                //              join bat in _context.Batches on Sche.BatcheId equals bat.Id
+                //              join user in _context.CoachFrikaUsers on bat.TeachersId.ToString() equals user.Id
+                //              where user.Email == userEmail
+                //              select Sche;
+                //var rr = Schedul.ToList();
                 res.Message = "Successful";
-                res.Data = rr;
+                //res.Data = rr;
                 return res;
             }
             catch (Exception ex)

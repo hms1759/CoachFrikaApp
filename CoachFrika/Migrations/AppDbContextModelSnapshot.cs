@@ -28,9 +28,6 @@ namespace CoachFrika.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CourseId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -62,8 +59,6 @@ namespace CoachFrika.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
 
                     b.HasIndex("TeachersId1");
 
@@ -152,49 +147,6 @@ namespace CoachFrika.Migrations
                     b.ToTable("ContactUs");
                 });
 
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Courses", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CoachId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CourseIntro")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CourseTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CoachId");
-
-                    b.ToTable("Courses");
-                });
-
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.NewsSubscription", b =>
                 {
                     b.Property<Guid>("Id")
@@ -230,17 +182,14 @@ namespace CoachFrika.Migrations
                     b.ToTable("NewsSubscription");
                 });
 
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schedules", b =>
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schedule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("BatcheId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CourseId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("CoachId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -254,14 +203,14 @@ namespace CoachFrika.Migrations
                     b.Property<DateTime>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Focus")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("MaterialUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -269,19 +218,17 @@ namespace CoachFrika.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("Schedule")
+                    b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Subject")
+                    b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BatcheId");
+                    b.HasIndex("CoachId");
 
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("Schedules");
+                    b.ToTable("Schedule");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schools", b =>
@@ -679,7 +626,7 @@ namespace CoachFrika.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<DateTime>("YearStartExperience")
+                    b.Property<DateTime?>("YearStartExperience")
                         .HasColumnType("datetime2");
 
                     b.HasIndex("CoachId")
@@ -695,41 +642,20 @@ namespace CoachFrika.Migrations
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Batches", b =>
                 {
-                    b.HasOne("coachfrikaaaa.APIs.Entity.Courses", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId");
-
                     b.HasOne("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", "Teachers")
                         .WithMany()
                         .HasForeignKey("TeachersId1");
 
-                    b.Navigation("Course");
-
                     b.Navigation("Teachers");
                 });
 
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Courses", b =>
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schedule", b =>
                 {
                     b.HasOne("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", "Coach")
                         .WithMany()
                         .HasForeignKey("CoachId");
 
                     b.Navigation("Coach");
-                });
-
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schedules", b =>
-                {
-                    b.HasOne("coachfrikaaaa.APIs.Entity.Batches", "Batche")
-                        .WithMany()
-                        .HasForeignKey("BatcheId");
-
-                    b.HasOne("coachfrikaaaa.APIs.Entity.Courses", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId");
-
-                    b.Navigation("Batche");
-
-                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Teachers", b =>

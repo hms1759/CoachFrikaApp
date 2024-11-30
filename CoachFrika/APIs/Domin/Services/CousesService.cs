@@ -67,11 +67,11 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var cos = from course in _context.Courses.AsNoTracking()
+                var cos = from course in _context.Schedule.AsNoTracking()
                           select new CoursesViewModel
                           {
-                              Id = course.Id,
-                              CourseTitle = course.CourseTitle
+                             // Id = course.Id,
+                             // CourseTitle = course.CourseTitle
                           };
                 var rr = cos.ToList();
                 res.Data = rr;
@@ -115,11 +115,11 @@ namespace CoachFrika.APIs.Domin.Services
             var res = new BaseResponse<List<CoursesViewModel>>();
             res.Status = true;
             try { 
-            var cos = from course in _context.Courses.AsNoTracking()
+            var cos = from course in _context.Schedule.AsNoTracking()
                           select new CoursesViewModel
                           {
                               Id = course.Id,
-                              CourseTitle = course.CourseTitle
+                              //CourseTitle = course.CourseTitle
                           };
                 var rr =  cos.ToList();
                 res.Data = rr;
@@ -209,11 +209,11 @@ namespace CoachFrika.APIs.Domin.Services
             try
             {
                 var user = _webHelpers.CurrentUser();
-                var bat = from Schedule in _context.Schedules
+                var bat = from Schedule in _context.Schedule
                           where Schedule.CreatedBy == user
                           select Schedule;
                 var rr = bat.ToList();
-                res.Data = rr;
+               // res.Data = rr;
                 return res;
             }
             catch (Exception ex)
