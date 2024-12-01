@@ -1,4 +1,5 @@
-﻿using coachfrikaaaa.APIs.Entity;
+﻿using CoachFrika.Common.Extension;
+using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ namespace coachfrikaaaa.Common
 {
     public class AppDbContext : IdentityDbContext
     {
+        private readonly IWebHelpers _webHelpers;
         public DbSet<Teachers> Teachers { get; set; }
         public DbSet<Coaches> Coaches { get; set; }
         public DbSet<ContactUs> ContactUs { get; set; }
@@ -18,8 +20,9 @@ namespace coachfrikaaaa.Common
         //public DbSet<Batches> Batches { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options, IWebHelpers webHelpers = null) : base(options)
         {
+            _webHelpers = webHelpers;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,6 +45,28 @@ namespace coachfrikaaaa.Common
 
             modelBuilder.Entity<Coaches>()
                 .HasQueryFilter(c => !c.IsDeleted);
+        }
+        public override int SaveChanges()
+        {
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedBy = _webHelpers.CurrentUser();
+                    entry.Entity.CreatedDate = DateTime.UtcNow;
+
+                    // Optionally, you can set ModifiedBy, ModifiedDate, etc.
+                }
+
+                // Handle updates or deletions if needed.
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.ModifiedBy = _webHelpers.CurrentUser();
+                    entry.Entity.ModifiedDate = DateTime.UtcNow;
+                }
+            }
+
+            return base.SaveChanges();
         }
     }
 

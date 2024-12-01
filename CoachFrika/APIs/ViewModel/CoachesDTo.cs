@@ -22,6 +22,14 @@ namespace CoachFrika.APIs.ViewModel
         public int PageNumber { get; set; }
 
     }
+    public class SchedulesViewModel
+    {
+        public Guid Id { get; set; }
+        public string? Title { get; set; }
+        public string? Focus { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+    }
     public class BatchesDto
     {
         public string? Title { get; set; }

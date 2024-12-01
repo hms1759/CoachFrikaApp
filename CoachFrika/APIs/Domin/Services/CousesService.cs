@@ -60,21 +60,37 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        public BaseResponse<List<CoursesViewModel>> GetSchedule(GetSchedules query)
+        public BaseResponse<List<SchedulesViewModel>> GetCoachSchedule(GetSchedules query)
         {
-
-            var res = new BaseResponse<List<CoursesViewModel>>();
+            var user = _webHelpers.CurrentUser();
+            var res = new BaseResponse<List<SchedulesViewModel>>();
             res.Status = true;
             try
             {
-                var cos = from course in _context.Schedule.AsNoTracking()
-                          select new CoursesViewModel
+                var day = DateTime.Now.Day;
+                // Apply filters based on the query parameters
+                var cos = from schedule in _context.Schedule
+                          where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
+                                && query.status == Common.Enum.ScheduleStatus.ongoing ? (schedule.StartDate.Value.Day == day): query.status == Common.Enum.ScheduleStatus.past ? (schedule.StartDate.Value.Day > day): (schedule.StartDate.Value.Day < day)// Assuming you filter based on a scheduled date
+                                && schedule.CreatedBy == user
+                          select new SchedulesViewModel
                           {
-                             // Id = course.Id,
-                             // CourseTitle = course.CourseTitle
+                              Id = schedule.Id,
+                              Title = schedule.Title,
+                              Focus = schedule.Focus,
+                              StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
+                              EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
                           };
-                var rr = cos.ToList();
-                res.Data = rr;
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
                 return res;
             }
             catch (Exception ex)
