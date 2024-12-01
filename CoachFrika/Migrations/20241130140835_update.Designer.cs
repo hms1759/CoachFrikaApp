@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using coachfrikaaaa.Common;
 
@@ -11,9 +12,10 @@ using coachfrikaaaa.Common;
 namespace CoachFrika.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241130140835_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -188,20 +190,11 @@ namespace CoachFrika.Migrations
                     b.ToTable("Schedule");
                 });
 
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.SchoolEnrollmentRequest", b =>
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schools", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ContactPersonEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactPersonName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactPersonPhoneNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -215,18 +208,6 @@ namespace CoachFrika.Migrations
                     b.Property<DateTime>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Goals")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HeadTeacherEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HeadTeacherName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HeadTeacherPhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -236,30 +217,12 @@ namespace CoachFrika.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("NumbersOfTeachers")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Programtype")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SchoolAddress")
+                    b.Property<string>("School")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SchoolEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SchoolName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SchoolPhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isSubscribed")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
-                    b.ToTable("SchoolEnrollmentRequest");
+                    b.ToTable("Schools");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Subjects", b =>
@@ -586,6 +549,9 @@ namespace CoachFrika.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("SchoolId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("SecurityAnswer")
                         .HasColumnType("nvarchar(max)");
 
@@ -617,6 +583,8 @@ namespace CoachFrika.Migrations
                     b.HasIndex("CoachId")
                         .IsUnique()
                         .HasFilter("[CoachId] IS NOT NULL");
+
+                    b.HasIndex("SchoolId");
 
                     b.HasIndex("TeacherId");
 
@@ -689,11 +657,17 @@ namespace CoachFrika.Migrations
                         .WithOne("CoachFrikaUser")
                         .HasForeignKey("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", "CoachId");
 
+                    b.HasOne("coachfrikaaaa.APIs.Entity.Schools", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId");
+
                     b.HasOne("coachfrikaaaa.APIs.Entity.Teachers", "Teacher")
                         .WithMany()
                         .HasForeignKey("TeacherId");
 
                     b.Navigation("Coach");
+
+                    b.Navigation("School");
 
                     b.Navigation("Teacher");
                 });

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using coachfrikaaaa.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoachFrika.Common
 {
@@ -10,19 +11,19 @@ namespace CoachFrika.Common
     public interface IGenericRepository<T> where T : class
     {
         Task AddAsync(T entity);
-        Task<T> GetByIdAsync(int id);
+        Task AddRangeAsync(IEnumerable<T> entities);
+        Task<T> GetByIdAsync(Guid id);
         Task<IEnumerable<T>> GetAllAsync();
         Task UpdateAsync(T entity);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(Guid id);
     }
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly DbContext _context;
+        private readonly AppDbContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public GenericRepository(DbContext context)
+        public GenericRepository(AppDbContext context)
         {
-            _context = context;
             _dbSet = context.Set<T>();
         }
 
@@ -31,7 +32,7 @@ namespace CoachFrika.Common
             await _dbSet.AddAsync(entity);
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -46,13 +47,18 @@ namespace CoachFrika.Common
             _dbSet.Update(entity);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity != null)
             {
                 _dbSet.Remove(entity);
             }
+        }
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities); 
+            await _context.SaveChangesAsync();    
         }
     }
 

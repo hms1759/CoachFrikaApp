@@ -12,8 +12,8 @@ using coachfrikaaaa.Common;
 namespace CoachFrika.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241112075557_first")]
-    partial class first
+    [Migration("20241130152847_dd")]
+    partial class dd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,9 @@ namespace CoachFrika.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CoachFrikaUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -42,29 +45,8 @@ namespace CoachFrika.Migrations
                     b.Property<DateTime>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacebookUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("IdentityUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("IdentityUserId1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("InstagramUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LinkedInUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -72,15 +54,10 @@ namespace CoachFrika.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TweeterUrl")
+                    b.Property<string>("ProfessionalTitle")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdentityUserId1");
 
                     b.ToTable("Coaches");
                 });
@@ -129,7 +106,7 @@ namespace CoachFrika.Migrations
                     b.ToTable("ContactUs");
                 });
 
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Teachers", b =>
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.NewsSubscription", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -147,11 +124,186 @@ namespace CoachFrika.Migrations
                     b.Property<DateTime>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("IdentityUserId")
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NewsSubscription");
+                });
+
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schedule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("IdentityUserId1")
+                    b.Property<string>("CoachId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Focus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoachId");
+
+                    b.ToTable("Schedule");
+                });
+
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.SchoolEnrollmentRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("HeadTeacherEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HeadTeacherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HeadTeacherPhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NumbersOfTeachers")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SchoolAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SchoolEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SchoolName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SchoolPhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Subscriptions")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isSubscribed")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SchoolEnrollmentRequest");
+                });
+
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Subjects", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SubjectName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Subjects");
+                });
+
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Teachers", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -172,8 +324,6 @@ namespace CoachFrika.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdentityUserId1");
 
                     b.ToTable("Teachers");
                 });
@@ -242,6 +392,10 @@ namespace CoachFrika.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -293,6 +447,8 @@ namespace CoachFrika.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -376,22 +532,94 @@ namespace CoachFrika.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Coaches", b =>
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
-                        .WithMany()
-                        .HasForeignKey("IdentityUserId1");
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Navigation("IdentityUser");
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CoachId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FacebookUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("FullName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("InstagramUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Nationality")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumbersOfStudents")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProfessionalTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecurityAnswer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityQuestion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Stages")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StateOfOrigin")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Subscriptions")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TeacherId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TweeterUrl")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime?>("YearStartExperience")
+                        .HasColumnType("datetime2");
+
+                    b.HasIndex("CoachId")
+                        .IsUnique()
+                        .HasFilter("[CoachId] IS NOT NULL");
+
+                    b.HasIndex("TeacherId");
+
+                    b.HasDiscriminator().HasValue("CoachFrikaUsers");
                 });
 
-            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Teachers", b =>
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schedule", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
+                    b.HasOne("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", "Coach")
                         .WithMany()
-                        .HasForeignKey("IdentityUserId1");
+                        .HasForeignKey("CoachId");
 
-                    b.Navigation("IdentityUser");
+                    b.Navigation("Coach");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -443,6 +671,26 @@ namespace CoachFrika.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", b =>
+                {
+                    b.HasOne("coachfrikaaaa.APIs.Entity.Coaches", "Coach")
+                        .WithOne("CoachFrikaUser")
+                        .HasForeignKey("coachfrikaaaa.APIs.Entity.CoachFrikaUsers", "CoachId");
+
+                    b.HasOne("coachfrikaaaa.APIs.Entity.Teachers", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId");
+
+                    b.Navigation("Coach");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Coaches", b =>
+                {
+                    b.Navigation("CoachFrikaUser");
                 });
 #pragma warning restore 612, 618
         }

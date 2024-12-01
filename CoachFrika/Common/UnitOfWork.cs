@@ -1,13 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using coachfrikaaaa.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoachFrika.Common
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly DbContext _context;
+        private readonly AppDbContext _context;
         private readonly Dictionary<string, object> _repositories;
 
-        public UnitOfWork(DbContext context)
+        public UnitOfWork(AppDbContext context)
         {
             _context = context;
             _repositories = new Dictionary<string, object>();
