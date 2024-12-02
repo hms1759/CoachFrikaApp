@@ -1,9 +1,11 @@
-﻿using coachfrikaaaa.APIs.Entity;
+﻿using CoachFrika.Common.AutoMapper;
+using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace CoachFrika.Common.LogingHandler
 {
@@ -29,11 +31,15 @@ namespace CoachFrika.Common.LogingHandler
             public async Task<string> GenerateToken(CoachFrikaUsers user, IList<string> roles)
             {
 
+                var profile = ProfileMapper.MapToProfileDto(user);
+                // Serialize the object to a JSON string
+                var myObjectJson = JsonSerializer.Serialize(profile);
                 // Create claims for the user
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id)
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim("Profile", myObjectJson)
                 };
 
                 // Add each role as a claim

@@ -32,8 +32,8 @@ namespace CoachFrika.APIs.Controllerss
             var result = _service.GetCoachSchedule(query);
             return Ok(result);
         }
-        [HttpPost("EditSchedule")]
-        public IActionResult EditSchedule([FromBody] CreateScheduleDto query, [FromBody]Guid Id)
+        [HttpPut("EditSchedule")]
+        public IActionResult EditSchedule([FromQuery]Guid Id,[FromBody] CreateScheduleDto query)
         {
             var result = _service.EditSchedule(query,Id);
             return Ok(result);

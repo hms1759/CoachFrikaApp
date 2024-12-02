@@ -55,10 +55,6 @@ namespace CoachFrika.APIs.Domin.Services
                 var roles = await _userManager.GetRolesAsync(user);
                 var details = new LoginDetails();
                 details.Token = await _jwtService.GenerateToken(user, roles);
-                details.Roles = roles.ToList();
-                details.Profile =  ProfileMapper.MapToProfileDto(user);
-
-
 
                 res.Data = details;
                 return res;
