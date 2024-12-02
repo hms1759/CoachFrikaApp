@@ -33,7 +33,7 @@ namespace CoachFrika.APIs.Domin.Services
             _emailService = emailService;
             _webHelpers = webHelpers;
         }
-    
+
         public async Task<BaseResponse<string>> CreateSchedule(CreateScheduleDto model)
         {
 
@@ -45,7 +45,8 @@ namespace CoachFrika.APIs.Domin.Services
                 dto.Title = model.Title;
                 dto.Focus = model.Focus;
                 dto.StartDate = model.Scheduled;
-                dto.EndDate =model.DurationType == Common.Enum.DurationType.Hour ?  model.Scheduled.AddHours(model.Duration): model.Scheduled.AddMinutes(model.Duration);
+                dto.MeetingLink = model.MeetingUrl;
+                dto.EndDate = model.DurationType == Common.Enum.DurationType.Hour ? model.Scheduled.AddHours(model.Duration) : model.Scheduled.AddMinutes(model.Duration);
                 var schRepository = _unitOfWork.GetRepository<Schedule>();
                 await schRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
@@ -71,13 +72,13 @@ namespace CoachFrika.APIs.Domin.Services
                 // Apply filters based on the query parameters
                 var cos = from schedule in _context.Schedule
                           where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
-                                && query.status == Common.Enum.ScheduleStatus.ongoing ? (schedule.StartDate.Value.Day == day): query.status == Common.Enum.ScheduleStatus.past ? (schedule.StartDate.Value.Day > day): (schedule.StartDate.Value.Day < day)// Assuming you filter based on a scheduled date
+                                && query.status == Common.Enum.ScheduleStatus.ongoing ? (schedule.StartDate.Value.Day == day) : query.status == Common.Enum.ScheduleStatus.past ? (schedule.StartDate.Value.Day > day) : (schedule.StartDate.Value.Day < day)// Assuming you filter based on a scheduled date
                                 && schedule.CreatedBy == user
                           select new SchedulesViewModel
                           {
                               Id = schedule.Id,
                               Title = schedule.Title,
-                              Focus = schedule.Focus,
+                              Focus = schedule.Focus.ToString(),
                               StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
                               EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
                           };
@@ -103,6 +104,34 @@ namespace CoachFrika.APIs.Domin.Services
 
         }
 
+
+        public async Task<BaseResponse<string>> EditSchedule(CreateScheduleDto model, Guid Id)
+        {
+
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var schRepository = _unitOfWork.GetRepository<Schedule>();
+                var dto = await schRepository.GetByIdAsync(Id);
+                dto.Title = model.Title;
+                dto.Focus = model.Focus;
+                dto.StartDate = model.Scheduled;
+                dto.MeetingLink = model.MeetingUrl;
+                dto.EndDate = model.DurationType == Common.Enum.DurationType.Hour ? model.Scheduled.AddHours(model.Duration) : model.Scheduled.AddMinutes(model.Duration);
+                await schRepository.UpdateAsync(dto);
+                await _unitOfWork.SaveChangesAsync();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+            throw new NotImplementedException();
+        }
         //public async Task<BaseResponse<string>> CreateBatches(BatchesDto model)
         //{
         //    var res = new BaseResponse<string>();
@@ -130,14 +159,15 @@ namespace CoachFrika.APIs.Domin.Services
 
             var res = new BaseResponse<List<CoursesViewModel>>();
             res.Status = true;
-            try { 
-            var cos = from course in _context.Schedule.AsNoTracking()
+            try
+            {
+                var cos = from course in _context.Schedule.AsNoTracking()
                           select new CoursesViewModel
                           {
                               Id = course.Id,
                               //CourseTitle = course.CourseTitle
                           };
-                var rr =  cos.ToList();
+                var rr = cos.ToList();
                 res.Data = rr;
                 return res;
             }
@@ -229,7 +259,7 @@ namespace CoachFrika.APIs.Domin.Services
                           where Schedule.CreatedBy == user
                           select Schedule;
                 var rr = bat.ToList();
-               // res.Data = rr;
+                // res.Data = rr;
                 return res;
             }
             catch (Exception ex)
@@ -240,5 +270,6 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
+
     }
 }

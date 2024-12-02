@@ -33,7 +33,7 @@ namespace CoachFrika.APIs.ViewModel
     }
     public class ProfileDto
     {
-
+        public string? Id { get; set; }  
         public string? FullName { get; set; }
         public string? TweeterUrl { get; set; }
         public string? LinkedInUrl { get; set; }
@@ -54,5 +54,7 @@ namespace CoachFrika.APIs.ViewModel
         public Coaches? Coach { get; set; }
         public Guid? TeacherId { get; set; }
         public Teachers? Teacher { get; set; }
+        public bool hasPaid { get; set; }
+        public decimal Amount { get; set; }
     }
 }

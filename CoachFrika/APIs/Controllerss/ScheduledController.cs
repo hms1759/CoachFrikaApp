@@ -32,20 +32,27 @@ namespace CoachFrika.APIs.Controllerss
             var result = _service.GetCoachSchedule(query);
             return Ok(result);
         }
-
-
-        [HttpGet("GetCoachesById")]
-        public async Task<IActionResult> GetCoachesById([FromQuery] Guid userId)
+        [HttpPost("EditSchedule")]
+        public IActionResult EditSchedule([FromBody] CreateScheduleDto query, [FromBody]Guid Id)
         {
-            var result = await _logicService.GetUserById(userId);
+            var result = _service.EditSchedule(query,Id);
             return Ok(result);
         }
-        [HttpGet("GetCoachesDetails")]
-        public async Task<IActionResult> GetCoachesDetails()
-        {
-            var result = await _logicService.GetUserDetails();
-            return Ok(result);
-        }
+
+
+
+        //[HttpGet("GetCoachesById")]
+        //public async Task<IActionResult> GetCoachesById([FromQuery] Guid userId)
+        //{
+        //    var result = await _logicService.GetUserById(userId);
+        //    return Ok(result);
+        //}
+        //[HttpGet("GetCoachesDetails")]
+        //public async Task<IActionResult> GetCoachesDetails()
+        //{
+        //    var result = await _logicService.GetUserDetails();
+        //    return Ok(result);
+        //}
         //[HttpGet("GetBatches")]
         //public IActionResult GetBatches()
         //{

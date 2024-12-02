@@ -8,10 +8,11 @@ namespace CoachFrika.APIs.ViewModel
     public class CreateScheduleDto
     {
         public string? Title { get; set; }
-        public string? Focus { get; set; }
+        public Subscriptions? Focus { get; set; }
         public DateTime Scheduled { get; set; }
         public DurationType DurationType { get; set; }
         public int Duration { get; set; }
+        public string? MeetingUrl { get; set; }
     }
     public class GetSchedules
     {
