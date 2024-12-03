@@ -30,9 +30,7 @@ namespace CoachFrika.Common.AutoMapper
                 YearStartExperience = coachFrikaUser.YearStartExperience,
                 Stages = coachFrikaUser.Stages,
                 CoachId = coachFrikaUser.CoachId,
-                Coach = coachFrikaUser.Coach,
-                TeacherId = coachFrikaUser.TeacherId,
-                Teacher = coachFrikaUser.Teacher
+                TeacherId = coachFrikaUser.TeacherId
             };
         }
 
@@ -60,9 +58,7 @@ namespace CoachFrika.Common.AutoMapper
                 YearStartExperience = profileDto.YearStartExperience,
                 Stages = profileDto.Stages,
                 CoachId = profileDto.CoachId,
-                Coach = profileDto.Coach,
-                TeacherId = profileDto.TeacherId,
-                Teacher = profileDto.Teacher
+                TeacherId = profileDto.TeacherId
             };
         }
     }

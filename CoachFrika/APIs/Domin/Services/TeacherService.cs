@@ -8,6 +8,7 @@ using CoachFrika.Models;
 using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
 using coachfrikaaaa.Common;
+using Google.Apis.Util;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -19,14 +20,14 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CoachFrika.APIs.Domin.Services
 {
-    public class CoachesService : ICoachesService
+    public class TeacherService : ITeacherService
     {
         private readonly AppDbContext _context;
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
         private readonly UserManager<CoachFrikaUsers> _userManager;
-        public CoachesService(IUnitOfWork unitOfWork, 
-            AppDbContext context,  
+        public TeacherService(IUnitOfWork unitOfWork,
+            AppDbContext context,
             IWebHelpers webHelpers,
             UserManager<CoachFrikaUsers> userManager)
         {
@@ -50,7 +51,7 @@ namespace CoachFrika.APIs.Domin.Services
                 }
                 var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == user);
                 detail.Title = model.Title;
-                detail.Stages +=1;
+                detail.Stages += 1;
                 detail.ProfessionalTitle = model.ProfessionalTitle;
                 await _context.SaveChangesAsync();
                 return res;
@@ -64,25 +65,25 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        public async Task<BaseResponse<string>> CreateStage2(PhoneYearsDto model)
+        public async Task<BaseResponse<string>> CreateStage2(TeacherPhoneYearsDto model)
         {
             var res = new BaseResponse<string>();
             res.Status = true;
             try
             {
                 var user = _webHelpers.CurrentUser();
-                if(user == null)
+                if (user == null)
                 {
                     res.Status = false;
                     res.Message = "User not found";
                     return res;
                 }
-             
-                    var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
-                    if (!phoneNumberValid)
-                    {
-                        throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
-                    }
+
+                var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
+                if (!phoneNumberValid)
+                {
+                    throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                }
 
                 // Check if the phone number already exists
                 var detail = await _userManager.Users
@@ -93,6 +94,7 @@ namespace CoachFrika.APIs.Domin.Services
                 }
 
                 var dateofwork = DateTime.Now.AddYears(model.YearOfExperience);
+                detail.NumbersOfStudents = model.NumberOfStudent.Value;
                 detail.PhoneNumber = model.PhoneNumber;
                 detail.YearStartExperience = dateofwork;
                 detail.Stages += 1;
@@ -210,12 +212,58 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from teachers in _context.CoachFrikaUsers
-                          where  teachers.CoachId == userId
+                          where teachers.CoachId == userId
                           select new ProfileDto
                           {
                               Id = teachers.Id,
                               Title = teachers.Title,
                               FullName = teachers.FullName     // Using DateTime.MinValue if EndDate is null
+                          };
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        public BaseResponse<List<SchedulesViewModel>> GetMySchedule(GetSchedules query)
+        {
+
+            var user = _webHelpers.CurrentUser();
+            var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == user);
+            if (teach == null) { };
+            var res = new BaseResponse<List<SchedulesViewModel>>();
+            res.Status = true;
+            try
+            {
+                var day = DateTime.Now.Day;
+                // Apply filters based on the query parameters
+                var cos = from schedule in _context.Schedule
+                          where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
+                               && query.status == Common.Enum.ScheduleStatus.ongoing ? (schedule.StartDate.Value.Day == day) : query.status == Common.Enum.ScheduleStatus.past ? (schedule.StartDate.Value.Day > day) : (schedule.StartDate.Value.Day < day)// Assuming you filter based on a scheduled date
+                               && schedule.CoachId == teach.CoachId && schedule.Focus == teach.Subscriptions
+                          select new SchedulesViewModel
+                          {
+                              Id = schedule.Id,
+                              Title = schedule.Title,
+                              Focus = schedule.Focus.ToString(),
+                              StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
+                              EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
                           };
 
                 // Apply pagination using Skip and Take

@@ -31,6 +31,11 @@ namespace CoachFrika.APIs.ViewModel
     {
         public Subscriptions Subscription { get; set; }
     }
+
+    public class TeacherPhoneYearsDto : PhoneYearsDto
+    {
+        public int? NumberOfStudent { get; set; }
+    }
     public class ProfileDto
     {
         public string? Id { get; set; }  
@@ -50,11 +55,16 @@ namespace CoachFrika.APIs.ViewModel
         public int NumbersOfStudents { get; set; }
         public DateTime? YearStartExperience { get; set; }
         public int Stages { get; set; }
-        public Guid? CoachId { get; set; }
-        public Coaches? Coach { get; set; }
+        public string? CoachId { get; set; }
         public Guid? TeacherId { get; set; }
-        public Teachers? Teacher { get; set; }
         public bool hasPaid { get; set; }
         public decimal Amount { get; set; }
+    }
+    public class GetTeachers
+    {
+        public string? Name { get; set; }
+        public int Pagesize { get; set; }
+        public int PageNumber { get; set; }
+
     }
 }

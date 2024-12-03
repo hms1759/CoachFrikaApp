@@ -11,5 +11,7 @@ namespace coachfrikaaaa.APIs.Entity
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string? MeetingLink { get; set; }
+        public string? CoachId { get; set; }
+        public CoachFrikaUsers? Coach { get; set; }
     }
 }

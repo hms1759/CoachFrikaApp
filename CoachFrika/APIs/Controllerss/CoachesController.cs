@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoachFrika.APIs.Controllerss
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Coach},{AppRoles.SuperAdmin}")]
+    [AllowAnonymous]
     [ApiController]
     public class CoachesController : BaseController
     {
@@ -47,6 +47,15 @@ namespace CoachFrika.APIs.Controllerss
         public async Task<IActionResult> CreateStage5(SubscriptionsDto model)
         {
             var result = await _coachesService.CreateStage5(model);
+            return Ok(result);
+        }
+
+
+        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Coach},{AppRoles.SuperAdmin}")]
+        [HttpGet("MyTeachers")]
+        public IActionResult MyTeachers([FromQuery]GetTeachers model)
+        {
+            var result =  _coachesService.MyTeachers(model);
             return Ok(result);
         }
     }
