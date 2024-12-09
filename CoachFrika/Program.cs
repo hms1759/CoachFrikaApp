@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -40,6 +42,7 @@ app.Run();
 // --- Service Configuration ---
 void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
+
     // Database Context & Identity
     services.AddDbContext<AppDbContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -54,6 +57,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         options.AccessDeniedPath = ""; // Customize access denied path if needed
     });
 
+    // Register HttpClient
+    services.AddHttpClient();
     // Service injections
     services.AddHttpContextAccessor();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -65,22 +70,30 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<ICoachesService, CoachesService>();
     services.Configure<EmailConfigSettings>(configuration.GetSection("EmailConfig"));
     services.AddSingleton<GoogleSheetsHelper>();
-    //services.AddTransient<IPaystackService, PaystackService>();
-    services.AddTransient<IPaystackService, PaystackService>(sp =>
+    // Register PaystackService as transient
+    services.AddTransient<IPaystackService>(serviceProvider =>
     {
-        var httpClient = sp.GetRequiredService<HttpClient>();
-        var secretKey = builder.Configuration["Paystack:SecretKey"];  // assuming you're using appsettings.json
-        return new PaystackService(httpClient, secretKey);
+        var httpClient = serviceProvider.GetRequiredService<HttpClient>();
+        var paystackSecretKey = configuration["PaystackSecretKey"];  // Get secret key from configuration
+        return new PaystackService(httpClient, paystackSecretKey);
     });
 
     // Controllers with authorization
     services.AddControllersWithViews();
-    services.AddCors(c =>
+    // Get the CORS_ORIGIN array from the appsettings
+    var corsOrigins = configuration.GetSection("CorSettings:CORS_ORIGIN").Get<string[]>();
+
+    // Register the CORS policy
+    services.AddCors(options =>
     {
-        c.AddPolicy("AllowOrigin", options => options
-        .AllowAnyOrigin()
-        .AllowAnyHeader()
-        .AllowAnyMethod());
+        options.AddPolicy("Coachfrika-Cors", builder =>
+        {
+            // Configure CORS policy using the origins from the appsettings
+            builder.WithOrigins(corsOrigins) // Pass the corsOrigins array here
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials();
+        });
     });
 
     // JWT Authentication
@@ -192,7 +205,7 @@ void ConfigureApp(WebApplication app)
     app.UseHttpsRedirection();
     app.UseRouting();
     app.UseStaticFiles();
-    app.UseCors("AllowOrigin");
+    app.UseCors("Coachfrika-Cors");
 
     app.UseAuthentication();  // Enable authentication middleware
     app.UseAuthorization();   // Enable authorization middleware

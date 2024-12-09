@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CoachFrika.Services;
+using Microsoft.AspNetCore.Mvc;
 
 public class PaymentController : Controller
 {
-    private readonly PaystackService _paystackService;
+    private readonly IPaystackService _paystackService;
 
-    public PaymentController(PaystackService paystackService)
+    // Constructor
+    public PaymentController(IPaystackService paystackService)
     {
         _paystackService = paystackService;
     }
@@ -15,16 +17,37 @@ public class PaymentController : Controller
         var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, email);
 
         // Redirect the user to Paystack for payment
-        return Redirect(transactionUrl);
+        return Ok(transactionUrl);
     }
 
-    [HttpGet("payment/callback")]
-    public async Task<IActionResult> PaymentCallback(string reference)
+    [HttpGet("VerifyTransaction")]
+    public async Task<IActionResult> VerifyTransaction(string reference)
     {
         // Here you can verify the transaction status
         var verificationResponse = await _paystackService.VerifyTransactionAsync(reference);
 
         // Process the payment response (e.g., show a success or failure page)
-        return View("PaymentResult", verificationResponse);
+        return Ok(verificationResponse);
+    }
+
+
+    [HttpGet("RetrieveTransactionAsync")]
+    public async Task<IActionResult> RetrieveTransactionAsync(long transactionId)
+    {
+        // Here you can verify the transaction status
+        var verificationResponse = await _paystackService.RetrieveTransactionAsync(transactionId);
+
+        // Process the payment response (e.g., show a success or failure page)
+        return Ok(verificationResponse);
+    }
+
+    [HttpGet("RefundTransactionAsync")]
+    public async Task<IActionResult> RefundTransactionAsync(long transactionId, decimal Amount)
+    {
+        // Here you can verify the transaction status
+        var verificationResponse = await _paystackService.RefundTransactionAsync(transactionId, Amount);
+
+        // Process the payment response (e.g., show a success or failure page)
+        return Ok(verificationResponse);
     }
 }

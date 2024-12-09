@@ -1,8 +1,14 @@
-﻿namespace CoachFrika.Services
+﻿using CoachFrika.APIs.ViewModel;
+using CoachFrika.Common;
+using static PaystackService;
+
+namespace CoachFrika.Services
 {
     public interface IPaystackService
     {
-        Task<string> InitializeTransactionAsync(decimal amount, string email);
-        Task<string> VerifyTransactionAsync(string reference);
+        Task<BaseResponse<InitiateModel>> InitializeTransactionAsync(decimal amount, string email);
+        Task<BaseResponse<PaymentVerifyData>> VerifyTransactionAsync(string reference);
+        Task<BaseResponse<TransactionData>> RetrieveTransactionAsync(long transactionId);
+        Task<BaseResponse<RefundData>> RefundTransactionAsync(long transactionId, decimal amount);
     }
 }
