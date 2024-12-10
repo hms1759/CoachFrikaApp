@@ -45,5 +45,14 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _publicService.SchoolEnrollment(model);
             return Ok(result);
         }
+
+        [HttpPost("CorsChecker")]
+        public async Task<IActionResult> CorsChecker([FromBody] SchoolEnrollmentDto model)
+        {
+            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+            model.logoUrl = logoUrl;
+            var result = await _publicService.SchoolEnrollment(model);
+            return Ok(result);
+        }
     }
 }

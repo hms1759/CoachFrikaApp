@@ -89,10 +89,13 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         options.AddPolicy("Coachfrika-Cors", builder =>
         {
             // Configure CORS policy using the origins from the appsettings
-            builder.WithOrigins(corsOrigins) // Pass the corsOrigins array here
-                   .AllowAnyMethod()
-                   .AllowAnyHeader()
-                   .AllowCredentials();
+
+
+            builder.WithOrigins("http://localhost:3150", "https://coachfrika.netlify.app") // Pass the corsOrigins array here
+                      .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials(); 
+       
         });
     });
 
@@ -205,6 +208,7 @@ void ConfigureApp(WebApplication app)
     app.UseHttpsRedirection();
     app.UseRouting();
     app.UseStaticFiles();
+
     app.UseCors("Coachfrika-Cors");
 
     app.UseAuthentication();  // Enable authentication middleware
