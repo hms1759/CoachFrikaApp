@@ -91,7 +91,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
             // Configure CORS policy using the origins from the appsettings
 
 
-            builder.WithOrigins("http://localhost:3150", "https://coachfrika.netlify.app") // Pass the corsOrigins array here
+            builder.WithOrigins(corsOrigins) // Pass the corsOrigins array here
                       .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials(); 

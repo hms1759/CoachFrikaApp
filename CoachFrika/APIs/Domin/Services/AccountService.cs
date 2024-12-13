@@ -134,6 +134,7 @@ namespace CoachFrika.APIs.Domin.Services
                     // Return the error messages from Identity
                     throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
+                model.Password = null;
                 res.Data = model;
                 return res;
             }

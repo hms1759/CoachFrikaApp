@@ -13,10 +13,13 @@ namespace CoachFrika.Common.AutoMapper
 
             return new ProfileDto
             {
+                Id = coachFrikaUser.Id,
                 FullName = coachFrikaUser.FullName,
                 TweeterUrl = coachFrikaUser.TweeterUrl,
                 LinkedInUrl = coachFrikaUser.LinkedInUrl,
                 InstagramUrl = coachFrikaUser.InstagramUrl,
+                PhoneNumber = coachFrikaUser.PhoneNumber,
+                Email = coachFrikaUser.Email,
                 FacebookUrl = coachFrikaUser.FacebookUrl,
                 Role = coachFrikaUser.Role,
                 StateOfOrigin = coachFrikaUser.StateOfOrigin,
