@@ -9,7 +9,8 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<string>> CreateStage2(TeacherPhoneYearsDto model);
         Task<BaseResponse<string>> CreateStage3(DescriptionDto model);
         Task<BaseResponse<string>> CreateStage4(SocialMediaDto model);
-        Task<BaseResponse<string>> CreateStage5(SubscriptionsDto model);
+        Task<BaseResponse<string>> CreateStage5(SchoolesdescriptionDto model);
+        Task<BaseResponse<string>> CreateStage6(SubscriptionsDto model);
         BaseResponse<List<ProfileDto>> MyTeachers(GetTeachers model);
         BaseResponse<List<SchedulesViewModel>> GetMySchedule(GetSchedules query);
     }

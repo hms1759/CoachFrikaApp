@@ -26,6 +26,12 @@ namespace CoachFrika.APIs.ViewModel
         public string? Nationality { get; set; }
         public string? Description { get; set; }
     }
+    public class SchoolesdescriptionDto
+    {
+        public string? SchoolName { get; set; }
+        public string? LocalGov { get; set; }
+        public List<string> Subjects { get; set; }
+    }
 
     public class SubscriptionsDto
     {

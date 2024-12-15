@@ -26,6 +26,9 @@ namespace coachfrikaaaa.APIs.Entity
         public DateTime? YearStartExperience { get; set; }
         public int Stages { get; set; }
         public string? CoachId { get; set; }
+        public string? SchoolName { get; set; }
+        public string? LocalGov { get; set; }
+        public string? Subject { get; set; }
         public CoachFrikaUsers? Coach { get; set; }
         public Guid? TeacherId { get; set; }
         public Teachers? Teacher { get; set; }

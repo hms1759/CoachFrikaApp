@@ -46,10 +46,17 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _teacherService.CreateStage4(model);
             return Ok(result);
         }
+
         [HttpPost("CreateStage5")]
-        public async Task<IActionResult> CreateStage5(SubscriptionsDto model)
+        public async Task<IActionResult> CreateStage5(SchoolesdescriptionDto model)
         {
             var result = await _teacherService.CreateStage5(model);
+            return Ok(result);
+        }
+        [HttpPost("CreateStage6")]
+        public async Task<IActionResult> CreateStage6(SubscriptionsDto model)
+        {
+            var result = await _teacherService.CreateStage6(model);
             return Ok(result);
         }
 

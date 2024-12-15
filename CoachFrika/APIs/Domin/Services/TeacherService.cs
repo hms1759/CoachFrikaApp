@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Crypto.Macs;
+using Org.BouncyCastle.Utilities;
+using System.Collections.Immutable;
 using System.Text;
 using System.Text.RegularExpressions;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
@@ -87,10 +89,10 @@ namespace CoachFrika.APIs.Domin.Services
 
                 // Check if the phone number already exists
                 var detail = await _userManager.Users
-                    .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
-                if (detail != null)
+                    .FirstOrDefaultAsync(u => u.Email == user);
+                if (detail == null)
                 {
-                    throw new ArgumentException("An account with this phone number already exists.");
+                    throw new ArgumentException("An account does not exists.");
                 }
 
                 var dateofwork = DateTime.Now.AddYears(model.YearOfExperience);
@@ -98,6 +100,7 @@ namespace CoachFrika.APIs.Domin.Services
                 detail.PhoneNumber = model.PhoneNumber;
                 detail.YearStartExperience = dateofwork;
                 detail.Stages += 1;
+                await _userManager.UpdateAsync(detail);
                 await _context.SaveChangesAsync();
                 return res;
             }
@@ -173,7 +176,37 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        public async Task<BaseResponse<string>> CreateStage5(SubscriptionsDto model)
+        public async Task<BaseResponse<string>> CreateStage5(SchoolesdescriptionDto model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var user = _webHelpers.CurrentUser();
+                if (user == null)
+                {
+                    res.Status = false;
+                    res.Message = "User not found";
+                    return res;
+                }
+
+                var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == user);
+                detail.SchoolName = model.SchoolName;
+                detail.LocalGov = model.LocalGov;
+                detail.Subject = string.Join(", ", model.Subjects);
+                detail.Stages += 1;
+                await _context.SaveChangesAsync();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+        }
+        public async Task<BaseResponse<string>> CreateStage6(SubscriptionsDto model)
         {
             var res = new BaseResponse<string>();
             res.Status = true;
@@ -201,6 +234,7 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
+
 
         public BaseResponse<List<ProfileDto>> MyTeachers(GetTeachers query)
         {
