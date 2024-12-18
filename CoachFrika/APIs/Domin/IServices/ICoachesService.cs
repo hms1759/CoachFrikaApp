@@ -11,6 +11,8 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<string>> CreateStage4(SocialMediaDto model);
         Task<BaseResponse<string>> CreateStage5(SubscriptionsDto model);
         BaseResponse<List<ProfileDto>> MyTeachers(GetTeachers model);
+        BaseResponse<List<ProfileDto>> GetAllCoaches(GetAllCoaches query);
+        Task<BaseResponse<ProfileDto>> GetCoachById(string Id);
     }
 }
 

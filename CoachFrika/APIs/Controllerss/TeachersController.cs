@@ -66,6 +66,14 @@ namespace CoachFrika.APIs.Controllerss
             var result = _teacherService.GetMySchedule(query);
             return Ok(result);
         }
+
+
+        [HttpGet("SelectCoach")]
+        public IActionResult SelectCoach([FromQuery] Guid CoachId)
+        {
+            var result = _teacherService.SelectCoach(CoachId);
+            return Ok(result);
+        }
         //[HttpGet("GetSubject")]
         //public IActionResult GetSubject()
         //{

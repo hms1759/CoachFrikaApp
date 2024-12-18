@@ -2,6 +2,7 @@
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
+using CoachFrika.Common.AutoMapper;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
@@ -210,7 +211,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from teachers in _context.CoachFrikaUsers
-                          where  teachers.CoachId == userId
+                          where teachers.CoachId == userId
                           select new ProfileDto
                           {
                               Id = teachers.Id,
@@ -229,6 +230,76 @@ namespace CoachFrika.APIs.Domin.Services
                 res.PageSize = query.Pagesize;
                 return res;
             }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        public BaseResponse<List<ProfileDto>> GetAllCoaches(GetAllCoaches query)
+        {
+            var res = new BaseResponse<List<ProfileDto>>();
+            res.Status = true;
+            try
+            {
+                var day = DateTime.Now.Day;
+                // Apply filters based on the query parameters
+                var cos = from coach in _context.CoachFrikaUsers
+                          where string.IsNullOrEmpty(query.Name) || coach.FullName.Contains(query.Name)
+                          select new ProfileDto
+                          {
+                              Id = coach.Id,
+                              Title = coach.Title,
+                              FullName = coach.FullName,
+                              ProfessionalTitle = coach.ProfessionalTitle,
+                              NumbersOfStudents = coach.NumbersOfStudents,
+                              Description = coach.Description,
+                              LinkedInUrl = coach.LinkedInUrl,
+                              FacebookUrl = coach.FacebookUrl,
+                              TweeterUrl = coach.TweeterUrl
+                              // Using DateTime.MinValue if EndDate is null
+                          };
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        public async Task<BaseResponse<ProfileDto>> GetCoachById(string Id)
+        {
+            var res = new BaseResponse<ProfileDto>();
+            res.Status = true;
+            try
+            {
+                var coach = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Id == Id);
+                if (coach == null)
+                    throw new NotImplementedException();
+
+                var profile = ProfileMapper.MapToProfileDto(coach);
+                res.Data = profile;
+                res.Status = false;
+                return res;
+            } 
             catch (Exception ex)
             {
                 res.Message = ex.Message;

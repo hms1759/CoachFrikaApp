@@ -75,4 +75,12 @@ namespace CoachFrika.APIs.ViewModel
         public int PageNumber { get; set; }
 
     }
+    public class GetAllCoaches
+    {
+        public string? Name { get; set; }
+        public bool IsPaginated { get; set; }
+        public int Pagesize { get; set; }
+        public int PageNumber { get; set; }
+
+    }
 }

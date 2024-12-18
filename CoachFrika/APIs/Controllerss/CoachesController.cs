@@ -58,5 +58,18 @@ namespace CoachFrika.APIs.Controllerss
             var result =  _coachesService.MyTeachers(model);
             return Ok(result);
         }
+        [HttpPost("GetAllCoaches")]
+        public async Task<IActionResult> GetAllCoaches(GetAllCoaches model)
+        {
+            var result =  _coachesService.GetAllCoaches(model);
+            return Ok(result);
+        }
+
+        [HttpPost("GetCoacheById")]
+        public async Task<IActionResult> GetCoacheById([FromQuery] string Id)
+        {
+            var result = await _coachesService.GetCoachById(Id);
+            return Ok(result);
+        }
     }
 }

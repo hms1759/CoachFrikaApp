@@ -13,6 +13,7 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<string>> CreateStage6(SubscriptionsDto model);
         BaseResponse<List<ProfileDto>> MyTeachers(GetTeachers model);
         BaseResponse<List<SchedulesViewModel>> GetMySchedule(GetSchedules query);
+        Task<BaseResponse<string>> SelectCoach(Guid CoachId);
     }
 }
 

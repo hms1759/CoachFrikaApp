@@ -320,5 +320,42 @@ namespace CoachFrika.APIs.Domin.Services
             }
 
         }
+
+        public async Task<BaseResponse<string>> SelectCoach(Guid CoachId)
+        {
+
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var user = _webHelpers.CurrentUser();
+                var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == user);
+                if (teach == null)
+                {
+                    res.Status = false;
+                    res.Message = "User not found";
+                    return res;
+                }
+
+                var coach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Id == CoachId.ToString());
+                if (coach == null)
+                {
+                    res.Status = false;
+                    res.Message = "Coach not found";
+                    return res;
+                }
+
+                teach.CoachId = CoachId.ToString();
+                await _context.SaveChangesAsync();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+        }
     }
 }
