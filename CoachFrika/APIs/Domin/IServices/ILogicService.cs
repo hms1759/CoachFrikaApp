@@ -17,6 +17,7 @@ namespace CoachFrika.APIs.Domin.IServices
         BaseResponse<string?[]> GetSchool();
         BaseResponse<string?[]> GetSubject();
         BaseResponse<List<Schedules>> GetMySchedule();
-       
+        Task<BaseResponse<string>> SponsorAchild(SponsorDto modle);
+
     }
 }

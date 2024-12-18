@@ -63,4 +63,13 @@ namespace CoachFrika.APIs.ViewModel
         [JsonIgnore]
         public string? logoUrl { get; set; }
     }
+    public class SponsorDto
+    {
+        public string? SponsorName { get; set; }
+        public string? SponsorEmail { get; set; }
+        public string? SponsorPhoneNumber { get; set; }
+        public int NumbersOfChildren { get; set; }
+        [JsonIgnore]
+        public string? logoUrl { get; set; }
+    }
 }

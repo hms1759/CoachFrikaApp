@@ -86,10 +86,10 @@ namespace CoachFrika.APIs.Domin.Services
 
                 // Check if the phone number already exists
                 var detail = await _userManager.Users
-                    .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
-                if (detail != null)
+                    .FirstOrDefaultAsync(u => u.Email == user);
+                if (detail == null)
                 {
-                    throw new ArgumentException("An account with this phone number already exists.");
+                    throw new ArgumentException("An account does not exists.");
                 }
 
                 var dateofwork = DateTime.Now.AddYears(model.YearOfExperience);

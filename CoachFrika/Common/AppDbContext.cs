@@ -1,4 +1,5 @@
-﻿using CoachFrika.Common.Extension;
+﻿using CoachFrika.APIs.Entity;
+using CoachFrika.Common.Extension;
 using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace coachfrikaaaa.Common
         public DbSet<Subjects> Subjects { get; set; }
         //public DbSet<Batches> Batches { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
+        public DbSet<ChildSponsor> ChildSponsor { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options, IWebHelpers webHelpers = null) : base(options)
         {

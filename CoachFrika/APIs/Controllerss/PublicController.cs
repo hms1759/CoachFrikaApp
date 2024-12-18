@@ -54,5 +54,14 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _publicService.SchoolEnrollment(model);
             return Ok(result);
         }
+
+        [HttpPost("SponsorAChild")]
+        public async Task<IActionResult> SponsorAChild([FromBody] SponsorDto model)
+        {
+            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+            model.logoUrl = logoUrl;
+            var result = await _publicService.SponsorAchild(model);
+            return Ok(result);
+        }
     }
 }

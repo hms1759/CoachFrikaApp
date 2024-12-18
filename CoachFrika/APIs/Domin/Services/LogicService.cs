@@ -1,4 +1,5 @@
 ﻿using CoachFrika.APIs.Domin.IServices;
+using CoachFrika.APIs.Entity;
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
@@ -347,6 +348,63 @@ namespace CoachFrika.APIs.Domin.Services
                 //var rr = Schedul.ToList();
                 res.Message = "Successful";
                 //res.Data = rr;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+        }
+
+        public async Task<BaseResponse<string>> SponsorAchild(SponsorDto model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var dto = new ChildSponsor();
+
+                var phoneNumberValid = Validators.ValidatePhoneNumber(model.SponsorPhoneNumber);
+                if (!phoneNumberValid)
+                {
+                    throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                }
+                // Validate email format
+                var emailValid = Validators.ValidateEmail(model.SponsorEmail);
+                if (!emailValid)
+                {
+                    throw new ArgumentException("Invalid email format.");
+                }
+                dto.SponsorPhoneNumber = model.SponsorPhoneNumber;
+                dto.SponsorEmail = model.SponsorEmail;
+
+                dto.SponsorName = model.SponsorName;
+                dto.NumbersOfChildren = model.NumbersOfChildren;
+                var newsRepository = _unitOfWork.GetRepository<ChildSponsor>();
+                await newsRepository.AddAsync(dto);
+                await _unitOfWork.SaveChangesAsync();
+                var mailSubject = _emailConfig.ContactTopic;
+                var mailto = _emailConfig.MailTo.ToList();
+                var body = await _emailService.ReadTemplate("emailrecieved");
+
+                //inserting variable
+                var messageToParse = new Dictionary<string, string>
+                    {
+                        { "{Fullname}", model.SponsorName},
+                        { "{Phonenumber}", model.SponsorPhoneNumber},
+                        { "{Email}", model.SponsorEmail},
+                        { "{Message}", $"has request for Sponsor"},
+                        { "{logo}", model.logoUrl},
+                    };
+
+                //  email notification
+                var messageBody = body.ParseTemplate(messageToParse);
+                var message = new Message(mailto, mailSubject, messageBody);
+                //await _emailService.SendEmail(message);
+
                 return res;
             }
             catch (Exception ex)
