@@ -61,7 +61,7 @@ namespace CoachFrika.APIs.Controllerss
         }
 
         [HttpGet("GetMySchedule")]
-        public IActionResult GetMySchedule(GetSchedules query)
+        public IActionResult GetMySchedule([FromQuery]GetSchedules query)
         {
             var result = _teacherService.GetMySchedule(query);
             return Ok(result);

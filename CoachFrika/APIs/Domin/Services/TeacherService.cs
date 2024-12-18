@@ -53,7 +53,7 @@ namespace CoachFrika.APIs.Domin.Services
                 }
                 var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == user);
                 detail.Title = model.Title;
-                detail.Stages += 1;
+                detail.Stages = 1;
                 detail.ProfessionalTitle = model.ProfessionalTitle;
                 await _context.SaveChangesAsync();
                 return res;
@@ -95,11 +95,11 @@ namespace CoachFrika.APIs.Domin.Services
                     throw new ArgumentException("An account does not exists.");
                 }
 
-                var dateofwork = DateTime.Now.AddYears(model.YearOfExperience);
+                var dateofwork = DateTime.Now.AddYears(-model.YearOfExperience);
                 detail.NumbersOfStudents = model.NumberOfStudent.Value;
                 detail.PhoneNumber = model.PhoneNumber;
                 detail.YearStartExperience = dateofwork;
-                detail.Stages += 1;
+                detail.Stages = 2;
                 await _userManager.UpdateAsync(detail);
                 await _context.SaveChangesAsync();
                 return res;
@@ -131,7 +131,7 @@ namespace CoachFrika.APIs.Domin.Services
                 detail.Description = model.Description;
                 detail.Nationality = model.Nationality;
                 detail.StateOfOrigin = model.StateOfOrigin;
-                detail.Stages += 1;
+                detail.Stages = 3;
                 await _context.SaveChangesAsync();
                 return res;
             }
@@ -163,7 +163,7 @@ namespace CoachFrika.APIs.Domin.Services
                 detail.TweeterUrl = model.TweeterUrl;
                 detail.LinkedInUrl = model.LinkedInUrl;
                 detail.InstagramUrl = model.InstagramUrl;
-                detail.Stages += 1;
+                detail.Stages = 4;
                 await _context.SaveChangesAsync();
                 return res;
             }
@@ -194,7 +194,7 @@ namespace CoachFrika.APIs.Domin.Services
                 detail.SchoolName = model.SchoolName;
                 detail.LocalGov = model.LocalGov;
                 detail.Subject = string.Join(", ", model.Subjects);
-                detail.Stages += 1;
+                detail.Stages = 5;
                 await _context.SaveChangesAsync();
                 return res;
             }
@@ -222,7 +222,7 @@ namespace CoachFrika.APIs.Domin.Services
 
                 var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == user);
 
-                detail.Stages += 1;
+                detail.Stages = 6;
                 await _context.SaveChangesAsync();
                 return res;
             }

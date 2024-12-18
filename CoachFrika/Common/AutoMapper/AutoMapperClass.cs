@@ -11,6 +11,7 @@ namespace CoachFrika.Common.AutoMapper
         {
             if (coachFrikaUser == null) return null;
 
+            var today = DateTime.Now;
             return new ProfileDto
             {
                 Id = coachFrikaUser.Id,
@@ -30,7 +31,7 @@ namespace CoachFrika.Common.AutoMapper
                 Description = coachFrikaUser.Description,
                 Subscriptions = coachFrikaUser.Subscriptions,
                 NumbersOfStudents = coachFrikaUser.NumbersOfStudents,
-                YearStartExperience = coachFrikaUser.YearStartExperience,
+                YearStartExperience = coachFrikaUser.YearStartExperience != null ? today.Year - coachFrikaUser.YearStartExperience.Value.Year: 0,
                 Stages = coachFrikaUser.Stages,
                 CoachId = coachFrikaUser.CoachId,
                 TeacherId = coachFrikaUser.TeacherId
@@ -58,7 +59,6 @@ namespace CoachFrika.Common.AutoMapper
                 Description = profileDto.Description,
                 Subscriptions = profileDto.Subscriptions,
                 NumbersOfStudents = profileDto.NumbersOfStudents,
-                YearStartExperience = profileDto.YearStartExperience,
                 Stages = profileDto.Stages,
                 CoachId = profileDto.CoachId,
                 TeacherId = profileDto.TeacherId

@@ -61,7 +61,7 @@ namespace CoachFrika.APIs.ViewModel
         public string? Description { get; set; }
         public Subscriptions? Subscriptions { get; set; }
         public int NumbersOfStudents { get; set; }
-        public DateTime? YearStartExperience { get; set; }
+        public int? YearStartExperience { get; set; }
         public int Stages { get; set; }
         public string? CoachId { get; set; }
         public Guid? TeacherId { get; set; }
