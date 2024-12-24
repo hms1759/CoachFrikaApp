@@ -69,6 +69,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<IEmailService, EmailService>();
     services.AddTransient<ICoachesService, CoachesService>();
     services.AddTransient<ITeacherService, TeacherService>();
+    services.AddTransient<ICousesService, CousesService>();
     services.Configure<EmailConfigSettings>(configuration.GetSection("EmailConfig"));
     services.AddSingleton<GoogleSheetsHelper>();
     // Register PaystackService as transient

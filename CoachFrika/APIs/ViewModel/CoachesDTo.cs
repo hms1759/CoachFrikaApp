@@ -17,7 +17,7 @@ namespace CoachFrika.APIs.ViewModel
     public class GetSchedules
     {
         public string? Title { get; set; }
-        public DateTime Scheduled { get; set; }
+        public DateTime? Scheduled { get; set; }
         public ScheduleStatus status { get; set; }
         public int Pagesize { get; set; }
         public int PageNumber { get; set; }
@@ -25,11 +25,12 @@ namespace CoachFrika.APIs.ViewModel
     }
     public class SchedulesViewModel
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string? Title { get; set; }
         public string? Focus { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public string? MeetingUrl { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
     public class BatchesDto
     {

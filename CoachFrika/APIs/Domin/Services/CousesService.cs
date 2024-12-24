@@ -37,6 +37,8 @@ namespace CoachFrika.APIs.Domin.Services
         public async Task<BaseResponse<string>> CreateSchedule(CreateScheduleDto model)
         {
 
+            var user = _webHelpers.CurrentUser();
+            var userId = _webHelpers.CurrentUserId();
             var res = new BaseResponse<string>();
             res.Status = true;
             try
@@ -46,6 +48,8 @@ namespace CoachFrika.APIs.Domin.Services
                 dto.Focus = model.Focus;
                 dto.StartDate = model.Scheduled;
                 dto.MeetingLink = model.MeetingUrl;
+                dto.CreatedBy = user;
+                dto.CoachId = userId;
                 dto.EndDate = model.DurationType == Common.Enum.DurationType.Hour ? model.Scheduled.AddHours(model.Duration) : model.Scheduled.AddMinutes(model.Duration);
                 var schRepository = _unitOfWork.GetRepository<Schedule>();
                 await schRepository.AddAsync(dto);
@@ -60,8 +64,7 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
-
-        public BaseResponse<List<SchedulesViewModel>> GetCoachSchedule(GetSchedules query)
+          public BaseResponse<List<SchedulesViewModel>> GetCoachSchedule(GetSchedules query)
         {
             var user = _webHelpers.CurrentUser();
             var res = new BaseResponse<List<SchedulesViewModel>>();
@@ -72,13 +75,19 @@ namespace CoachFrika.APIs.Domin.Services
                 // Apply filters based on the query parameters
                 var cos = from schedule in _context.Schedule
                           where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
-                                && query.status == Common.Enum.ScheduleStatus.ongoing ? (schedule.StartDate.Value.Day == day) : query.status == Common.Enum.ScheduleStatus.past ? (schedule.StartDate.Value.Day > day) : (schedule.StartDate.Value.Day < day)// Assuming you filter based on a scheduled date
-                                && schedule.CreatedBy == user
+                                && query.status == Common.Enum.ScheduleStatus.ongoing
+                                        ? (schedule.StartDate.Value.Day == day)
+                                        : query.status == Common.Enum.ScheduleStatus.past
+                                            ? (schedule.StartDate.Value.Day > day)
+                                            : (schedule.StartDate.Value.Day < day)
+                                 && schedule.CreatedBy == user
+                                && (query.Scheduled == null || schedule.StartDate.Value.Date ==query.Scheduled.Value.Date)
                           select new SchedulesViewModel
                           {
                               Id = schedule.Id,
                               Title = schedule.Title,
                               Focus = schedule.Focus.ToString(),
+                              MeetingUrl = schedule.MeetingLink,
                               StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
                               EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
                           };

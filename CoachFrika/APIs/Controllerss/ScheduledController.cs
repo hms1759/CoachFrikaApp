@@ -26,6 +26,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _service.CreateSchedule(model);
             return Ok(result);
         }
+        [AllowAnonymous]
         [HttpGet("GetCoachSchedule")]
         public IActionResult GetSchedule([FromQuery]GetSchedules query)
         {
