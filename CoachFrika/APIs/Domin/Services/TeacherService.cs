@@ -277,64 +277,9 @@ namespace CoachFrika.APIs.Domin.Services
 
         public BaseResponse<List<SchedulesViewModel>> GetMySchedule(GetSchedules query)
         {
-
-            var res = new BaseResponse<List<SchedulesViewModel>>();
-            res.Status = true;
-            var user = _webHelpers.CurrentUser();
-            var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == user);
-            if (teach == null)
-            {
-                res.Message = "User not found";
-                res.Status = false;
-                return res;
-            };
-            try
-            {
-                var day = DateTime.Now.Day;
-                // Apply filters based on the query parameters
-                var cos = from schedule in _context.Schedule
-                          where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
-                               && query.status == Common.Enum.ScheduleStatus.ongoing ? (schedule.StartDate.Value.Day == day) : query.status == Common.Enum.ScheduleStatus.past ? (schedule.StartDate.Value.Day > day) : (schedule.StartDate.Value.Day < day)// Assuming you filter based on a scheduled date
-                               && schedule.CoachId == teach.CoachId 
-                               && schedule.Focus == teach.Subscriptions
-                          select new SchedulesViewModel
-                          {
-                              Id = schedule.Id,
-                              Title = schedule.Title,
-                              Focus = schedule.Focus.ToString(),
-                              StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
-                              EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
-                          };
-
-                // Apply pagination using Skip and Take
-                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
-                                   .Take(query.Pagesize)
-                                   .ToList();
-
-                // Set the response data
-                res.Data = pagedData;
-                res.PageNumber = query.PageNumber;
-                res.PageSize = query.Pagesize;
-                return res;
-            }
-            catch (Exception ex)
-            {
-                res.Message = ex.Message;
-                res.Status = false;
-                return res;
-
-            }
-
-        }
-        public BaseResponse<List<SchedulesViewModel>> GetMySchedules(GetSchedules query)
-        {
             var user = _webHelpers.CurrentUser();
             var res = new BaseResponse<List<SchedulesViewModel>>();
             res.Status = true;
-
-            var res = new BaseResponse<List<SchedulesViewModel>>();
-            res.Status = true;
-            var user = _webHelpers.CurrentUser();
             var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == user);
             if (teach == null)
             {
@@ -351,15 +296,17 @@ namespace CoachFrika.APIs.Domin.Services
             }
             try
             {
-                var day = DateTime.Now.Day;
+                var day = DateTime.Now.Date;
                 // Apply filters based on the query parameters
                 var cos = from schedule in _context.Schedule
                           where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
                                 && (query.status == Common.Enum.ScheduleStatus.ongoing
-                                        ? (schedule.StartDate.Value.Day == day)
+                                        ? (schedule.StartDate.Value.Date == day)
                                         : query.status == Common.Enum.ScheduleStatus.past
-                                            ? (schedule.StartDate.Value.Day > day)
-                                            : (schedule.StartDate.Value.Day < day))
+                                            ? (schedule.StartDate.Value.Date > day)
+                                            : query.status == Common.Enum.ScheduleStatus.comingsoon
+                                            ? (schedule.StartDate.Value.Date < day)
+                                            : (schedule.StartDate.Value.Date > day && !schedule.TeacherAttended))
                                   && schedule.CoachId == teach.CoachId
                                && schedule.Focus == teach.Subscriptions
                                 && (query.Scheduled == null || schedule.StartDate.Value.Date == query.Scheduled.Value.Date)

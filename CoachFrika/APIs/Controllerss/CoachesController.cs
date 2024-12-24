@@ -51,21 +51,24 @@ namespace CoachFrika.APIs.Controllerss
         }
 
 
-        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Coach},{AppRoles.SuperAdmin}")]
+        [Authorize]
         [HttpGet("MyTeachers")]
         public IActionResult MyTeachers([FromQuery]GetTeachers model)
         {
             var result =  _coachesService.MyTeachers(model);
             return Ok(result);
         }
-        [HttpPost("GetAllCoaches")]
-        public async Task<IActionResult> GetAllCoaches(GetAllCoaches model)
+
+        [Authorize]
+        [HttpGet("GetAllCoaches")]
+        public async Task<IActionResult> GetAllCoaches([FromQuery] GetAllCoaches model)
         {
             var result =  _coachesService.GetAllCoaches(model);
             return Ok(result);
         }
 
-        [HttpPost("GetCoacheById")]
+        [Authorize]
+        [HttpGet("GetCoacheById")]
         public async Task<IActionResult> GetCoacheById([FromQuery] string Id)
         {
             var result = await _coachesService.GetCoachById(Id);

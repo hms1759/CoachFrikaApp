@@ -42,6 +42,7 @@ namespace CoachFrika.APIs.ViewModel
     {
         public int? NumberOfStudent { get; set; }
     }
+
     public class ProfileDto
     {
         public string? Id { get; set; }  
@@ -68,19 +69,22 @@ namespace CoachFrika.APIs.ViewModel
         public bool hasPaid { get; set; }
         public decimal Amount { get; set; }
     }
-    public class GetTeachers
+    public class GetTeachers : Pagination
     {
         public string? Name { get; set; }
-        public int Pagesize { get; set; }
-        public int PageNumber { get; set; }
 
     }
-    public class GetAllCoaches
+    public class GetAllCoaches : Pagination
     {
         public string? Name { get; set; }
         public bool IsPaginated { get; set; }
-        public int Pagesize { get; set; }
-        public int PageNumber { get; set; }
+
+    }
+
+    public class Pagination
+    {
+        public int Pagesize { get; set; } = 10;
+        public int PageNumber { get; set; } = 1;
 
     }
 }

@@ -26,6 +26,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _service.CreateSchedule(model);
             return Ok(result);
         }
+        [AllowAnonymous]
         [HttpGet("GetCoachSchedule")]
         public IActionResult GetSchedule([FromQuery]GetSchedules query)
         {
@@ -38,6 +39,14 @@ namespace CoachFrika.APIs.Controllerss
             var result = _service.EditSchedule(query,Id);
             return Ok(result);
         }
+
+        [HttpPut("AttendSchedle")]
+        public IActionResult AttendSchedle([FromQuery] Guid Id)
+        {
+            var result = _service.AttendSchedle(Id);
+            return Ok(result);
+        }
+
 
 
 

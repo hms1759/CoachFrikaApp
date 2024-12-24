@@ -64,24 +64,26 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
-          public BaseResponse<List<SchedulesViewModel>> GetCoachSchedule(GetSchedules query)
+        public BaseResponse<List<SchedulesViewModel>> GetCoachSchedule(GetSchedules query)
         {
             var user = _webHelpers.CurrentUser();
             var res = new BaseResponse<List<SchedulesViewModel>>();
             res.Status = true;
             try
             {
-                var day = DateTime.Now.Day;
+                var day = DateTime.Now.Date;
                 // Apply filters based on the query parameters
                 var cos = from schedule in _context.Schedule
                           where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
-                                &&( query.status == Common.Enum.ScheduleStatus.ongoing
-                                        ? (schedule.StartDate.Value.Day == day)
+                                && (query.status == Common.Enum.ScheduleStatus.ongoing
+                                        ? (schedule.StartDate.Value.Date == day)
                                         : query.status == Common.Enum.ScheduleStatus.past
-                                            ? (schedule.StartDate.Value.Day > day)
-                                            : (schedule.StartDate.Value.Day < day))
+                                            ? (schedule.StartDate.Value.Date < day)
+                                            : query.status == Common.Enum.ScheduleStatus.comingsoon
+                                            ? (schedule.StartDate.Value.Date > day)
+                                            : (schedule.StartDate.Value.Date < day && !schedule.CoachAttended))
                                  && schedule.CreatedBy == user
-                                && (query.Scheduled == null || schedule.StartDate.Value.Date ==query.Scheduled.Value.Date)
+                                && (query.Scheduled == null || schedule.StartDate.Value.Date == query.Scheduled.Value.Date)
                           select new SchedulesViewModel
                           {
                               Id = schedule.Id,
@@ -280,5 +282,29 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
+        public async Task<BaseResponse<string>> AttendSchedle(Guid Id)
+        {
+            var userRole = _webHelpers.CurrentUserRole();
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            var schedule = await _context.Schedule.FirstOrDefaultAsync(x => x.Id == Id);
+            if (schedule == null)
+            {
+                res.Message = "schedule not found";
+                res.Status = false;
+                return res;
+            };
+            if (DateTime.Now > schedule.StartDate.Value.AddMinutes(-15) && DateTime.Now < schedule.EndDate.Value )
+            {
+                if (userRole.Equals("Coach"))
+                { schedule.CoachAttended = true; }
+                else
+                { schedule.TeacherAttended = true; }
+            }
+
+            res.Message = "Attendance Successfully Marked";
+            res.Status = true;
+            return res;
+        }
     }
 }

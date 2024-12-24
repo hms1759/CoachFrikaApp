@@ -14,13 +14,11 @@ namespace CoachFrika.APIs.ViewModel
         public int Duration { get; set; }
         public string? MeetingUrl { get; set; }
     }
-    public class GetSchedules
+    public class GetSchedules : Pagination
     {
         public string? Title { get; set; }
         public DateTime? Scheduled { get; set; }
         public ScheduleStatus status { get; set; }
-        public int Pagesize { get; set; }
-        public int PageNumber { get; set; }
 
     }
     public class SchedulesViewModel

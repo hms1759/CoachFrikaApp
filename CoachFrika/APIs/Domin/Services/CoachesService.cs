@@ -10,6 +10,7 @@ using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
 using coachfrikaaaa.Common;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Build.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Crypto.Macs;
@@ -210,13 +211,21 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
-                var cos = from teachers in _context.CoachFrikaUsers
-                          where teachers.CoachId == userId
+                var cos = from teacher in _context.CoachFrikaUsers
+                          where teacher.CoachId == userId
                           select new ProfileDto
                           {
-                              Id = teachers.Id,
-                              Title = teachers.Title,
-                              FullName = teachers.FullName     // Using DateTime.MinValue if EndDate is null
+                              Id = teacher.Id,
+                              Title = teacher.Title,
+                              FullName = teacher.FullName,
+                              ProfessionalTitle = teacher.ProfessionalTitle,
+                              NumbersOfStudents = teacher.NumbersOfStudents,
+                              Description = teacher.Description,
+                              LinkedInUrl = teacher.LinkedInUrl,
+                              FacebookUrl = teacher.FacebookUrl,
+                              TweeterUrl = teacher.TweeterUrl,
+                              Email = teacher.Email,
+                              PhoneNumber = teacher.PhoneNumber   // Using DateTime.MinValue if EndDate is null
                           };
 
                 // Apply pagination using Skip and Take
@@ -228,6 +237,7 @@ namespace CoachFrika.APIs.Domin.Services
                 res.Data = pagedData;
                 res.PageNumber = query.PageNumber;
                 res.PageSize = query.Pagesize;
+                res.TotalCount = cos.Count();
                 return res;
             }
             catch (Exception ex)
@@ -249,18 +259,22 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from coach in _context.CoachFrikaUsers
-                          where string.IsNullOrEmpty(query.Name) || coach.FullName.Contains(query.Name)
+                          where coach.Role == 1 &&
+                          (string.IsNullOrEmpty(query.Name) || coach.FullName.Contains(query.Name))
+                          let numberOfStudent = _context.CoachFrikaUsers.Where(x => x.CoachId == coach.Id).ToList().Count()
                           select new ProfileDto
                           {
                               Id = coach.Id,
                               Title = coach.Title,
                               FullName = coach.FullName,
                               ProfessionalTitle = coach.ProfessionalTitle,
-                              NumbersOfStudents = coach.NumbersOfStudents,
+                              NumbersOfStudents = numberOfStudent,
                               Description = coach.Description,
                               LinkedInUrl = coach.LinkedInUrl,
                               FacebookUrl = coach.FacebookUrl,
-                              TweeterUrl = coach.TweeterUrl
+                              TweeterUrl = coach.TweeterUrl,
+                              Email = coach.Email,
+                              PhoneNumber = coach.PhoneNumber
                               // Using DateTime.MinValue if EndDate is null
                           };
 
@@ -273,6 +287,7 @@ namespace CoachFrika.APIs.Domin.Services
                 res.Data = pagedData;
                 res.PageNumber = query.PageNumber;
                 res.PageSize = query.Pagesize;
+                res.TotalCount = cos.Count();
                 return res;
             }
             catch (Exception ex)

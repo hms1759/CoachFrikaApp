@@ -14,5 +14,6 @@ namespace CoachFrika.APIs.Domin.IServices
         BaseResponse<List<CoursesViewModel>> GetCourses();
         //BaseResponse<List<BatchesViewModel>> GetBatches();
         BaseResponse<List<Schedules>> GetMySchedule();
+        Task<BaseResponse<string>> AttendSchedle(Guid Id);
     }
 }
