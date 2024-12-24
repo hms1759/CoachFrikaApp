@@ -278,11 +278,16 @@ namespace CoachFrika.APIs.Domin.Services
         public BaseResponse<List<SchedulesViewModel>> GetMySchedule(GetSchedules query)
         {
 
-            var user = _webHelpers.CurrentUser();
-            var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == user);
-            if (teach == null) { };
             var res = new BaseResponse<List<SchedulesViewModel>>();
             res.Status = true;
+            var user = _webHelpers.CurrentUser();
+            var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == user);
+            if (teach == null)
+            {
+                res.Message = "User not found";
+                res.Status = false;
+                return res;
+            };
             try
             {
                 var day = DateTime.Now.Day;
@@ -290,7 +295,8 @@ namespace CoachFrika.APIs.Domin.Services
                 var cos = from schedule in _context.Schedule
                           where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
                                && query.status == Common.Enum.ScheduleStatus.ongoing ? (schedule.StartDate.Value.Day == day) : query.status == Common.Enum.ScheduleStatus.past ? (schedule.StartDate.Value.Day > day) : (schedule.StartDate.Value.Day < day)// Assuming you filter based on a scheduled date
-                               && schedule.CoachId == teach.CoachId && schedule.Focus == teach.Subscriptions
+                               && schedule.CoachId == teach.CoachId 
+                               && schedule.Focus == teach.Subscriptions
                           select new SchedulesViewModel
                           {
                               Id = schedule.Id,
@@ -320,6 +326,74 @@ namespace CoachFrika.APIs.Domin.Services
             }
 
         }
+        public BaseResponse<List<SchedulesViewModel>> GetMySchedules(GetSchedules query)
+        {
+            var user = _webHelpers.CurrentUser();
+            var res = new BaseResponse<List<SchedulesViewModel>>();
+            res.Status = true;
+
+            var res = new BaseResponse<List<SchedulesViewModel>>();
+            res.Status = true;
+            var user = _webHelpers.CurrentUser();
+            var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == user);
+            if (teach == null)
+            {
+                res.Message = "User not found";
+                res.Status = false;
+                return res;
+            };
+            if (teach.CoachId == null)
+            {
+                res.Message = "No Schedule Found: Kindly Select A Coach";
+                res.Status = false;
+                return res;
+
+            }
+            try
+            {
+                var day = DateTime.Now.Day;
+                // Apply filters based on the query parameters
+                var cos = from schedule in _context.Schedule
+                          where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
+                                && (query.status == Common.Enum.ScheduleStatus.ongoing
+                                        ? (schedule.StartDate.Value.Day == day)
+                                        : query.status == Common.Enum.ScheduleStatus.past
+                                            ? (schedule.StartDate.Value.Day > day)
+                                            : (schedule.StartDate.Value.Day < day))
+                                  && schedule.CoachId == teach.CoachId
+                               && schedule.Focus == teach.Subscriptions
+                                && (query.Scheduled == null || schedule.StartDate.Value.Date == query.Scheduled.Value.Date)
+                          select new SchedulesViewModel
+                          {
+                              Id = schedule.Id,
+                              Title = schedule.Title,
+                              Focus = schedule.Focus.ToString(),
+                              MeetingUrl = schedule.MeetingLink,
+                              StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
+                              EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
+                          };
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
 
         public async Task<BaseResponse<string>> SelectCoach(Guid CoachId)
         {

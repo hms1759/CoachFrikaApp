@@ -75,11 +75,11 @@ namespace CoachFrika.APIs.Domin.Services
                 // Apply filters based on the query parameters
                 var cos = from schedule in _context.Schedule
                           where (string.IsNullOrEmpty(query.Title) || schedule.Title.Contains(query.Title))
-                                && query.status == Common.Enum.ScheduleStatus.ongoing
+                                &&( query.status == Common.Enum.ScheduleStatus.ongoing
                                         ? (schedule.StartDate.Value.Day == day)
                                         : query.status == Common.Enum.ScheduleStatus.past
                                             ? (schedule.StartDate.Value.Day > day)
-                                            : (schedule.StartDate.Value.Day < day)
+                                            : (schedule.StartDate.Value.Day < day))
                                  && schedule.CreatedBy == user
                                 && (query.Scheduled == null || schedule.StartDate.Value.Date ==query.Scheduled.Value.Date)
                           select new SchedulesViewModel
