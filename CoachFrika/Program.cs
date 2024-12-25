@@ -46,6 +46,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     // Database Context & Identity
     services.AddDbContext<AppDbContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    services.AddScoped<IUnitOfWork, UnitOfWork>();
+    services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
     services.AddIdentity<CoachFrikaUsers, IdentityRole>()
         .AddEntityFrameworkStores<AppDbContext>()
@@ -61,7 +63,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddHttpClient();
     // Service injections
     services.AddHttpContextAccessor();
-    services.AddTransient<IUnitOfWork, UnitOfWork>();
+    services.AddScoped<IUnitOfWork, UnitOfWork>();
+    services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
     services.AddTransient<ILogicService, LogicService>();
     services.AddTransient<IWebHelpers, WebHelpers>();
     services.AddTransient<IJwtService, JwtService>();

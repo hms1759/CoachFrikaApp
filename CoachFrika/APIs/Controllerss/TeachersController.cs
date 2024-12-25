@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoachFrika.APIs.Controllerss
 {
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Teacher")]
     [ApiController]
     public class TeachersController : BaseController
     {

@@ -2,6 +2,7 @@
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
+using CoachFrika.Common.Enum;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
@@ -116,22 +117,21 @@ namespace CoachFrika.APIs.Domin.Services
         }
 
 
-        public async Task<BaseResponse<string>> EditSchedule(CreateScheduleDto model, Guid Id)
+        public BaseResponse<string> EditSchedule(EditScheduleDto model)
         {
 
             var res = new BaseResponse<string>();
             res.Status = true;
             try
             {
-                var schRepository = _unitOfWork.GetRepository<Schedule>();
-                var dto = await schRepository.GetByIdAsync(Id);
+                var dto =  _context.Schedule.FirstOrDefault(x => x.Id == model.Id);
                 dto.Title = model.Title;
                 dto.Focus = model.Focus;
                 dto.StartDate = model.Scheduled;
                 dto.MeetingLink = model.MeetingUrl;
                 dto.EndDate = model.DurationType == Common.Enum.DurationType.Hour ? model.Scheduled.AddHours(model.Duration) : model.Scheduled.AddMinutes(model.Duration);
-                await schRepository.UpdateAsync(dto);
-                await _unitOfWork.SaveChangesAsync();
+               
+                 _context.SaveChanges();
                 return res;
             }
             catch (Exception ex)
@@ -218,8 +218,8 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        //public async Task<BaseResponse<string>> CreateSchedule(SchedulesDto model)
-        //{
+       //public async Task<BaseResponse<string>> CreateSchedule(SchedulesDto model)
+         ////{
         //    var res = new BaseResponse<string>();
         //    res.Status = true;
         //    try
@@ -259,9 +259,9 @@ namespace CoachFrika.APIs.Domin.Services
 
         //    }
         //}
-        public BaseResponse<List<Schedules>> GetMySchedule()
+        public BaseResponse<List<Schedule>> GetMySchedule()
         {
-            var res = new BaseResponse<List<Schedules>>();
+            var res = new BaseResponse<List<Schedule>>();
             res.Status = true;
             try
             {
@@ -282,19 +282,19 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        public async Task<BaseResponse<string>> AttendSchedle(Guid Id)
+        public BaseResponse<string> AttendSchedle(Guid Id)
         {
             var userRole = _webHelpers.CurrentUserRole();
             var res = new BaseResponse<string>();
             res.Status = true;
-            var schedule = await _context.Schedule.FirstOrDefaultAsync(x => x.Id == Id);
+            var schedule =  _context.Schedule.FirstOrDefault(x => x.Id == Id);
             if (schedule == null)
             {
                 res.Message = "schedule not found";
                 res.Status = false;
                 return res;
             };
-            if (DateTime.Now > schedule.StartDate.Value.AddMinutes(-15) && DateTime.Now < schedule.EndDate.Value )
+            if (DateTime.Now > schedule.StartDate.Value.AddMinutes(-15) && DateTime.Now < schedule.EndDate.Value)
             {
                 if (userRole.Equals("Coach"))
                 { schedule.CoachAttended = true; }
@@ -305,6 +305,43 @@ namespace CoachFrika.APIs.Domin.Services
             res.Message = "Attendance Successfully Marked";
             res.Status = true;
             return res;
+        }
+
+        public BaseResponse<SchedulesDto> GetScheduleById(Guid Id)
+        {
+            var res = new BaseResponse<SchedulesDto>();
+            res.Status = true;
+            try
+            {
+                var sch =  _context.Schedule.FirstOrDefault(x => x.Id == Id);
+                if (sch == null)
+                {
+                    res.Message = "schedule not found";
+                    res.Status = false;
+                    return res;
+                };
+                var respose = new SchedulesDto()
+                {
+                    Id = sch.Id,
+                    Title = sch.Title,
+                    Focus = sch.Focus,
+                    Scheduled = sch.StartDate,
+                    EndDate = sch.EndDate,
+                    MeetingUrl = sch.MeetingLink,
+                    CoachAttended = sch.CoachAttended,
+                    TeacherAttended = sch.TeacherAttended
+                    
+                };
+            res.Data = respose;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
         }
     }
 }

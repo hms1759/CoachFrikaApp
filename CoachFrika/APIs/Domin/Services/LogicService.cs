@@ -331,10 +331,10 @@ namespace CoachFrika.APIs.Domin.Services
             res.Data = scharray;
             return res;
         }
-        public BaseResponse<List<Schedules>> GetMySchedule()
+        public BaseResponse<List<Schedule>> GetMySchedule()
         {
 
-            var res = new BaseResponse<List<Schedules>>();
+            var res = new BaseResponse<List<Schedule>>();
             res.Status = true;
             try
             {
