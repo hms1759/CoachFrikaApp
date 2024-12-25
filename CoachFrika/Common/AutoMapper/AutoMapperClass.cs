@@ -14,6 +14,7 @@ namespace CoachFrika.Common.AutoMapper
             var today = DateTime.Now;
             return new ProfileDto
             {
+
                 Id = coachFrikaUser.Id,
                 FullName = coachFrikaUser.FullName,
                 TweeterUrl = coachFrikaUser.TweeterUrl,
@@ -34,7 +35,8 @@ namespace CoachFrika.Common.AutoMapper
                 YearStartExperience = coachFrikaUser.YearStartExperience != null ? today.Year - coachFrikaUser.YearStartExperience.Value.Year: 0,
                 Stages = coachFrikaUser.Stages,
                 CoachId = coachFrikaUser.CoachId,
-                TeacherId = coachFrikaUser.TeacherId
+                TeacherId = coachFrikaUser.TeacherId,
+                ProfileImageUrl = coachFrikaUser.ProfileImageUrl,
             };
         }
 

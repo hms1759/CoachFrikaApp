@@ -46,5 +46,13 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.ChangePassword(model);
             return Ok(result);
         }
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadFile([FromForm]ProfileImgUpload file)
+        {
+            var result = await _accountService.UploadFile(file);
+            return Ok(result);
+           
+        }
     }
+
 }

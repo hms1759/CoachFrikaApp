@@ -21,4 +21,11 @@ namespace CoachFrika.Models
         public string? RequestTopic { get; set; }
         public string? NotificationTopic { get; set; }
     }
+    public class CloudinarySettings
+    {
+        public string? CloudName { get; set; }
+        public string? ApiKey { get; set; }
+        public string? ApiSecret { get; set; }
+    }
+
 }

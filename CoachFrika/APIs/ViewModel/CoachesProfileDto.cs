@@ -52,6 +52,7 @@ namespace CoachFrika.APIs.ViewModel
         public string? InstagramUrl { get; set; }
         public string? FacebookUrl { get; set; }
         public string? PhoneNumber { get; set; }
+        public string? ProfileImageUrl { get; set; }
         public string? Email { get; set; }
         public int Role { get; set; }
         public string? StateOfOrigin { get; set; }

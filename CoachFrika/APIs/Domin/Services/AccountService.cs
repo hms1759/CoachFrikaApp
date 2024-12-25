@@ -10,6 +10,7 @@ using CoachFrika.Models;
 using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -24,13 +25,16 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly IJwtService _jwtService;
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
-        public AccountService(UserManager<CoachFrikaUsers> userManager, SignInManager<CoachFrikaUsers> signInManager, IJwtService jwtService, IEmailService emailService, IWebHelpers webHelpers)
+        private readonly ICloudinaryService _cloudinaryService;
+        public AccountService(UserManager<CoachFrikaUsers> userManager, SignInManager<CoachFrikaUsers> signInManager,
+            IJwtService jwtService, IEmailService emailService, IWebHelpers webHelpers, ICloudinaryService cloudinaryService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
             _emailService = emailService;
             _webHelpers = webHelpers;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<BaseResponse<LoginDetails>> Login(LoginDto login)
@@ -291,5 +295,45 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
+        public async  Task<BaseResponse<string>> UploadFile(ProfileImgUpload model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            if (model.ProfileImage == null || model.ProfileImage.Length == 0)
+            {
+                res.Message = "No file uploaded.";
+                res.Status = false;
+                return res;
+            }
+            if (model.ProfileImage.Length > 0 && model.ProfileImage.Length <= 204800)
+            {
+
+                var email = _webHelpers.CurrentUser();
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    throw new ArgumentException("User not found.");
+                }
+
+                var fileUrl = await _cloudinaryService.UploadFileAsync(model.ProfileImage);
+                if (fileUrl != null)
+                {
+                    user.ProfileImageUrl = fileUrl;
+                   await _userManager.UpdateAsync(user);
+                    res.Data = fileUrl; 
+                    return res;
+                }
+                res.Message = "Error uploading file.";
+                res.Status = false;
+                return res;
+            }
+            else
+            {
+                res.Message = "file most not be higher than 200KB";
+                res.Status = false;
+                return res;
+            }
+
+        }
     }
 }

@@ -1,3 +1,4 @@
+using CloudinaryDotNet;
 using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.Domin.Services;
 using CoachFrika.Common;
@@ -73,6 +74,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<ICoachesService, CoachesService>();
     services.AddTransient<ITeacherService, TeacherService>();
     services.AddTransient<ICousesService, CousesService>();
+    services.AddTransient<ICloudinaryService, CloudinaryService>();
     services.Configure<EmailConfigSettings>(configuration.GetSection("EmailConfig"));
     services.AddSingleton<GoogleSheetsHelper>();
     // Register PaystackService as transient
@@ -81,6 +83,22 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         var httpClient = serviceProvider.GetRequiredService<HttpClient>();
         var paystackSecretKey = configuration["PaystackSecretKey"];  // Get secret key from configuration
         return new PaystackService(httpClient, paystackSecretKey);
+    });
+    
+    // Load Cloudinary configuration from appsettings.json
+    services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
+
+    // Configure Cloudinary
+    services.AddSingleton<Cloudinary>(serviceProvider =>
+    {
+        var cloudinarySettings = serviceProvider.GetRequiredService<IConfiguration>().GetSection("Cloudinary").Get<CloudinarySettings>();
+
+        var account = new Account(
+            cloudinarySettings.CloudName,
+            cloudinarySettings.ApiKey,
+            cloudinarySettings.ApiSecret);
+
+        return new Cloudinary(account);
     });
 
     // Controllers with authorization

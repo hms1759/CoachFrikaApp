@@ -72,4 +72,8 @@ namespace CoachFrika.APIs.ViewModel
         [JsonIgnore]
         public string? logoUrl { get; set; }
     }
+    public class ProfileImgUpload
+    {
+        public IFormFile? ProfileImage { get; set; }
+    }
 }

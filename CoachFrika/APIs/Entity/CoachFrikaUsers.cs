@@ -11,6 +11,7 @@ namespace coachfrikaaaa.APIs.Entity
         public string? LinkedInUrl { get; set; }
         public string? InstagramUrl { get; set; }
         public string? FacebookUrl { get; set; }
+        public string? ProfileImageUrl { get; set; }
         public bool IsDeleted { get; set; }
         public int Role { get; set; }
         public string? SecurityQuestion { get; set; }
