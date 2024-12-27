@@ -102,11 +102,24 @@ namespace CoachFrika.APIs.ViewModel
         public string? Recommendation { get; set; }
 
     }
+    public class TeachersRemark
+    {
+        public Guid Id { get; set; }
+        public string? TeacherRemark { get; set; }
+
+    }
 
     public class GetCoachesRecommendations : Pagination
     {
         public string? ScheduleTitle { get; set; }
         public string? TeachersName { get; set; }
+
+    }
+
+
+    public class GetTeacherRecommendations : Pagination
+    {
+        public string? ScheduleTitle { get; set; }
 
     }
     public class GetCoachesRecommendationResponse 
@@ -115,6 +128,7 @@ namespace CoachFrika.APIs.ViewModel
         public string? ScheduleTitle { get; set; }
         public string? Recommendation { get; set; }
         public string? TeachersName { get; set; }
+        public string? CoachName { get; set; }
         public string? ScheduleId { get; set; }
 
     }

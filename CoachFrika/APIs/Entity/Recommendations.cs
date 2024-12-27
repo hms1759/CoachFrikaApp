@@ -10,5 +10,6 @@ namespace coachfrikaaaa.APIs.Entity
         public string? TeacherId { get; set; }
         public string? ScheduleId { get; set; }
         public Schedule? Schedule { get; set; }
+        public string? TeacherRemark { get; set; }
     }
 }

@@ -456,10 +456,7 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var rec = await _context.Recommendations.FirstOrDefaultAsync(x => x.Id.ToString() == Id);
-                if (rec == null)
-                    throw new NotImplementedException();
-
+                var rec = await _context.Recommendations.FirstOrDefaultAsync(x => x.Id.ToString() == Id) ?? throw new NotImplementedException();
                 res.Data = rec;
                 return res;
             }

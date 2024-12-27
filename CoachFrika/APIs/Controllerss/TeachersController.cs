@@ -80,6 +80,21 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _teacherService.GetTeacherById(Id);
             return Ok(result);
         }
+
+        [HttpGet("GetAllRecommendations")]
+        public async Task<IActionResult> GetAllRecommendations([FromQuery] GetTeacherRecommendations model)
+        {
+            var result = _teacherService.Recommendations(model);
+            return Ok(result);
+        }
+
+        [HttpPut("RecommendationRemark")]
+        public async Task<IActionResult> RecommendationRemark(TeachersRemark model)
+        {
+            var result = await _teacherService.RecommendationRemark(model);
+            return Ok(result);
+        }
+
         //[HttpGet("GetSubject")]
         //public IActionResult GetSubject()
         //{

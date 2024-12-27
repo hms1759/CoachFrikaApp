@@ -15,6 +15,8 @@ namespace CoachFrika.APIs.Domin.IServices
         BaseResponse<List<SchedulesViewModel>> GetMySchedule(GetSchedules query);
         Task<BaseResponse<string>> SelectCoach(Guid CoachId);
         Task<BaseResponse<ProfileDto>> GetTeacherById(string Id);
+        Task<BaseResponse<string>> RecommendationRemark(TeachersRemark model);
+        BaseResponse<List<GetCoachesRecommendationResponse>> Recommendations(GetTeacherRecommendations query);
     }
 }
 

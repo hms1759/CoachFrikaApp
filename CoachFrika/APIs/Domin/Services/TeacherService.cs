@@ -403,5 +403,81 @@ namespace CoachFrika.APIs.Domin.Services
             }
 
         }
+
+        public BaseResponse<List<GetCoachesRecommendationResponse>> Recommendations(GetTeacherRecommendations query)
+        {
+            var userId = _webHelpers.CurrentUserId();
+            var res = new BaseResponse<List<GetCoachesRecommendationResponse>>();
+            res.Status = true;
+            try
+            {
+                // Apply filters based on the query parameters
+                var cos = from rec in _context.Recommendations
+                          join coach in _context.CoachFrikaUsers on rec.CoachId equals coach.Id
+                          join schd in _context.Schedule on rec.ScheduleId equals schd.Id.ToString()
+
+                          where rec.TeacherId == userId
+                          && (string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
+                          select new GetCoachesRecommendationResponse
+                          {
+                              Id = rec.Id.ToString(),
+                              CoachName  = coach.FullName,
+                              ScheduleTitle = schd.Title,
+                              Recommendation = rec.Recommendation,
+                              ScheduleId = rec.ScheduleId,
+
+                          };
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                res.TotalCount = cos.Count();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        public async Task<BaseResponse<string>> RecommendationRemark(TeachersRemark model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var recomm = await _context.Recommendations.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+
+                if (recomm == null)
+                {
+                    res.Status = false;
+                    res.Message = "schedule not found";
+                    return res;
+                }
+                recomm.TeacherRemark = model.TeacherRemark;
+
+                _context.Recommendations.Update(recomm);
+                await _context.SaveChangesAsync();
+                return res;
+
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+            }
+        }
+
     }
 }
