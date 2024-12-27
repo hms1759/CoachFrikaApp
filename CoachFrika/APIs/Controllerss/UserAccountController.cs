@@ -53,6 +53,13 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
            
         }
+
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            var result = await _accountService.ResetPassword(model);
+            return Ok(result);
+        }
     }
 
 }

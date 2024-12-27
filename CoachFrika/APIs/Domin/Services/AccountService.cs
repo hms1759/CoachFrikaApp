@@ -155,7 +155,6 @@ namespace CoachFrika.APIs.Domin.Services
 
         public async Task<BaseResponse<string>> ForgetPassword(string email, string logoUrl)
         {
-                var defaultPassword = GeneratePassword();
             var res = new BaseResponse<string>();
             res.Status = true;
             try
@@ -166,6 +165,7 @@ namespace CoachFrika.APIs.Domin.Services
                     throw new ArgumentException("User not found.");
                 }
 
+                var defaultPassword = GeneratePassword();
 
                 var resetResult = await _userManager.RemovePasswordAsync(user);
                 if (!resetResult.Succeeded)
@@ -179,6 +179,8 @@ namespace CoachFrika.APIs.Domin.Services
                     throw new InvalidOperationException("Failed to set the new password.");
                 }
 
+                user.IsPasswordDefault = true;
+                await _userManager.UpdateAsync(user);
                 // Optionally send the password via email
                 await SendPasswordResetEmail(user, defaultPassword, logoUrl);
                 res.Message = "Successful";
@@ -336,6 +338,44 @@ namespace CoachFrika.APIs.Domin.Services
                 return res;
             }
 
+        }
+
+        public async Task<BaseResponse<string>> ResetPassword(ResetPasswordDto model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var email = _webHelpers.CurrentUser();
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    throw new ArgumentException("User not found.");
+                }
+                var resetResult = await _userManager.RemovePasswordAsync(user);
+                if (!resetResult.Succeeded)
+                {
+                    throw new InvalidOperationException("Failed to remove the old password.");
+                }
+
+                var resultss = await _userManager.AddPasswordAsync(user, model.NewPassword);
+                if (!resultss.Succeeded)
+                {
+                    throw new InvalidOperationException("Failed to set the new password.");
+                }
+
+                user.IsPasswordDefault = false;
+                await _userManager.UpdateAsync(user);
+                res.Message = "Successful";
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
         }
     }
 }

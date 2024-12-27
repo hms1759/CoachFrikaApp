@@ -1,6 +1,7 @@
 ﻿using CoachFrika.Common.Enum;
 using coachfrikaaaa.APIs.Entity;
 using coachfrikaaaa.Common;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace CoachFrika.APIs.ViewModel
@@ -25,10 +26,17 @@ namespace CoachFrika.APIs.ViewModel
         public string? ExpiredTime { get; set; }
     }
 
-    public class ChangePasswordDto
+    public class ChangePasswordDto : ResetPasswordDto
     {
         public string? OldPassword { get; set; }
+    }
+
+    public class ResetPasswordDto
+    {
+        [Required(ErrorMessage = "New password is required.")]
         public string? NewPassword { get; set; }
+        [Required(ErrorMessage = "New Confirm Password is required.")]
+        [Compare("NewPassword", ErrorMessage = "The password and confirmation password do not match.")]
         public string? ConfirmPassword { get; set; }
     }
     public class PublicCountDto
