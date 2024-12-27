@@ -21,6 +21,7 @@ namespace coachfrikaaaa.Common
         //public DbSet<Batches> Batches { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
         public DbSet<ChildSponsor> ChildSponsor { get; set; }
+        public DbSet<Recommendations> Recommendations { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options, IWebHelpers webHelpers = null) : base(options)
         {

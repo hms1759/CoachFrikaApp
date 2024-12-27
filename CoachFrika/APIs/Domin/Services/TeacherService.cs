@@ -2,6 +2,7 @@
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
+using CoachFrika.Common.AutoMapper;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
@@ -377,6 +378,30 @@ namespace CoachFrika.APIs.Domin.Services
                 return res;
 
             }
+        }
+        public async Task<BaseResponse<ProfileDto>> GetTeacherById(string Id)
+        {
+            var res = new BaseResponse<ProfileDto>();
+            res.Status = true;
+            try
+            {
+                var coach = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Id == Id);
+                if (coach == null)
+                    throw new NotImplementedException();
+
+                var profile = ProfileMapper.MapToProfileDto(coach);
+                res.Data = profile;
+                res.Status = false;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
         }
     }
 }

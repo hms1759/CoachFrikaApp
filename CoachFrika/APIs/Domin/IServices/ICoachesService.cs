@@ -1,5 +1,6 @@
 ﻿using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
+using coachfrikaaaa.APIs.Entity;
 
 namespace CoachFrika.APIs.Domin.IServices
 {
@@ -13,6 +14,10 @@ namespace CoachFrika.APIs.Domin.IServices
         BaseResponse<List<ProfileDto>> MyTeachers(GetTeachers model);
         BaseResponse<List<ProfileDto>> GetAllCoaches(GetAllCoaches query);
         Task<BaseResponse<ProfileDto>> GetCoachById(string Id);
+        Task<BaseResponse<string>> AddRecomendations(CoachRecommendation model);
+        Task<BaseResponse<string>> EditRecommendation(EditRecommendation model);
+        BaseResponse<List<GetCoachesRecommendationResponse>> Recommendations(GetCoachesRecommendations query);
+        Task<BaseResponse<Recommendations>> GetRecommendationById(string Id);
     }
 }
 

@@ -74,6 +74,12 @@ namespace CoachFrika.APIs.Controllerss
             var result = _teacherService.SelectCoach(CoachId);
             return Ok(result);
         }
+        [HttpGet("GetTeacherById")]
+        public async Task<IActionResult> GetTeacherById([FromQuery] string Id)
+        {
+            var result = await _teacherService.GetTeacherById(Id);
+            return Ok(result);
+        }
         //[HttpGet("GetSubject")]
         //public IActionResult GetSubject()
         //{

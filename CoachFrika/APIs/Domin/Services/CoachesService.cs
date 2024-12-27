@@ -312,9 +312,157 @@ namespace CoachFrika.APIs.Domin.Services
 
                 var profile = ProfileMapper.MapToProfileDto(coach);
                 res.Data = profile;
-                res.Status = false;
                 return res;
             } 
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        public async Task<BaseResponse<string>> AddRecomendations(CoachRecommendation model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var userId = _webHelpers.CurrentUserId();
+                if (string.IsNullOrEmpty(userId))
+                {
+                    res.Status = false;
+                    res.Message = "Login User not found";
+                    return res;
+                }
+                var schedule = await _context.Schedule.Where(x => x.Id == model.ScheduleId).FirstOrDefaultAsync();
+
+                if (schedule == null)
+                {
+                    res.Status = false;
+                    res.Message = "schedule not found";
+                    return res;
+                }
+
+                var teach = await _context.CoachFrikaUsers.Where(x => x.CoachId == userId && x.Subscriptions == schedule.Focus).FirstOrDefaultAsync();
+                if (teach == null)
+                {
+                    res.Status = false;
+                    res.Message = "Teacher not found";
+                    return res;
+                }
+                var recom = new Recommendations()
+                {
+                    CoachId = userId,
+                    TeacherId = teach.Id,
+                    ScheduleId = schedule.Id.ToString(),
+                    Recommendation = model.Recommendation
+
+                };
+                _context.Recommendations.Add(recom);
+                await _context.SaveChangesAsync();
+                return res;
+
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+            }
+        }
+
+        public async Task<BaseResponse<string>> EditRecommendation(EditRecommendation model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var recomm = await _context.Recommendations.Where(x => x.Id == model.Id).FirstOrDefaultAsync();
+
+                if (recomm == null)
+                {
+                    res.Status = false;
+                    res.Message = "schedule not found";
+                    return res;
+                }
+                recomm.Recommendation = model.Recommendation;
+               
+                _context.Recommendations.Update(recomm);
+                await _context.SaveChangesAsync();
+                return res;
+
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+            }
+        }
+
+        public BaseResponse<List<GetCoachesRecommendationResponse>> Recommendations(GetCoachesRecommendations query)
+        {
+            var userId = _webHelpers.CurrentUserId();
+            var res = new BaseResponse<List<GetCoachesRecommendationResponse>>();
+            res.Status = true;
+            try
+            {
+                // Apply filters based on the query parameters
+                var cos = from rec in _context.Recommendations
+                          join teach in _context.CoachFrikaUsers on rec.TeacherId equals teach.Id
+                          join schd in _context.Schedule on rec.ScheduleId equals schd.Id.ToString()
+
+                          where rec.CoachId == userId
+                          && (string.IsNullOrEmpty(query.TeachersName) || teach.FullName.Contains(query.TeachersName))
+                          && (string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
+                          select new GetCoachesRecommendationResponse
+                          {
+                              Id = rec.Id.ToString(),
+                              TeachersName = teach.FullName,
+                              ScheduleTitle = schd.Title,
+                              Recommendation = rec.Recommendation,
+                              ScheduleId = rec.ScheduleId,
+
+                          };
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                res.TotalCount = cos.Count();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        public async Task<BaseResponse<Recommendations>> GetRecommendationById(string Id)
+        {
+            var res = new BaseResponse<Recommendations>();
+            res.Status = true;
+            try
+            {
+                var rec = await _context.Recommendations.FirstOrDefaultAsync(x => x.Id.ToString() == Id);
+                if (rec == null)
+                    throw new NotImplementedException();
+
+                res.Data = rec;
+                return res;
+            }
             catch (Exception ex)
             {
                 res.Message = ex.Message;

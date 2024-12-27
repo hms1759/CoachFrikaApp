@@ -2,6 +2,7 @@
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
+using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoachFrika.APIs.Controllerss
 {
     [Route("api/[controller]")]
-    [AllowAnonymous]
     [ApiController]
     public class CoachesController : BaseController
     {
@@ -51,7 +51,6 @@ namespace CoachFrika.APIs.Controllerss
         }
 
 
-        [Authorize]
         [HttpGet("MyTeachers")]
         public IActionResult MyTeachers([FromQuery]GetTeachers model)
         {
@@ -59,7 +58,6 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
-        [Authorize]
         [HttpGet("GetAllCoaches")]
         public async Task<IActionResult> GetAllCoaches([FromQuery] GetAllCoaches model)
         {
@@ -67,11 +65,39 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
-        [Authorize]
         [HttpGet("GetCoacheById")]
         public async Task<IActionResult> GetCoacheById([FromQuery] string Id)
         {
             var result = await _coachesService.GetCoachById(Id);
+            return Ok(result);
+        }
+
+        [HttpPost("AddTeachersRecomendatins")]
+        public async Task<IActionResult> AddRecomendatins(CoachRecommendation model)
+        {
+            var result = await _coachesService.AddRecomendations(model);
+            return Ok(result);
+        }
+
+        [HttpPut("EditRecommendation")]
+        public async Task<IActionResult> EditRecommendation(EditRecommendation model)
+        {
+            var result = await _coachesService.EditRecommendation(model);
+            return Ok(result);
+        }
+
+        [HttpGet("GetAllRecommendations")]
+        public async Task<IActionResult> GetAllRecommendations([FromQuery] GetCoachesRecommendations model)
+        {
+            var result = _coachesService.Recommendations(model);
+            return Ok(result);
+        }
+
+
+        [HttpGet("GetRecommendationById")]
+        public async Task<IActionResult> GetRecommendationById([FromQuery] string Id)
+        {
+            var result = await _coachesService.GetRecommendationById(Id);
             return Ok(result);
         }
     }

@@ -88,4 +88,34 @@ namespace CoachFrika.APIs.ViewModel
         public int PageNumber { get; set; } = 1;
 
     }
+
+    public class CoachRecommendation
+    {
+        public Guid? ScheduleId { get; set; }
+        public string? Recommendation { get; set; }
+
+    }
+
+    public class EditRecommendation
+    {
+        public Guid Id { get; set; }
+        public string? Recommendation { get; set; }
+
+    }
+
+    public class GetCoachesRecommendations : Pagination
+    {
+        public string? ScheduleTitle { get; set; }
+        public string? TeachersName { get; set; }
+
+    }
+    public class GetCoachesRecommendationResponse 
+    {
+        public string? Id { get; set; }
+        public string? ScheduleTitle { get; set; }
+        public string? Recommendation { get; set; }
+        public string? TeachersName { get; set; }
+        public string? ScheduleId { get; set; }
+
+    }
 }
