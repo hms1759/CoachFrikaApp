@@ -33,7 +33,7 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
         [AllowAnonymous]
-        [HttpPut("ForgetPassword")]
+        [HttpPost("ForgetPassword")]
         public async Task<IActionResult> ForgetPassword([FromBody] SubscriptionDto model)
         {
             var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
