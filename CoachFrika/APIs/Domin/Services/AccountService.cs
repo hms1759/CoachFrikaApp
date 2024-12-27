@@ -155,6 +155,7 @@ namespace CoachFrika.APIs.Domin.Services
 
         public async Task<BaseResponse<string>> ForgetPassword(string email, string logoUrl)
         {
+                var defaultPassword = GeneratePassword();
             var res = new BaseResponse<string>();
             res.Status = true;
             try
@@ -165,7 +166,6 @@ namespace CoachFrika.APIs.Domin.Services
                     throw new ArgumentException("User not found.");
                 }
 
-                var defaultPassword = GeneratePassword();
 
                 var resetResult = await _userManager.RemovePasswordAsync(user);
                 if (!resetResult.Succeeded)
@@ -195,7 +195,6 @@ namespace CoachFrika.APIs.Domin.Services
 
         private async Task SendPasswordResetEmail(CoachFrikaUsers user, string newPassword, string logoUrl)
         {
-            // Use an email service (SMTP, SendGrid, etc.) to send the new password to the user
             var subject = "Your password has been reset";
             var body = $"Your password has been reset. Your new password is: {newPassword}";
 
@@ -214,14 +213,16 @@ namespace CoachFrika.APIs.Domin.Services
 
             await _emailService.SendEmail(message);
         }
-
         public string GeneratePassword(int length = 12)
         {
             // Character sets for password generation
             const string lowerCaseChars = "abcdefghijklmnopqrstuvwxyz";
             const string upperCaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const string digits = "0123456789";
-            const string specialChars = "!@#$%^&*()-_+=<>?";
+            const string specialChars = "@";
+
+            // Predefined words for password generation (like "HomeComing")
+            var predefinedWords = new string[] { "HomeComing", "WinterBreak", "SummerFun", "Spring2024" };
 
             // Ensure the password meets the minimum length of 8 characters
             if (length < 8)
@@ -231,18 +232,20 @@ namespace CoachFrika.APIs.Domin.Services
 
             var random = new Random();
 
-            // Ensure that we have at least one character from each category
-            var password = new StringBuilder();
-            password.Append(lowerCaseChars[random.Next(lowerCaseChars.Length)]);
-            password.Append(upperCaseChars[random.Next(upperCaseChars.Length)]);
-            password.Append(digits[random.Next(digits.Length)]);
-            password.Append(specialChars[random.Next(specialChars.Length)]);
+            // Start by picking a random predefined word
+            string password = predefinedWords[random.Next(predefinedWords.Length)];
 
-            // Fill the rest of the password length with random characters from all sets
+            // Add a random special character to enhance complexity
+            password += specialChars[random.Next(specialChars.Length)];
+
+            // Add a random digit at the end
+            password += digits[random.Next(digits.Length)];
+
+            // If the password length is still less than the desired length, fill with random characters
             var allChars = lowerCaseChars + upperCaseChars + digits + specialChars;
-            for (int i = password.Length; i < length; i++)
+            while (password.Length < length)
             {
-                password.Append(allChars[random.Next(allChars.Length)]);
+                password += allChars[random.Next(allChars.Length)];
             }
 
             // Shuffle the characters to randomize the order
@@ -252,7 +255,6 @@ namespace CoachFrika.APIs.Domin.Services
 
             return new string(shuffledPassword);
         }
-
         public async Task<BaseResponse<string>> ChangePassword(ChangePasswordDto model)
         {
             var res = new BaseResponse<string>();
