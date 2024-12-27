@@ -219,7 +219,7 @@ namespace CoachFrika.APIs.Domin.Services
             const string lowerCaseChars = "abcdefghijklmnopqrstuvwxyz";
             const string upperCaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const string digits = "0123456789";
-            const string specialChars = "@";
+            const string specialChars = "!@$?";
 
             // Predefined words for password generation (like "HomeComing")
             var predefinedWords = new string[] { "HomeComing", "WinterBreak", "SummerFun", "Spring2024" };
