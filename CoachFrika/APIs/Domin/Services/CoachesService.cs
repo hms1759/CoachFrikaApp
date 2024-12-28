@@ -261,7 +261,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var cos = from coach in _context.CoachFrikaUsers
                           where coach.Role == 1 &&
                           (string.IsNullOrEmpty(query.Name) || coach.FullName.Contains(query.Name))
-                          let numberOfStudent = _context.CoachFrikaUsers.Where(x => x.CoachId == coach.Id).ToList().Count()
+                          let numberOfStudent = _context.CoachFrikaUsers.Where(x => x.CoachId == coach.Id).Count()
                           select new ProfileDto
                           {
                               Id = coach.Id,
