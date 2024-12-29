@@ -57,7 +57,7 @@ namespace CoachFrika.APIs.Controllerss
             var result =  _coachesService.MyTeachers(model);
             return Ok(result);
         }
-        [AllowAnonymous]
+
         [HttpGet("GetAllCoaches")]
         public async Task<IActionResult> GetAllCoaches([FromQuery] GetAllCoaches model)
         {
