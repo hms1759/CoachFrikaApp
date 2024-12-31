@@ -32,7 +32,7 @@ namespace CoachFrika.Common.Extension
                 return name;
             }
 
-            throw new NotImplementedException("User not found");
+            return null;
         }
 
         public string CurrentUserId()
@@ -45,7 +45,7 @@ namespace CoachFrika.Common.Extension
                 nameIdentifier = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 return nameIdentifier;
             }
-            throw new NotImplementedException("User not found");
+            return null;
         }
 
         public string CurrentUserRole()
@@ -61,7 +61,7 @@ namespace CoachFrika.Common.Extension
                 return role;
             }
 
-            throw new NotImplementedException("User not found");
+            return null;
         }
 
     }

@@ -141,7 +141,6 @@ namespace CoachFrika.APIs.Domin.Services
                 return res;
 
             }
-            throw new NotImplementedException();
         }
         //public async Task<BaseResponse<string>> CreateBatches(BatchesDto model)
         //{
@@ -228,14 +227,14 @@ namespace CoachFrika.APIs.Domin.Services
         //        var checkBatch = await BatchRepository.GetByIdAsync(model.BatcheId);
         //        if (checkBatch == null)
         //        {
-        //            throw new NotImplementedException($"Batch with {model.BatcheId} not found");
+        //            res.Message = $"Batch with {model.BatcheId} not found");
 
         //        }
         //        var courseRepository = _unitOfWork.GetRepository<Batches>();
         //        var courseBatch = await courseRepository.GetByIdAsync(model.CourseId);
         //        if (courseBatch == null)
         //        {
-        //            throw new NotImplementedException($"Course with {model.CourseId} not found");
+        //            res.Message = $"Course with {model.CourseId} not found");
 
         //        }
         //        var dto = new Schedules();

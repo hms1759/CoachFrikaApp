@@ -46,13 +46,17 @@ namespace CoachFrika.APIs.Domin.Services
                 var phoneNumberValid = Validators.ValidatePhoneNumber(model.ContactPersonPhoneNumber);
                 if (!phoneNumberValid)
                 {
-                    throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                    res.Message = "Phone number must be in the format: 0800 000 0000";
+                    res.Status = false;
+                    return res;
                 }
                 // Validate email format
                 var emailValid = Validators.ValidateEmail(model.ContactPersonEmail);
                 if (!emailValid)
                 {
-                    throw new ArgumentException("Invalid email format.");
+                    res.Message = "Invalid email format.";
+                    res.Status = false;
+                    return res;
                 }
                 dto.ContactPersonEmail = model.ContactPersonEmail;
                 dto.ContactPersonPhoneNumber = model.ContactPersonPhoneNumber;
@@ -102,13 +106,17 @@ namespace CoachFrika.APIs.Domin.Services
                 var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
                 if (!phoneNumberValid)
                 {
-                    throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                    res.Message = "Phone number must be in the format: 0800 000 0000";
+                    res.Status = false;
+                    return res;
                 }
                 // Validate email format
                 var emailValid = Validators.ValidateEmail(model.Email);
                 if (!emailValid)
                 {
-                    throw new ArgumentException("Invalid email format.");
+                    res.Message = "Invalid email format.";
+                    res.Status = false;
+                    return res;
                 }
                 var dto = new coachfrikaaaa.APIs.Entity.ContactUs();
                 dto.Email = model.Email;
@@ -158,7 +166,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var schcount = await _context.SchoolEnrollmentRequest.Where(x=> x.isSubscribed).ToListAsync();
                 var usercount = await _context.CoachFrikaUsers.Where(x => x.Role == 1 || x.Role == 0).ToListAsync();
                 //if (usercount.Count() >1)
-                //    throw new NotImplementedException("User not found");
+                //    res.Message = "User not found");
                 var dto = new PublicCountDto();
                 // Get count of users with Coach role
                 dto.CoachesCount = usercount.Where(x => x.Role == 1).Count();
@@ -190,7 +198,9 @@ namespace CoachFrika.APIs.Domin.Services
                 var emailValid = Validators.ValidateEmail(model.Email);
                 if (!emailValid)
                 {
-                    throw new ArgumentException("Invalid email format.");
+                    res.Message = "Invalid email format.";
+                    res.Status = false;
+                    return res;
                 }
                 var dto = new NewsSubscription();
                 dto.Email = model.Email;
@@ -306,7 +316,7 @@ namespace CoachFrika.APIs.Domin.Services
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException();
+                return null;
             }
         }
 
@@ -370,13 +380,17 @@ namespace CoachFrika.APIs.Domin.Services
                 var phoneNumberValid = Validators.ValidatePhoneNumber(model.SponsorPhoneNumber);
                 if (!phoneNumberValid)
                 {
-                    throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                    res.Message = "Phone number must be in the format: 0800 000 0000";
+                    res.Status = false;
+                    return res;
                 }
                 // Validate email format
                 var emailValid = Validators.ValidateEmail(model.SponsorEmail);
                 if (!emailValid)
                 {
-                    throw new ArgumentException("Invalid email format.");
+                    res.Message = "Invalid email format.";
+                    res.Status = false;
+                    return res;
                 }
                 dto.SponsorPhoneNumber = model.SponsorPhoneNumber;
                 dto.SponsorEmail = model.SponsorEmail;
