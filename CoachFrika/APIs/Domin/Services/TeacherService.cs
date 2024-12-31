@@ -241,40 +241,45 @@ namespace CoachFrika.APIs.Domin.Services
                     Subscriptions.Transformational => _subscrib.Transformational,
                     _ => 0 // default value if none of the above match
                 };
-                var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
 
-                if (transactionUrl != null)
-                {
-                    var obj = transactionUrl.Data;
-                    if (transactionUrl.Status)
-                    {
-                    detail.Subscriptions = model.Subscription;
-                    detail.Stages = 6;
+                detail.Subscriptions = model.Subscription;
+                detail.Stages = 6;
+                /*var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
 
-                        var payment = new Payment()
-                        {
-                            Amount = amount,
-                            Subscription = sub,
-                            Paymentrefernce = obj.reference,
-                            CreatedBy = user,
-                            CreatedDate = DateTime.UtcNow
+                 if (transactionUrl != null)
+                 {
+                     var obj = transactionUrl.Data;
+                     if (transactionUrl.Status)
+                     {
+                     detail.Subscriptions = model.Subscription;
+                     detail.Stages = 6;
 
-                        };
-                        _context.Payment.Add(payment);
-                        await _context.SaveChangesAsync();
-                    res.Data = obj.authorization_url;
-                    return res; 
-                    }
+                         var payment = new Payment()
+                         {
+                             Amount = amount,
+                             Subscription = sub,
+                             Paymentrefernce = obj.reference,
+                             CreatedBy = user,
+                             CreatedDate = DateTime.UtcNow
 
-
-                    res.Message = transactionUrl.Message;
-                    res.Status = false;
-                    return res;
-                }
+                         };
+                         _context.Payment.Add(payment);
+                         await _context.SaveChangesAsync();
+                     res.Data = obj.authorization_url;
+                     return res; 
+                     }
 
 
-                res.Message ="Error Occur: contact The Administration";
-                res.Status = false;
+                     res.Message = transactionUrl.Message;
+                     res.Status = false;
+                     return res;
+                 }
+
+
+                 res.Message ="Error Occur: contact The Administration";
+                 res.Status = false;
+                 return res;*/
+               
                 return res;
 
             }
