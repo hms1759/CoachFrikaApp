@@ -226,7 +226,7 @@ namespace CoachFrika.APIs.Domin.Services
                 }
 
                 var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == user);
-
+                detail.Subscriptions = model.Subscription;
                 detail.Stages = 6;
                 await _context.SaveChangesAsync();
                 return res;
