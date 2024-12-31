@@ -67,11 +67,11 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
-
-        [HttpGet("SelectCoach")]
-        public IActionResult SelectCoach([FromQuery] Guid CoachId)
+        [AllowAnonymous]
+        [HttpPut("SelectCoach")]
+        public async Task<IActionResult> SelectCoach([FromQuery] Guid CoachId)
         {
-            var result = _teacherService.SelectCoach(CoachId);
+            var result = await _teacherService.SelectCoach(CoachId);
             return Ok(result);
         }
         [HttpGet("GetTeacherById")]
