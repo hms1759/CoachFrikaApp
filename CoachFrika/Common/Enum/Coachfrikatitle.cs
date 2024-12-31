@@ -28,4 +28,11 @@
         Personalized
 
     }
+    public enum PaymentStatus
+    { 
+        Pending,
+        Approved,
+        Cancelled
+    }
+
 }

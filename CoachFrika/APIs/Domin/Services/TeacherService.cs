@@ -1,8 +1,11 @@
-﻿using CoachFrika.APIs.Domin.IServices;
+﻿using CloudinaryDotNet;
+using CoachFrika.APIs.Domin.IServices;
+using CoachFrika.APIs.Entity;
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
 using CoachFrika.Common.AutoMapper;
+using CoachFrika.Common.Enum;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
@@ -29,14 +32,19 @@ namespace CoachFrika.APIs.Domin.Services
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
         private readonly UserManager<CoachFrikaUsers> _userManager;
+        private readonly IPaystackService _paystackService;
+        private readonly SubscriptionsConfigSettings _subscrib;
         public TeacherService(IUnitOfWork unitOfWork,
             AppDbContext context,
             IWebHelpers webHelpers,
-            UserManager<CoachFrikaUsers> userManager)
+            UserManager<CoachFrikaUsers> userManager, IOptions<SubscriptionsConfigSettings> subscrib,
+            IPaystackService paystackService)
         {
             _context = context;
             _webHelpers = webHelpers;
             _userManager = userManager;
+            _subscrib = subscrib.Value;
+            _paystackService = paystackService;
         }
         public async Task<BaseResponse<string>> CreateStage1(TitleDto model)
         {
@@ -224,12 +232,51 @@ namespace CoachFrika.APIs.Domin.Services
                     res.Message = "User not found";
                     return res;
                 }
-
+                var sub = model.Subscription;
                 var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == user);
-                detail.Subscriptions = model.Subscription;
-                detail.Stages = 6;
-                await _context.SaveChangesAsync();
+                var amount = model.Subscription switch
+                {
+                    Subscriptions.Intentional => _subscrib.Intentional,
+                    Subscriptions.Phenomenal => _subscrib.Phenomenal,
+                    Subscriptions.Transformational => _subscrib.Transformational,
+                    _ => 0 // default value if none of the above match
+                };
+                var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
+
+                if (transactionUrl != null)
+                {
+                    var obj = transactionUrl.Data;
+                    if (transactionUrl.Status)
+                    {
+                    detail.Subscriptions = model.Subscription;
+                    detail.Stages = 6;
+
+                        var payment = new Payment()
+                        {
+                            Amount = amount,
+                            Subscription = sub,
+                            Paymentrefernce = obj.reference,
+                            CreatedBy = user,
+                            CreatedDate = DateTime.UtcNow
+
+                        };
+                        _context.Payment.Add(payment);
+                        await _context.SaveChangesAsync();
+                    res.Data = obj.authorization_url;
+                    return res; 
+                    }
+
+
+                    res.Message = transactionUrl.Message;
+                    res.Status = false;
+                    return res;
+                }
+
+
+                res.Message ="Error Occur: contact The Administration";
+                res.Status = false;
                 return res;
+
             }
             catch (Exception ex)
             {
