@@ -26,17 +26,21 @@ namespace CoachFrika.APIs.ViewModel
         public string? ExpiredTime { get; set; }
     }
 
-    public class ChangePasswordDto : ResetPasswordDto
+    public class ChangePasswordDto 
     {
         public string? OldPassword { get; set; }
+        public string? NewPassword { get; set; }
     }
 
     public class ResetPasswordDto
     {
-        [Required(ErrorMessage = "New password is required.")]
-        public string? NewPassword { get; set; }
+        [Required(ErrorMessage = "Password is required.")]
+        public string? Password { get; set; }
+        public string? Email { get; set; }
+        public string? DefaultPassword { get; set; }
+
         [Required(ErrorMessage = "New Confirm Password is required.")]
-        [Compare("NewPassword", ErrorMessage = "The password and confirmation password do not match.")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string? ConfirmPassword { get; set; }
     }
     public class PublicCountDto

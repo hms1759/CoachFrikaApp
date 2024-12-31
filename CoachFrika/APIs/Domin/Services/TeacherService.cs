@@ -85,7 +85,9 @@ namespace CoachFrika.APIs.Domin.Services
                 var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
                 if (!phoneNumberValid)
                 {
-                    throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                    res.Message = "Phone number must be in the format: 0800 000 0000";
+                    res.Status = false;
+                    return res;
                 }
 
                 // Check if the phone number already exists
@@ -93,7 +95,9 @@ namespace CoachFrika.APIs.Domin.Services
                     .FirstOrDefaultAsync(u => u.Email == user);
                 if (detail == null)
                 {
-                    throw new ArgumentException("An account does not exists.");
+                    res.Message = "An account does not exists.";
+                    res.Status = false;
+                    return res;
                 }
 
                 var dateofwork = DateTime.Now.AddYears(-model.YearOfExperience);
@@ -387,7 +391,11 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 var coach = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Id == Id);
                 if (coach == null)
-                    throw new NotImplementedException();
+                {
+                    res.Message = "Teacher not found";
+                    res.Status = false;
+                    return res;
+                }
 
                 var profile = ProfileMapper.MapToProfileDto(coach);
                 res.Data = profile;
@@ -421,7 +429,7 @@ namespace CoachFrika.APIs.Domin.Services
                           select new GetCoachesRecommendationResponse
                           {
                               Id = rec.Id.ToString(),
-                              CoachName  = coach.FullName,
+                              CoachName = coach.FullName,
                               ScheduleTitle = schd.Title,
                               Recommendation = rec.Recommendation,
                               ScheduleId = rec.ScheduleId,

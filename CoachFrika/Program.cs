@@ -76,6 +76,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<ICousesService, CousesService>();
     services.AddTransient<ICloudinaryService, CloudinaryService>();
     services.Configure<EmailConfigSettings>(configuration.GetSection("EmailConfig"));
+    services.Configure<UiSiteConfigSettings>(configuration.GetSection("UiSiteConfig"));
     services.AddSingleton<GoogleSheetsHelper>();
     // Register PaystackService as transient
     services.AddTransient<IPaystackService>(serviceProvider =>

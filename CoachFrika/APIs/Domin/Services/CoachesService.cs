@@ -83,15 +83,19 @@ namespace CoachFrika.APIs.Domin.Services
                     var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
                     if (!phoneNumberValid)
                     {
-                        throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
-                    }
+                        res.Message = "Phone number must be in the format: 0800 000 0000";
+                    res.Status = false;
+                    return res;
+                }
 
                 // Check if the phone number already exists
                 var detail = await _userManager.Users
                     .FirstOrDefaultAsync(u => u.Email == user);
                 if (detail == null)
                 {
-                    throw new ArgumentException("An account does not exists.");
+                    res.Message = "An account does not exists.";
+                    res.Status = false;
+                    return res;
                 }
 
                 var dateofwork = DateTime.Now.AddYears(-model.YearOfExperience);
@@ -119,8 +123,8 @@ namespace CoachFrika.APIs.Domin.Services
                 var user = _webHelpers.CurrentUser();
                 if (user == null)
                 {
-                    res.Status = false;
                     res.Message = "User not found";
+                    res.Status = false;
                     return res;
                 }
 
@@ -308,7 +312,11 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 var coach = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Id == Id);
                 if (coach == null)
-                    throw new NotImplementedException();
+                {
+                    res.Message = "Coach not found";
+                    res.Status = false;
+                    return res;
+                }
 
                 var profile = ProfileMapper.MapToProfileDto(coach);
                 res.Data = profile;
@@ -456,7 +464,14 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var rec = await _context.Recommendations.FirstOrDefaultAsync(x => x.Id.ToString() == Id) ?? throw new NotImplementedException();
+                var rec = await _context.Recommendations.FirstOrDefaultAsync(x => x.Id.ToString() == Id);
+                if (rec != null)
+                {
+                    res.Message = "Recommendations not found";
+                    res.Status = false;
+                    return res;
+                }
+
                 res.Data = rec;
                 return res;
             }

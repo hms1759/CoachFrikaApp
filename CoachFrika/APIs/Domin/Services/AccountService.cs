@@ -12,6 +12,7 @@ using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.RegularExpressions;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
@@ -26,14 +27,16 @@ namespace CoachFrika.APIs.Domin.Services
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
         private readonly ICloudinaryService _cloudinaryService;
+        private readonly UiSiteConfigSettings _uiSite; 
         public AccountService(UserManager<CoachFrikaUsers> userManager, SignInManager<CoachFrikaUsers> signInManager,
-            IJwtService jwtService, IEmailService emailService, IWebHelpers webHelpers, ICloudinaryService cloudinaryService)
+            IJwtService jwtService, IEmailService emailService, IOptions<UiSiteConfigSettings> uiSite, IWebHelpers webHelpers, ICloudinaryService cloudinaryService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
             _emailService = emailService;
             _webHelpers = webHelpers;
+            _uiSite = uiSite.Value;
             _cloudinaryService = cloudinaryService;
         }
 
@@ -47,12 +50,16 @@ namespace CoachFrika.APIs.Domin.Services
                 var user = await _userManager.FindByNameAsync(login.Email);
                 if (user == null)
                 {
-                    throw new NotImplementedException("User not found.");
+                    res.Message = "User not found.";
+                    res.Status = false;
+                    return res;
                 }
                 var result = await _signInManager.PasswordSignInAsync(login.Email, login.Password, false, false);
                 if (!result.Succeeded)
                 {
-                    throw new NotImplementedException("Invalid credentials");
+                    res.Message = "Invalid credentials";
+                    res.Status = false;
+                    return res;
                 }
 
                 // Get the roles of the user
@@ -82,7 +89,9 @@ namespace CoachFrika.APIs.Domin.Services
                 var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
                 if (existingUserByEmail != null)
                 {
-                    throw new ArgumentException("An account with this email already exists.");
+                    res.Message = "An account with this email already exists.";
+                    res.Status = false;
+                    return res;
                 }
 
                 // Validate phone number format
@@ -91,7 +100,9 @@ namespace CoachFrika.APIs.Domin.Services
                     var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
                     if (!phoneNumberValid)
                     {
-                        throw new ArgumentException("Phone number must be in the format: 0800 000 0000");
+                        res.Message = "Phone number must be in the format: 0800 000 0000";
+                        res.Status = false;
+                        return res;
                     }
 
                     // Check if the phone number already exists
@@ -99,7 +110,9 @@ namespace CoachFrika.APIs.Domin.Services
                         .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
                     if (existingUserByPhone != null)
                     {
-                        throw new ArgumentException("An account with this phone number already exists.");
+                        res.Message = "An account with this phone number already exists.";
+                        res.Status = false;
+                        return res;
                     }
                 }
 
@@ -107,14 +120,18 @@ namespace CoachFrika.APIs.Domin.Services
                 var emailValid = Validators.ValidateEmail(model.Email);
                 if (!emailValid)
                 {
-                    throw new ArgumentException("Invalid email format.");
+                    res.Message = "Invalid email format.";
+                    res.Status = false;
+                    return res;
                 }
 
                 // Validate password using a regular expression
                 var passwordValid = Validators.ValidatePassword(model.Password);
                 if (!passwordValid)
                 {
-                    throw new ArgumentException("Password must be at least 8 characters long, include at least one uppercase letter, one digit, and one special character.");
+                    res.Message = "Password must be at least 8 characters long, include at least one uppercase letter, one digit, and one special character.";
+                    res.Status = false;
+                    return res;
                 }
 
                 // Create a new user
@@ -162,7 +179,9 @@ namespace CoachFrika.APIs.Domin.Services
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    throw new ArgumentException("User not found.");
+                    res.Message = "User not found.";
+                    res.Status = false;
+                    return res;
                 }
 
                 var defaultPassword = GeneratePassword();
@@ -170,13 +189,17 @@ namespace CoachFrika.APIs.Domin.Services
                 var resetResult = await _userManager.RemovePasswordAsync(user);
                 if (!resetResult.Succeeded)
                 {
-                    throw new InvalidOperationException("Failed to remove the old password.");
+                    res.Message = "Failed to remove the old password.";
+                    res.Status = false;
+                    return res;
                 }
 
                 var result = await _userManager.AddPasswordAsync(user, defaultPassword);
                 if (!result.Succeeded)
                 {
-                    throw new InvalidOperationException("Failed to set the new password.");
+                    res.Message = "Failed to set the new password.";
+                    res.Status = false;
+                    return res;
                 }
 
                 user.IsPasswordDefault = true;
@@ -198,7 +221,7 @@ namespace CoachFrika.APIs.Domin.Services
         private async Task SendPasswordResetEmail(CoachFrikaUsers user, string newPassword, string logoUrl)
         {
             var subject = "Your password has been reset";
-            var body = $"Your password has been reset. Your new password is: {newPassword}";
+            var body = $"Your password has been reset. Your default password is: {newPassword} <br> click here <a href={_uiSite.SiteUrl}auth/reset-password>here</a> to reset your password  ";
 
             var bodyTemplate = await _emailService.ReadTemplate("forgetPassword");
             //inserting variable
@@ -225,12 +248,6 @@ namespace CoachFrika.APIs.Domin.Services
 
             // Predefined words for password generation (like "HomeComing")
             var predefinedWords = new string[] { "HomeComing", "WinterBreak", "SummerFun", "Spring2024" };
-
-            // Ensure the password meets the minimum length of 8 characters
-            if (length < 8)
-            {
-                throw new ArgumentException("Password length must be at least 8 characters.");
-            }
 
             var random = new Random();
 
@@ -260,33 +277,37 @@ namespace CoachFrika.APIs.Domin.Services
         public async Task<BaseResponse<string>> ChangePassword(ChangePasswordDto model)
         {
             var res = new BaseResponse<string>();
-            res.Status = true;
+            res.Status = false;
             try
             {
                 var email = _webHelpers.CurrentUser();
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    throw new ArgumentException("User not found.");
+                    res.Message = "User not found.";
+                    return res;
                 }
 
                 var result = await _signInManager.PasswordSignInAsync(email, model.OldPassword, false, false);
                 if (!result.Succeeded)
                 {
-                    throw new NotImplementedException("Invalid credentials");
+                    res.Message = "Invalid credentials";
+                    return res;
                 }
                 var resetResult = await _userManager.RemovePasswordAsync(user);
                 if (!resetResult.Succeeded)
                 {
-                    throw new InvalidOperationException("Failed to remove the old password.");
+                    res.Message = "Failed to remove the old password.";
+                    return res;
                 }
 
                 var resultss = await _userManager.AddPasswordAsync(user, model.NewPassword);
                 if (!resultss.Succeeded)
                 {
-                    throw new InvalidOperationException("Failed to set the new password.");
+                    res.Message = "Failed to set the new password.";
+                    return res;
                 }
-
+                res.Status = true;
                 res.Message = "Successful";
                 return res;
             }
@@ -316,7 +337,9 @@ namespace CoachFrika.APIs.Domin.Services
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    throw new ArgumentException("User not found.");
+                    res.Message = "User not found.";
+                    res.Status = false;
+                    return res;
                 }
 
                 var fileUrl = await _cloudinaryService.UploadFileAsync(model.ProfileImage);
@@ -343,29 +366,39 @@ namespace CoachFrika.APIs.Domin.Services
         public async Task<BaseResponse<string>> ResetPassword(ResetPasswordDto model)
         {
             var res = new BaseResponse<string>();
-            res.Status = true;
+            res.Status = false;
             try
             {
-                var email = _webHelpers.CurrentUser();
-                var user = await _userManager.FindByEmailAsync(email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
-                    throw new ArgumentException("User not found.");
+                    res.Message = "User not found.";
+
+                    return res;
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.DefaultPassword, false, false);
+                if (!result.Succeeded)
+                {
+                    res.Message = "Kindly use the code in your email has default Password";
+                    return res;
                 }
                 var resetResult = await _userManager.RemovePasswordAsync(user);
                 if (!resetResult.Succeeded)
                 {
-                    throw new InvalidOperationException("Failed to remove the old password.");
+                    res.Message = "Failed to remove the old password.";
+                return res;
                 }
 
-                var resultss = await _userManager.AddPasswordAsync(user, model.NewPassword);
+                var resultss = await _userManager.AddPasswordAsync(user, model.Password);
                 if (!resultss.Succeeded)
                 {
-                    throw new InvalidOperationException("Failed to set the new password.");
+                    res.Message = "Failed to set the new password.";
+
+                    return res;
                 }
 
-                user.IsPasswordDefault = false;
-                await _userManager.UpdateAsync(user);
+                res.Status = true;
                 res.Message = "Successful";
                 return res;
             }
