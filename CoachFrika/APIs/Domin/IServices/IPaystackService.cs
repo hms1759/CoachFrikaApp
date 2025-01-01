@@ -10,5 +10,6 @@ namespace CoachFrika.Services
         Task<BaseResponse<PaymentVerifyData>> VerifyTransactionAsync(string reference);
         Task<BaseResponse<TransactionData>> RetrieveTransactionAsync(long transactionId);
         Task<BaseResponse<RefundData>> RefundTransactionAsync(long transactionId, decimal amount);
+        Task<TransactionList> ListTransactionsAsync(int page = 1, int perPage = 10);
     }
 }

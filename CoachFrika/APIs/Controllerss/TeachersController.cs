@@ -53,6 +53,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _teacherService.CreateStage5(model);
             return Ok(result);
         }
+        [AllowAnonymous]
         [HttpPost("CreateStage6")]
         public async Task<IActionResult> CreateStage6(SubscriptionsDto model)
         {

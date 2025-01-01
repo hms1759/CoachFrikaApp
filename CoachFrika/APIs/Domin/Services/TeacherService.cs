@@ -225,8 +225,10 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var user = _webHelpers.CurrentUser();
-                if (user == null)
+                //var user = _webHelpers.CurrentUser();
+                var user = "hmsefx@gmail.com";
+
+                if (string.IsNullOrEmpty(user))
                 {
                     res.Status = false;
                     res.Message = "User not found";
@@ -243,43 +245,39 @@ namespace CoachFrika.APIs.Domin.Services
                 };
 
                 detail.Subscriptions = model.Subscription;
-                detail.Stages = 6;
-                /*var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
+               var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
 
-                 if (transactionUrl != null)
-                 {
-                     var obj = transactionUrl.Data;
-                     if (transactionUrl.Status)
-                     {
-                     detail.Subscriptions = model.Subscription;
-                     detail.Stages = 6;
+                if (transactionUrl != null)
+                {
+                    var obj = transactionUrl.Data;
+                    if (transactionUrl.Status)
+                    {
+                    detail.Subscriptions = model.Subscription;
 
-                         var payment = new Payment()
-                         {
-                             Amount = amount,
-                             Subscription = sub,
-                             Paymentrefernce = obj.reference,
-                             CreatedBy = user,
-                             CreatedDate = DateTime.UtcNow
+                        var payment = new Payment()
+                        {
+                            Amount = amount,
+                            Subscription = sub,
+                            Paymentrefernce = obj.reference,
+                            CreatedBy = user,
+                            CreatedDate = DateTime.UtcNow
 
-                         };
-                         _context.Payment.Add(payment);
-                         await _context.SaveChangesAsync();
-                     res.Data = obj.authorization_url;
-                     return res; 
-                     }
+                        };
+                        _context.Payment.Add(payment);
+                        await _context.SaveChangesAsync();
+                    res.Data = obj.authorization_url;
+                    return res; 
+                    }
 
 
-                     res.Message = transactionUrl.Message;
-                     res.Status = false;
-                     return res;
-                 }
+                    res.Message = transactionUrl.Message;
+                    res.Status = false;
+                    return res;
+                }
 
 
-                 res.Message ="Error Occur: contact The Administration";
-                 res.Status = false;
-                 return res;*/
-               
+                res.Message ="Error Occur: contact The Administration";
+                res.Status = false;
                 return res;
 
             }

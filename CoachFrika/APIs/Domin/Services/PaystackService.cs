@@ -5,17 +5,22 @@ using Newtonsoft.Json;
 using CoachFrika.Services;
 using CoachFrika.Common;
 using CoachFrika.APIs.ViewModel;
+using coachfrikaaaa.Common;
+using CoachFrika.Common.Enum;
+using Google.Apis.Sheets.v4.Data;
 
 public class PaystackService : IPaystackService
 {
     private readonly HttpClient _httpClient;
     private readonly string _paystackSecretKey;
+    private readonly AppDbContext _context;
 
     // Constructor to initialize HttpClient and set the Paystack Secret Key
-    public PaystackService(HttpClient httpClient, string paystackSecretKey)
+    public PaystackService(HttpClient httpClient, string paystackSecretKey, AppDbContext context)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _paystackSecretKey = paystackSecretKey ?? throw new ArgumentNullException(nameof(paystackSecretKey));
+        _context = context;
     }
 
     // Method to initialize a transaction
@@ -28,7 +33,7 @@ public class PaystackService : IPaystackService
         {
             amount = (int)(amount * 100),  // Convert to Kobo
             email,
-            reference = "OLAmi564DE1"  // You can generate or pass a unique reference here
+            reference = $"{Guid.NewGuid()}-{email.Substring(0,5)}"
         };
 
         var jsonContent = JsonConvert.SerializeObject(requestData);
@@ -70,14 +75,33 @@ public class PaystackService : IPaystackService
 
         var response = await _httpClient.SendAsync(requestMessage);
 
+           var payment = _context.Payment.FirstOrDefault(x => x.Paymentrefernce == reference);
+
         if (response.IsSuccessStatusCode)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
             var jsonResponse = JsonConvert.DeserializeObject<BaseResponse<PaymentVerifyData>>(responseContent);
+            if (payment != null)
+            {
+                payment.PaymentStatus = PaymentStatus.Approved;
+
+                var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == payment.CreatedBy);
+                if(teach != null)
+                {
+                    teach.Stages = 6;
+                }
+                _context.SaveChanges();
+            }
+
             return jsonResponse;
         }
         else
         {
+            if (payment != null)
+            {
+                payment.PaymentStatus = PaymentStatus.Cancelled;
+            }
+            _context.SaveChanges();
             res.Status = false;
             res.Message = response.ReasonPhrase;
             return res;
@@ -112,11 +136,10 @@ public class PaystackService : IPaystackService
     }
 
     // Method to list all transactions
-    public async Task<BaseResponse<TransactionList>> ListTransactionsAsync(int page = 1, int perPage = 10)
+    public async Task<TransactionList> ListTransactionsAsync(int page = 1, int perPage = 10)
     {
-        var res = new BaseResponse<TransactionList>();
-        res.Status = true;
-
+        var res = new TransactionList();
+        try {
         var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://api.paystack.co/transaction")
         {
             Headers = { { "Authorization", $"Bearer {_paystackSecretKey}" } }
@@ -127,13 +150,21 @@ public class PaystackService : IPaystackService
         if (response.IsSuccessStatusCode)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
-            var jsonResponse = JsonConvert.DeserializeObject<BaseResponse<TransactionList>>(responseContent);
+            var jsonResponse = JsonConvert.DeserializeObject<TransactionList>(responseContent);
+
             return jsonResponse;
         }
         else
         {
-            res.Status = false;
-            res.Message = response.ReasonPhrase;
+            res.status = false;
+            res.message = response.ReasonPhrase;
+            return res;
+            }
+        }
+        catch (Exception ex)
+        {
+            res.status = false;
+            res.message = ex.Message;
             return res;
         }
     }

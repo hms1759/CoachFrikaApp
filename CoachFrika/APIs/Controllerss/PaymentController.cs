@@ -1,5 +1,7 @@
 ﻿using CoachFrika.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 
 public class PaymentController : Controller
 {
@@ -46,6 +48,15 @@ public class PaymentController : Controller
     {
         // Here you can verify the transaction status
         var verificationResponse = await _paystackService.RefundTransactionAsync(transactionId, Amount);
+
+        // Process the payment response (e.g., show a success or failure page)
+        return Ok(verificationResponse);
+    }
+    [HttpGet("ListTransactionsAsync")]
+    public async Task<IActionResult> ListTransactionsAsync(int page, int pageSize)
+    {
+        // Here you can verify the transaction status
+        var verificationResponse = await _paystackService.ListTransactionsAsync(page, pageSize);
 
         // Process the payment response (e.g., show a success or failure page)
         return Ok(verificationResponse);

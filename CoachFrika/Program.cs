@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Text;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
 
@@ -83,8 +84,9 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<IPaystackService>(serviceProvider =>
     {
         var httpClient = serviceProvider.GetRequiredService<HttpClient>();
-        var paystackSecretKey = configuration["PaystackSecretKey"];  // Get secret key from configuration
-        return new PaystackService(httpClient, paystackSecretKey);
+        var paystackSecretKey = configuration["PaystackSecretKey"];
+        var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+        return new PaystackService(httpClient, paystackSecretKey, dbContext);
     });
     
     // Load Cloudinary configuration from appsettings.json
