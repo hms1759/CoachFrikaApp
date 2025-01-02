@@ -1,4 +1,5 @@
-﻿using CoachFrika.Services;
+﻿using CoachFrika.APIs.ViewModel;
+using CoachFrika.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,13 +23,12 @@ public class PaymentController : Controller
         return Ok(transactionUrl);
     }
 
-    [HttpGet("VerifyTransaction")]
+    [HttpPut("VerifyTransaction")]
     public async Task<IActionResult> VerifyTransaction(string reference)
     {
-        // Here you can verify the transaction status
-        var verificationResponse = await _paystackService.VerifyTransactionAsync(reference);
+        var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+        var verificationResponse = await _paystackService.VerifyTransactionAsync(reference, logoUrl);
 
-        // Process the payment response (e.g., show a success or failure page)
         return Ok(verificationResponse);
     }
 
@@ -61,4 +61,15 @@ public class PaymentController : Controller
         // Process the payment response (e.g., show a success or failure page)
         return Ok(verificationResponse);
     }
+
+    [AllowAnonymous]
+    [HttpPost("ProcessPaystack")]
+    public async Task<IActionResult> WebHooksVerification([FromBody]PaymentWebHook model)
+    {
+        var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+        model.logo = logoUrl;
+        var verificationResponse =await _paystackService.WebHooksVerification(model);
+        return Ok(verificationResponse);
+    }
+
 }

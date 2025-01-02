@@ -8,19 +8,25 @@ using CoachFrika.APIs.ViewModel;
 using coachfrikaaaa.Common;
 using CoachFrika.Common.Enum;
 using Google.Apis.Sheets.v4.Data;
+using coachfrikaaaa.APIs.Entity;
+using System.ComponentModel;
+using CoachFrika.Models;
+using CoachFrika.Extensions;
 
 public class PaystackService : IPaystackService
 {
     private readonly HttpClient _httpClient;
     private readonly string _paystackSecretKey;
     private readonly AppDbContext _context;
+    public readonly IEmailService _emailService;
 
     // Constructor to initialize HttpClient and set the Paystack Secret Key
-    public PaystackService(HttpClient httpClient, string paystackSecretKey, AppDbContext context)
+    public PaystackService(HttpClient httpClient, string paystackSecretKey, AppDbContext context, IEmailService emailService)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _paystackSecretKey = paystackSecretKey ?? throw new ArgumentNullException(nameof(paystackSecretKey));
         _context = context;
+        _emailService = emailService;
     }
 
     // Method to initialize a transaction
@@ -63,7 +69,7 @@ public class PaystackService : IPaystackService
     }
 
     // Method to verify the transaction
-    public async Task<BaseResponse<PaymentVerifyData>> VerifyTransactionAsync(string reference)
+    public async Task<BaseResponse<PaymentVerifyData>> VerifyTransactionAsync(string reference,string logo)
     {
         var res = new BaseResponse<PaymentVerifyData>();
         res.Status = true;
@@ -90,6 +96,7 @@ public class PaystackService : IPaystackService
                 {
                     teach.Stages = 6;
                 }
+              await  SendPaymentNotificationEmail(teach, logo);
                 _context.SaveChanges();
             }
 
@@ -207,5 +214,53 @@ public class PaystackService : IPaystackService
         }
     }
 
+    public async Task<string> WebHooksVerification(PaymentWebHook model)
+    {
+        if(model == null)
+        throw new NotImplementedException();
+        if(model.data == null)
+            throw new NotImplementedException();
+        var response = model.data;
+        if(response.status != "success")
+            throw new NotImplementedException();
+
+        var payment = _context.Payment.FirstOrDefault(x => x.Paymentrefernce == response.reference);
+
+        if (payment == null)
+            throw new NotImplementedException();
+
+        payment.PaymentStatus = PaymentStatus.Approved;
+
+        var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == payment.CreatedBy);
+        if (teach != null)
+        {
+            teach.Stages = 6;
+        }
+        await SendPaymentNotificationEmail(teach, model.logo);
+        _context.SaveChanges();
+        return response.status;
+    }
+
+
+    private async Task SendPaymentNotificationEmail(CoachFrikaUsers user, string logoUrl)
+    {
+        var subject = "Payment Notification";
+        var body = $"Your Payment has been recieved, Kindly logout and login again";
+
+        var bodyTemplate = await _emailService.ReadTemplate("forgetPassword");
+        //inserting variable
+        var messageToParse = new Dictionary<string, string>
+                    {
+                        { "{Fullname}", user.FullName},
+                        { "{Message}", body},
+                        { "{logo}", logoUrl},
+                    };
+
+        //  email notification
+        var messageBody = bodyTemplate.ParseTemplate(messageToParse);
+        var message = new Message(new List<string> { user.Email }, subject, messageBody);
+
+        await _emailService.SendEmail(message);
+    }
 
 }

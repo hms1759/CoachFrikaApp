@@ -86,7 +86,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
         var httpClient = serviceProvider.GetRequiredService<HttpClient>();
         var paystackSecretKey = configuration["PaystackSecretKey"];
         var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
-        return new PaystackService(httpClient, paystackSecretKey, dbContext);
+        var emailService = serviceProvider.GetRequiredService<IEmailService>(); 
+        return new PaystackService(httpClient, paystackSecretKey, dbContext, emailService);
     });
     
     // Load Cloudinary configuration from appsettings.json
