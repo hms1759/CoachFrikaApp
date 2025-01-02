@@ -57,6 +57,8 @@ namespace CoachFrika.APIs.Controllerss
         [HttpPost("CreateStage6")]
         public async Task<IActionResult> CreateStage6(SubscriptionsDto model)
         {
+            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+            model.Logo = logoUrl;
             var result = await _teacherService.CreateStage6(model);
             return Ok(result);
         }

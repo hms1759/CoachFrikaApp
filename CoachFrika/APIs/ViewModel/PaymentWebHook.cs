@@ -33,7 +33,7 @@ namespace CoachFrika.APIs.ViewModel
         public string @event { get; set; }
         public Data data { get; set; }
         [JsonIgnore]
-        public string  logo { get; set; }
+        public string?  logo { get; set; }
     }
 
 }

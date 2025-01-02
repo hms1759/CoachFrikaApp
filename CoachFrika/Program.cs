@@ -1,4 +1,5 @@
 using CloudinaryDotNet;
+using CoachFrika.APIs.Domin.BackgroundServices;
 using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.Domin.Services;
 using CoachFrika.Common;
@@ -79,6 +80,8 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.Configure<EmailConfigSettings>(configuration.GetSection("EmailConfig"));
     services.Configure<UiSiteConfigSettings>(configuration.GetSection("UiSiteConfig"));
     services.Configure<SubscriptionsConfigSettings>(configuration.GetSection("Subscriptions"));
+    services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+    services.AddHostedService<BackgroundTaskService>();
     services.AddSingleton<GoogleSheetsHelper>();
     // Register PaystackService as transient
     services.AddTransient<IPaystackService>(serviceProvider =>
@@ -242,6 +245,12 @@ void ConfigureApp(WebApplication app)
     app.UseAuthentication();  // Enable authentication middleware
     app.UseAuthorization();   // Enable authorization middleware
 
+    // Endpoint to display task count
+    app.MapGet("/dashboard", (IBackgroundTaskQueue taskQueue) =>
+    {
+        var queuedTaskCount = (taskQueue as BackgroundTaskQueue)?.GetQueuedTaskCount() ?? 0;
+        return Results.Json(new { QueuedTasks = queuedTaskCount });
+    });
     // Default MVC route
     app.MapControllerRoute(
         name: "default",

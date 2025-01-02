@@ -1,4 +1,5 @@
 ﻿using CloudinaryDotNet;
+using CoachFrika.APIs.Domin.BackgroundServices;
 using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.Entity;
 using CoachFrika.APIs.ViewModel;
@@ -34,6 +35,7 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly UserManager<CoachFrikaUsers> _userManager;
         private readonly IPaystackService _paystackService;
         private readonly SubscriptionsConfigSettings _subscrib;
+        private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         public TeacherService(IUnitOfWork unitOfWork,
             AppDbContext context,
             IWebHelpers webHelpers,
@@ -219,6 +221,32 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
+        private async Task<BaseResponse<string>> processPaymentChecker(string refcode, string logo)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                await Task.Delay(60000); // 15 minutes delay
+                var transactionUrl = await _paystackService.VerifyTransactionAsync(refcode, logo);
+
+                if (transactionUrl == null)
+                {
+                    res.Message = "Error Occur: contact The Administration";
+                    res.Status = false;
+                    return res;
+                }
+                return res;
+
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+        }
         public async Task<BaseResponse<string>> CreateStage6(SubscriptionsDto model)
         {
             var res = new BaseResponse<string>();
@@ -227,7 +255,6 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 //var user = _webHelpers.CurrentUser();
                 var user = "hmsefx@gmail.com";
-
                 if (string.IsNullOrEmpty(user))
                 {
                     res.Status = false;
@@ -245,14 +272,14 @@ namespace CoachFrika.APIs.Domin.Services
                 };
 
                 detail.Subscriptions = model.Subscription;
-               var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
+                var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
 
                 if (transactionUrl != null)
                 {
                     var obj = transactionUrl.Data;
                     if (transactionUrl.Status)
                     {
-                    detail.Subscriptions = model.Subscription;
+                        detail.Subscriptions = model.Subscription;
 
                         var payment = new Payment()
                         {
@@ -265,8 +292,15 @@ namespace CoachFrika.APIs.Domin.Services
                         };
                         _context.Payment.Add(payment);
                         await _context.SaveChangesAsync();
-                    res.Data = obj.authorization_url;
-                    return res; 
+                        res.Data = obj.authorization_url;
+
+                        // Queue the background task to process payment after 15 minutes
+                        await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(async token =>
+                        {
+                            await Task.Delay(TimeSpan.FromMinutes(15), token); // Delay for 15 minutes
+                            await processPaymentChecker(obj.reference, model.Logo);
+                        });
+                        return res;
                     }
 
 
@@ -276,7 +310,7 @@ namespace CoachFrika.APIs.Domin.Services
                 }
 
 
-                res.Message ="Error Occur: contact The Administration";
+                res.Message = "Error Occur: contact The Administration";
                 res.Status = false;
                 return res;
 

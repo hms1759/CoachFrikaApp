@@ -1,5 +1,6 @@
 ﻿using CoachFrika.Common.Enum;
 using coachfrikaaaa.APIs.Entity;
+using System.Text.Json.Serialization;
 
 namespace CoachFrika.APIs.ViewModel
 {
@@ -35,6 +36,8 @@ namespace CoachFrika.APIs.ViewModel
 
     public class SubscriptionsDto
     {
+        [JsonIgnore]
+        public string? Logo { get; set; }
         public Subscriptions Subscription { get; set; }
     }
 
