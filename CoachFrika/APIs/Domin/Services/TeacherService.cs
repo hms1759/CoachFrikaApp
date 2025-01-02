@@ -40,13 +40,14 @@ namespace CoachFrika.APIs.Domin.Services
             AppDbContext context,
             IWebHelpers webHelpers,
             UserManager<CoachFrikaUsers> userManager, IOptions<SubscriptionsConfigSettings> subscrib,
-            IPaystackService paystackService)
+            IPaystackService paystackService, IBackgroundTaskQueue backgroundTaskQueue)
         {
             _context = context;
             _webHelpers = webHelpers;
             _userManager = userManager;
             _subscrib = subscrib.Value;
             _paystackService = paystackService;
+            _backgroundTaskQueue = backgroundTaskQueue;
         }
         public async Task<BaseResponse<string>> CreateStage1(TitleDto model)
         {
@@ -227,7 +228,6 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                await Task.Delay(60000); // 15 minutes delay
                 var transactionUrl = await _paystackService.VerifyTransactionAsync(refcode, logo);
 
                 if (transactionUrl == null)
@@ -253,8 +253,7 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                //var user = _webHelpers.CurrentUser();
-                var user = "hmsefx@gmail.com";
+                var user = _webHelpers.CurrentUser();
                 if (string.IsNullOrEmpty(user))
                 {
                     res.Status = false;
