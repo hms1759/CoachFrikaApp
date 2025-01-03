@@ -48,7 +48,7 @@ namespace CoachFrika.APIs.Controllerss
         }
         [HttpPost("upload")]
         public async Task<IActionResult> UploadFile([FromForm]ProfileImgUpload file)
-        {
+        {  
             var result = await _accountService.UploadFile(file);
             return Ok(result);
            

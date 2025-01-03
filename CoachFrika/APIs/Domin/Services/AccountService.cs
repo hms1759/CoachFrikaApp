@@ -324,6 +324,18 @@ namespace CoachFrika.APIs.Domin.Services
         {
             var res = new BaseResponse<string>();
             res.Status = true;
+            if (model.ProfileImage == null)
+            {
+
+                res.Message = "payload can not be null";
+                res.Status = false;
+                SentrySdk.CaptureMessage("payload can not be null", level: SentryLevel.Error);
+                return res;
+
+            }
+
+            SentrySdk.CaptureMessage($"Starting file upload. File name: {model.ProfileImage.FileName}, File size: {model.ProfileImage.Length} bytes.", level: SentryLevel.Info);
+
             if (model.ProfileImage == null || model.ProfileImage.Length == 0)
             {
                 res.Message = "No file uploaded.";

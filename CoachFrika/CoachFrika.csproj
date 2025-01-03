@@ -26,7 +26,9 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.0" />
     <PackageReference Include="MimeKit" Version="4.1.0" />
+    <PackageReference Include="Sentry.AspNetCore" Version="4.13.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.Sentry" Version="2.4.3" />
   <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.0" />
     <!-- Serilog Core Dependencies -->
 

@@ -53,7 +53,6 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _teacherService.CreateStage5(model);
             return Ok(result);
         }
-        [AllowAnonymous]
         [HttpPost("CreateStage6")]
         public async Task<IActionResult> CreateStage6(SubscriptionsDto model)
         {
@@ -62,7 +61,6 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _teacherService.CreateStage6(model);
             return Ok(result);
         }
-        [AllowAnonymous]
         [HttpGet("GetMySchedule")]
         public IActionResult GetMySchedule([FromQuery]GetSchedules query)
         {
