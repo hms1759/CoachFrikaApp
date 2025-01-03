@@ -16,12 +16,10 @@ namespace CoachFrika.APIs.Controllerss
     {
         private readonly ILogicService _service;
         private readonly ITeacherService _teacherService;
-        private readonly ILogger _logger;
-        public TeachersController(ILogicService service, ITeacherService teacherService, ILogger<TeachersController> logger)
+        public TeachersController(ILogicService service, ITeacherService teacherService)
         {
             _service = service;
             _teacherService = teacherService;
-            _logger = logger;
         }
 
         [HttpPost("CreateStage1")]
@@ -61,7 +59,6 @@ namespace CoachFrika.APIs.Controllerss
         {
             var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
             model.Logo = logoUrl;
-            _logger.LogError("My activity log message");
             var result = await _teacherService.CreateStage6(model);
             return Ok(result);
         }

@@ -17,32 +17,17 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Net;
 using System.Text;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
 
 var builder = WebApplication.CreateBuilder(args)
     .ConfigureSerilog();
-// Add Sentry configuration
-// Add Sentry
-builder.WebHost.UseSentry(options =>
-{
-    options.Dsn = "https://899540a3da044867920923cba43ce1e1@o1009331.ingest.us.sentry.io/5973444";
-    // When configuring for the first time, to see what the SDK is doing:
-    options.Debug = true;
-});
-//Log.Logger = new LoggerConfiguration()
-//    .MinimumLevel.Error()
-//    .WriteTo.Console()
-//    .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day)
-//    .WriteTo.Sentry(builder.Configuration["SentryConfig:Dsn"])
-//    .CreateLogger();
-//// Add services to the container
+
+// Add services to the container
 ConfigureServices(builder.Services, builder.Configuration);
 var app = builder.Build();
 try
@@ -97,8 +82,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.Configure<SubscriptionsConfigSettings>(configuration.GetSection("Subscriptions"));
     services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
     services.AddHostedService<BackgroundTaskService>();
-    services.AddSingleton<GoogleSheetsHelper>();// Setup Serilog logging
-   
+    services.AddSingleton<GoogleSheetsHelper>();
     // Register PaystackService as transient
     services.AddTransient<IPaystackService>(serviceProvider =>
     {

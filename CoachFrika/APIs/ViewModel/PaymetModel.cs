@@ -1,4 +1,7 @@
-﻿namespace CoachFrika.APIs.ViewModel
+﻿using Serilog;
+using System.Net;
+
+namespace CoachFrika.APIs.ViewModel
 {
 
     // Model classes for JSON response parsing
