@@ -59,7 +59,7 @@ namespace CoachFrika.APIs.Controllerss
         }
 
         [Authorize]
-        [HttpPost("GetProfileImageUrl")]
+        [HttpGet("GetProfileImageUrl")]
         public async Task<IActionResult> GetProfileImageUrl()
         {
             var result = await _accountService.GetProfileImageUrl();
