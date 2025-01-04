@@ -441,5 +441,31 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
+
+        public async  Task<BaseResponse<string>> GetProfileImageUrl()
+        {
+            var res = new BaseResponse<string>();
+            res.Status = false;
+            try
+            {
+                var email = _webHelpers.CurrentUser();
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    res.Message = "User not found.";
+                    res.Status = false;
+                    return res;
+                }
+                res.Data = user.ProfileImageUrl ?? _uiSite.ProfileUrl;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+            }
+            }
+        
     }
 }

@@ -57,6 +57,14 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
            
         }
+
+        [Authorize]
+        [HttpPost("GetProfileImageUrl")]
+        public async Task<IActionResult> GetProfileImageUrl()
+        {
+            var result = await _accountService.GetProfileImageUrl();
+            return Ok(result);
+        }
         [AllowAnonymous]
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)

@@ -9,6 +9,7 @@ namespace CoachFrika.Models
     public class UiSiteConfigSettings
     {
         public string? SiteUrl { get; set; }
+        public string ProfileUrl { get; set; }
     }
 
 }

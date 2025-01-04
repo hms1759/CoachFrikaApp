@@ -323,7 +323,6 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-
         public BaseResponse<List<ProfileDto>> MyTeachers(GetTeachers query)
         {
             var userId = _webHelpers.CurrentUserId();
@@ -428,7 +427,6 @@ namespace CoachFrika.APIs.Domin.Services
             }
 
         }
-
 
         public async Task<BaseResponse<string>> SelectCoach(Guid CoachId)
         {
@@ -540,7 +538,6 @@ namespace CoachFrika.APIs.Domin.Services
             }
 
         }
-
         public async Task<BaseResponse<string>> RecommendationRemark(TeachersRemark model)
         {
             var res = new BaseResponse<string>();
