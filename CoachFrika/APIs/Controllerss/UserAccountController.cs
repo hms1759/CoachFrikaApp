@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoachFrika.APIs.Controllerss
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserAccountController : ControllerBase
