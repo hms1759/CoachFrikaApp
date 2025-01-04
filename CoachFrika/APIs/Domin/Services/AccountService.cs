@@ -347,7 +347,8 @@ namespace CoachFrika.APIs.Domin.Services
                 if (model.ProfileImage.Length > 0 && model.ProfileImage.Length <= 204800)
                 {
 
-                    var email = _webHelpers.CurrentUser();
+                    //var email = _webHelpers.CurrentUser();
+                    var email = "xenel60285@rustetic.com";
                     SentrySdk.CaptureMessage($"Current user: {email}", level: SentryLevel.Info);
 
                     if (string.IsNullOrEmpty(email))
