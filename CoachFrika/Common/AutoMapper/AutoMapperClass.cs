@@ -37,7 +37,10 @@ namespace CoachFrika.Common.AutoMapper
                 CoachId = coachFrikaUser.CoachId,
                 TeacherId = coachFrikaUser.TeacherId,
                 ProfileImageUrl = coachFrikaUser.ProfileImageUrl,
-                IsPasswordDefault = coachFrikaUser.IsPasswordDefault
+                IsPasswordDefault = coachFrikaUser.IsPasswordDefault,
+                SchoolName= coachFrikaUser.SchoolName,
+                LocalGov = coachFrikaUser.LocalGov,
+                Subject = coachFrikaUser.Subject
             };
         }
 
