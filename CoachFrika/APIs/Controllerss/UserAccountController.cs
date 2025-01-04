@@ -1,6 +1,7 @@
 ﻿using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.Domin.Services;
 using CoachFrika.APIs.ViewModel;
+using CoachFrika.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ namespace CoachFrika.APIs.Controllerss
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserAccountController : ControllerBase
+    public class UserAccountController : BaseController
     {
         private readonly IAccountService _accountService;
         public UserAccountController(IAccountService accountService)
@@ -40,12 +41,15 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.ForgetPassword(model.Email, logoUrl);
             return Ok(result);
         }
+
+        [Authorize]
         [HttpPost("ChangePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
         {
             var result = await _accountService.ChangePassword(model);
             return Ok(result);
         }
+        [Authorize]
         [HttpPost("upload")]
         public async Task<IActionResult> UploadFile([FromForm]ProfileImgUpload file)
         {  
