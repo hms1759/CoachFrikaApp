@@ -73,6 +73,9 @@ namespace CoachFrika.APIs.ViewModel
         public bool hasPaid { get; set; }
         public decimal Amount { get; set; }
         public bool IsPasswordDefault { get; set; }
+        public string? SchoolName { get; set; }
+        public string? LocalGov { get; set; }
+        public string? Subject { get; set; }
 
     }
     public class GetTeachers : Pagination
