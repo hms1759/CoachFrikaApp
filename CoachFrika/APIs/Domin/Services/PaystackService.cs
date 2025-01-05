@@ -71,6 +71,8 @@ public class PaystackService : IPaystackService
     // Method to verify the transaction
     public async Task<BaseResponse<PaymentVerifyData>> VerifyTransactionAsync(string reference,string logo)
     {
+
+        SentrySdk.CaptureMessage($"VerifyTransactionAsync", level: SentryLevel.Info);
         var res = new BaseResponse<PaymentVerifyData>();
         res.Status = true;
 
@@ -83,8 +85,12 @@ public class PaystackService : IPaystackService
 
            var payment = _context.Payment.FirstOrDefault(x => x.Paymentrefernce == reference);
 
+
+        SentrySdk.CaptureMessage($"VerifyTransactionAsync refcode: {payment.Id}", level: SentryLevel.Info);
         if (response.IsSuccessStatusCode)
         {
+
+            SentrySdk.CaptureMessage($"VerifyTransactionAsync IsSuccessStatusCode", level: SentryLevel.Info);
             var responseContent = await response.Content.ReadAsStringAsync();
             var jsonResponse = JsonConvert.DeserializeObject<BaseResponse<PaymentVerifyData>>(responseContent);
             if (payment != null)
@@ -105,6 +111,7 @@ public class PaystackService : IPaystackService
         }
         else
         {
+            SentrySdk.CaptureMessage($"VerifyTransactionAsync ReasonPhrase: {response.ReasonPhrase}", level: SentryLevel.Info);
             if (payment != null)
             {
                 payment.PaymentStatus = PaymentStatus.Cancelled;
@@ -217,7 +224,8 @@ public class PaystackService : IPaystackService
 
     public async Task<string> WebHooksVerification(PaymentWebHook model)
     {
-        if(model == null)
+        SentrySdk.CaptureMessage($"WebHooksVerification service {JsonConvert.SerializeObject(model)}", level: SentryLevel.Info);
+        if (model == null)
         throw new NotImplementedException();
         if(model.data == null)
             throw new NotImplementedException();

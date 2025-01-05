@@ -224,6 +224,8 @@ namespace CoachFrika.APIs.Domin.Services
         }
         private async Task<BaseResponse<string>> processPaymentChecker(string refcode, string logo)
         {
+
+            SentrySdk.CaptureMessage($"processPaymentChecker refcode: {refcode}", level: SentryLevel.Info);
             var res = new BaseResponse<string>();
             res.Status = true;
             try
@@ -296,6 +298,7 @@ namespace CoachFrika.APIs.Domin.Services
                         // Queue the background task to process payment after 15 minutes
                         await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(async token =>
                         {
+                            SentrySdk.CaptureMessage($"QueueBackgroundWorkItem reference : {obj.reference}, logo {model.Logo} url.", level: SentryLevel.Info);
                             await Task.Delay(TimeSpan.FromMinutes(15), token); // Delay for 15 minutes
                             await processPaymentChecker(obj.reference, model.Logo);
                         });
@@ -303,6 +306,7 @@ namespace CoachFrika.APIs.Domin.Services
                     }
 
 
+                    SentrySdk.CaptureMessage($"transactionUrl Error : {transactionUrl.Message}", level: SentryLevel.Info);
                     res.Message = transactionUrl.Message;
                     res.Status = false;
                     return res;
@@ -316,6 +320,7 @@ namespace CoachFrika.APIs.Domin.Services
             }
             catch (Exception ex)
             {
+                SentrySdk.CaptureMessage($"Message :{ex.Message},StackTrace:{ex.StackTrace}", level: SentryLevel.Info);
                 res.Message = ex.Message;
                 res.Status = false;
                 return res;
