@@ -95,6 +95,7 @@ public class PaystackService : IPaystackService
                 if(teach != null)
                 {
                     teach.Stages = 6;
+                    teach.hasPaid = true;
                 }
               await  SendPaymentNotificationEmail(teach, logo);
                 _context.SaveChanges();

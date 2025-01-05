@@ -30,6 +30,7 @@ namespace coachfrikaaaa.APIs.Entity
         public string? SchoolName { get; set; }
         public string? LocalGov { get; set; }
         public string? Subject { get; set; }
+        public bool hasPaid { get; set; }
         public CoachFrikaUsers? Coach { get; set; }
         public Guid? TeacherId { get; set; }
         public Teachers? Teacher { get; set; }

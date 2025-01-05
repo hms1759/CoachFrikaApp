@@ -40,7 +40,8 @@ namespace CoachFrika.Common.AutoMapper
                 IsPasswordDefault = coachFrikaUser.IsPasswordDefault,
                 SchoolName= coachFrikaUser.SchoolName,
                 LocalGov = coachFrikaUser.LocalGov,
-                Subject = coachFrikaUser.Subject
+                Subject = coachFrikaUser.Subject,
+                hasPaid = coachFrikaUser.hasPaid
             };
         }
 
