@@ -456,6 +456,7 @@ namespace CoachFrika.APIs.Domin.Services
                     res.Status = false;
                     return res;
                 }
+                res.Status = true;
                 res.Data = user.ProfileImageUrl ?? _uiSite.ProfileUrl;
                 return res;
             }
