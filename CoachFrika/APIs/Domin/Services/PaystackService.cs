@@ -223,10 +223,10 @@ public class PaystackService : IPaystackService
     }
 
     public async Task<string> WebHooksVerification(PaymentWebHook model)
-    {
-        SentrySdk.CaptureMessage($"WebHooksVerification service {JsonConvert.SerializeObject(model)}", level: SentryLevel.Info);
-        if (model == null)
+    {  if (model == null)
         throw new NotImplementedException();
+        SentrySdk.CaptureMessage($"WebHooksVerification service {JsonConvert.SerializeObject(model)}", level: SentryLevel.Info);
+      
         if(model.data == null)
             throw new NotImplementedException();
         var response = model.data;

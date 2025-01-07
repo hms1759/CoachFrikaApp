@@ -46,7 +46,6 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _teacherService.CreateStage4(model);
             return Ok(result);
         }
-
         [HttpPost("CreateStage5")]
         public async Task<IActionResult> CreateStage5(SchoolesdescriptionDto model)
         {
@@ -95,6 +94,13 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpPost("backStage")]
+        public async Task<IActionResult> backStage(string email)
+        {
+            var result = await _teacherService.backStage(email);
+            return Ok(result);
+        }
         //[HttpGet("GetSubject")]
         //public IActionResult GetSubject()
         //{

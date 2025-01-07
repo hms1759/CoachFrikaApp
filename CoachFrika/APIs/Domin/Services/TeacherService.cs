@@ -16,6 +16,7 @@ using coachfrikaaaa.Common;
 using Google.Apis.Util;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Crypto.Macs;
 using Org.BouncyCastle.Utilities;
@@ -147,6 +148,34 @@ namespace CoachFrika.APIs.Domin.Services
                 detail.Description = model.Description;
                 detail.Nationality = model.Nationality;
                 detail.StateOfOrigin = model.StateOfOrigin;
+                detail.Stages = 3;
+                await _context.SaveChangesAsync();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+        }
+
+        public async Task<BaseResponse<string>> backStage(string email)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == email);
+                detail.SchoolName = null;
+                detail.LocalGov = null;
+                detail.Subject = null; 
+                detail.FacebookUrl = null;
+                detail.TweeterUrl = null;
+                detail.LinkedInUrl = null;
+                detail.InstagramUrl = null;
+                detail.hasPaid = false;
                 detail.Stages = 3;
                 await _context.SaveChangesAsync();
                 return res;
