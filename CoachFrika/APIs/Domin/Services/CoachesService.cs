@@ -27,14 +27,16 @@ namespace CoachFrika.APIs.Domin.Services
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
         private readonly UserManager<CoachFrikaUsers> _userManager;
+        private readonly UiSiteConfigSettings _uiSite; 
         public CoachesService(IUnitOfWork unitOfWork, 
             AppDbContext context,  
-            IWebHelpers webHelpers,
+            IWebHelpers webHelpers, IOptions<UiSiteConfigSettings> uiSite,
             UserManager<CoachFrikaUsers> userManager)
         {
             _context = context;
             _webHelpers = webHelpers;
             _userManager = userManager;
+            _uiSite = uiSite.Value;
         }
         public async Task<BaseResponse<string>> CreateStage1(TitleDto model)
         {
@@ -263,7 +265,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from coach in _context.CoachFrikaUsers
-                          where coach.Role == 1 &&
+                          where coach.Role == 1 && coach.Stages == 4 && 
                           (string.IsNullOrEmpty(query.Name) || coach.FullName.Contains(query.Name))
                           let numberOfStudent = _context.CoachFrikaUsers.Where(x => x.CoachId == coach.Id).Count()
                           select new ProfileDto
@@ -278,7 +280,8 @@ namespace CoachFrika.APIs.Domin.Services
                               FacebookUrl = coach.FacebookUrl,
                               TweeterUrl = coach.TweeterUrl,
                               Email = coach.Email,
-                              PhoneNumber = coach.PhoneNumber
+                              PhoneNumber = coach.PhoneNumber,
+                              ProfileImageUrl = coach.ProfileImageUrl?? _uiSite.ProfileUrl,
                               // Using DateTime.MinValue if EndDate is null
                           };
 
