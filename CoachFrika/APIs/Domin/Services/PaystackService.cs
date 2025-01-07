@@ -243,6 +243,7 @@ public class PaystackService : IPaystackService
         var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == payment.CreatedBy);
         if (teach != null)
         {
+            teach.hasPaid = true;
             teach.Stages = 6;
         }
         await SendPaymentNotificationEmail(teach, model.logo);
