@@ -294,7 +294,7 @@ namespace CoachFrika.APIs.Domin.Services
                 }
 
 
-             var existingPayment =await  _context.Payment.FirstOrDefaultAsync(x => x.CreatedBy == user);
+             var existingPayment =await  _context.Payment.FirstOrDefaultAsync(x => x.CreatedBy == user && x.PaymentStatus ==PaymentStatus.Pending);
                 if (existingPayment != null)
                 {
                     res.Status = false;
