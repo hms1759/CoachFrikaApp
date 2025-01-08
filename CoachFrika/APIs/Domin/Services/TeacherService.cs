@@ -255,7 +255,7 @@ namespace CoachFrika.APIs.Domin.Services
         private async Task<BaseResponse<string>> processPaymentChecker(string refcode, string logo)
         {
 
-            SentrySdk.CaptureMessage($"processPaymentChecker refcode: {refcode}", level: SentryLevel.Info);
+            SentrySdk.CaptureMessage($"processPaymentChecker refcode: {refcode}", level: SentryLevel.Error);
             var res = new BaseResponse<string>();
             res.Status = true;
             try
@@ -337,7 +337,7 @@ namespace CoachFrika.APIs.Domin.Services
                         // Queue the background task to process payment after 15 minutes
                         await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(async token =>
                         {
-                            SentrySdk.CaptureMessage($"QueueBackgroundWorkItem reference : {obj.reference}, logo {model.Logo} url.", level: SentryLevel.Info);
+                            SentrySdk.CaptureMessage($"QueueBackgroundWorkItem reference : {obj.reference}, logo {model.Logo} url.", level: SentryLevel.Error);
                             await Task.Delay(TimeSpan.FromSeconds(30), token); // Delay for 30 Seconds
                             await processPaymentChecker(obj.reference, model.Logo);
                         });

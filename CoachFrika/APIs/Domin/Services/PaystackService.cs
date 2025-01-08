@@ -72,7 +72,7 @@ public class PaystackService : IPaystackService
     public async Task<BaseResponse<PaymentVerifyData>> VerifyTransactionAsync(string reference,string logo)
     {
 
-        SentrySdk.CaptureMessage($"VerifyTransactionAsync", level: SentryLevel.Info);
+        SentrySdk.CaptureMessage($"VerifyTransactionAsync", level: SentryLevel.Error);
         var res = new BaseResponse<PaymentVerifyData>();
         res.Status = true;
 
