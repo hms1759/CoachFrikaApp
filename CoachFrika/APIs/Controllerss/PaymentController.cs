@@ -2,6 +2,7 @@
 using CoachFrika.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 
 public class PaymentController : Controller
@@ -66,7 +67,11 @@ public class PaymentController : Controller
     [HttpPost("ProcessPaystack")]
     public async Task<IActionResult> WebHooksVerification([FromBody]PaymentWebHook model)
     {
-        SentrySdk.CaptureMessage($"WebHooksVerification", level: SentryLevel.Info);
+        // Serialize the model to JSON and capture it in Sentry
+        string modelJson = JsonConvert.SerializeObject(model);
+        SentrySdk.CaptureMessage($"WebHooksVerification received with model: {modelJson}", level: SentryLevel.Info);
+
+        //SentrySdk.CaptureMessage($"WebHooksVerification", level: SentryLevel.Info);
         string logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
         model.logo = logoUrl;
         var verificationResponse =await _paystackService.WebHooksVerification(model);
