@@ -67,7 +67,7 @@ public class PaymentController : Controller
     public async Task<IActionResult> WebHooksVerification([FromBody]PaymentWebHook model)
     {
         SentrySdk.CaptureMessage($"WebHooksVerification", level: SentryLevel.Info);
-        var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+        string logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
         model.logo = logoUrl;
         var verificationResponse =await _paystackService.WebHooksVerification(model);
         return Ok(verificationResponse);

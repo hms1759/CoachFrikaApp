@@ -246,7 +246,8 @@ public class PaystackService : IPaystackService
             teach.hasPaid = true;
             teach.Stages = 6;
         }
-        await SendPaymentNotificationEmail(teach, model.logo);
+        var logo = "";
+        await SendPaymentNotificationEmail(teach, logo);
         _context.SaveChanges();
         return response.status;
     }
