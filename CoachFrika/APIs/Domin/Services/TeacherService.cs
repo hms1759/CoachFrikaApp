@@ -9,6 +9,7 @@ using CoachFrika.Common.AutoMapper;
 using CoachFrika.Common.Enum;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
+using CoachFrika.Migrations;
 using CoachFrika.Models;
 using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
@@ -289,6 +290,15 @@ namespace CoachFrika.APIs.Domin.Services
                 {
                     res.Status = false;
                     res.Message = "User not found";
+                    return res;
+                }
+
+
+             var existingPayment =await  _context.Payment.FirstOrDefaultAsync(x => x.CreatedBy == user && x.PaymentStatus ==PaymentStatus.Pending);
+                if (existingPayment != null)
+                {
+                    res.Status = false;
+                    res.Message = "You have an existing payment process:Kindly reachout to Admin";
                     return res;
                 }
                 var sub = model.Subscription;
