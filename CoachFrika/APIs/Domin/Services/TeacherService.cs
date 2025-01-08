@@ -328,7 +328,7 @@ namespace CoachFrika.APIs.Domin.Services
                         await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(async token =>
                         {
                             SentrySdk.CaptureMessage($"QueueBackgroundWorkItem reference : {obj.reference}, logo {model.Logo} url.", level: SentryLevel.Info);
-                            await Task.Delay(TimeSpan.FromMinutes(15), token); // Delay for 15 minutes
+                            await Task.Delay(TimeSpan.FromSeconds(30), token); // Delay for 30 Seconds
                             await processPaymentChecker(obj.reference, model.Logo);
                         });
                         return res;
