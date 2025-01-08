@@ -12,6 +12,8 @@ using coachfrikaaaa.APIs.Entity;
 using System.ComponentModel;
 using CoachFrika.Models;
 using CoachFrika.Extensions;
+using Sentry.Protocol;
+using static Google.Apis.Requests.BatchRequest;
 
 public class PaystackService : IPaystackService
 {
@@ -39,7 +41,7 @@ public class PaystackService : IPaystackService
         {
             amount = (int)(amount * 100),  // Convert to Kobo
             email,
-            reference = $"{Guid.NewGuid()}-{email.Substring(0,5)}"
+            reference = $"{Guid.NewGuid()}-{email.Substring(0, 5)}"
         };
 
         var jsonContent = JsonConvert.SerializeObject(requestData);
@@ -69,56 +71,68 @@ public class PaystackService : IPaystackService
     }
 
     // Method to verify the transaction
-    public async Task<BaseResponse<PaymentVerifyData>> VerifyTransactionAsync(string reference,string logo)
+    public async Task<BaseResponse<PaymentVerifyData>> VerifyTransactionAsync(string reference, string logo)
     {
-
-        SentrySdk.CaptureMessage($"VerifyTransactionAsync", level: SentryLevel.Info);
         var res = new BaseResponse<PaymentVerifyData>();
         res.Status = true;
-
-        var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://api.paystack.co/transaction/verify/{reference}")
+        try
         {
-            Headers = { { "Authorization", $"Bearer {_paystackSecretKey}" } }
-        };
+            SentrySdk.CaptureMessage($"VerifyTransactionAsync", level: SentryLevel.Info);
+           
 
-        var response = await _httpClient.SendAsync(requestMessage);
-
-           var payment = _context.Payment.FirstOrDefault(x => x.Paymentrefernce == reference);
-
-
-        SentrySdk.CaptureMessage($"VerifyTransactionAsync PaymentId: {payment.Id}", level: SentryLevel.Info);
-        if (response.IsSuccessStatusCode)
-        {
-
-            SentrySdk.CaptureMessage($"VerifyTransactionAsync IsSuccessStatusCode", level: SentryLevel.Info);
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var jsonResponse = JsonConvert.DeserializeObject<BaseResponse<PaymentVerifyData>>(responseContent);
-            if (payment != null)
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://api.paystack.co/transaction/verify/{reference}")
             {
-                payment.PaymentStatus = PaymentStatus.Approved;
+                Headers = { { "Authorization", $"Bearer {_paystackSecretKey}" } }
+            };
 
-                var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == payment.CreatedBy);
-                if(teach != null)
+            var response = await _httpClient.SendAsync(requestMessage);
+
+            var payment = _context.Payment.FirstOrDefault(x => x.Paymentrefernce == reference);
+            var dd = JsonConvert.SerializeObject(response); 
+            var ddpayment = JsonConvert.SerializeObject(payment);
+
+            SentrySdk.CaptureMessage($"VerifyTransactionAsync Response: {dd}: Payment{ddpayment} ", level: SentryLevel.Info);
+            if (response.IsSuccessStatusCode)
+            {
+
+                SentrySdk.CaptureMessage($"VerifyTransactionAsync IsSuccessStatusCode", level: SentryLevel.Info);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var jsonResponse = JsonConvert.DeserializeObject<BaseResponse<PaymentVerifyData>>(responseContent);
+                if (payment != null)
                 {
-                    teach.Stages = 6;
-                    teach.hasPaid = true;
-                }
-              await  SendPaymentNotificationEmail(teach, logo);
-                _context.SaveChanges();
-            }
+                    payment.PaymentStatus = PaymentStatus.Approved;
 
-            return jsonResponse;
-        }
-        else
-        {
-            SentrySdk.CaptureMessage($"VerifyTransactionAsync ReasonPhrase: {response.ReasonPhrase}", level: SentryLevel.Info);
-            if (payment != null)
-            {
-                payment.PaymentStatus = PaymentStatus.Cancelled;
+                    var teach = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == payment.CreatedBy);
+                    if (teach != null)
+                    {
+                        teach.Stages = 6;
+                        teach.hasPaid = true;
+                    }
+                    await SendPaymentNotificationEmail(teach, logo);
+                    _context.SaveChanges();
+                }
+
+                return jsonResponse;
             }
-            _context.SaveChanges();
+            else
+            {
+                SentrySdk.CaptureMessage($"VerifyTransactionAsync ReasonPhrase: {response.ReasonPhrase}", level: SentryLevel.Info);
+                if (payment != null)
+                {
+                    payment.PaymentStatus = PaymentStatus.Cancelled;
+                }
+                _context.SaveChanges();
+                res.Status = false;
+                res.Message = response.ReasonPhrase;
+                return res;
+            }
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureMessage($"Exception: {ex.Message},:{ex.StackTrace}", level: SentryLevel.Info);
+
             res.Status = false;
-            res.Message = response.ReasonPhrase;
+            res.Message = ex.Message;
             return res;
         }
     }
@@ -154,26 +168,27 @@ public class PaystackService : IPaystackService
     public async Task<TransactionList> ListTransactionsAsync(int page = 1, int perPage = 10)
     {
         var res = new TransactionList();
-        try {
-        var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://api.paystack.co/transaction")
+        try
         {
-            Headers = { { "Authorization", $"Bearer {_paystackSecretKey}" } }
-        };
+            var requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://api.paystack.co/transaction")
+            {
+                Headers = { { "Authorization", $"Bearer {_paystackSecretKey}" } }
+            };
 
-        var response = await _httpClient.SendAsync(requestMessage);
+            var response = await _httpClient.SendAsync(requestMessage);
 
-        if (response.IsSuccessStatusCode)
-        {
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var jsonResponse = JsonConvert.DeserializeObject<TransactionList>(responseContent);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var jsonResponse = JsonConvert.DeserializeObject<TransactionList>(responseContent);
 
-            return jsonResponse;
-        }
-        else
-        {
-            res.status = false;
-            res.message = response.ReasonPhrase;
-            return res;
+                return jsonResponse;
+            }
+            else
+            {
+                res.status = false;
+                res.message = response.ReasonPhrase;
+                return res;
             }
         }
         catch (Exception ex)
@@ -223,14 +238,15 @@ public class PaystackService : IPaystackService
     }
 
     public async Task<string> WebHooksVerification(PaymentWebHook model)
-    {  if (model == null)
-        throw new NotImplementedException();
+    {
+        if (model == null)
+            throw new NotImplementedException();
         SentrySdk.CaptureMessage($"WebHooksVerification service {JsonConvert.SerializeObject(model)}", level: SentryLevel.Info);
-      
-        if(model.data == null)
+
+        if (model.data == null)
             throw new NotImplementedException();
         var response = model.data;
-        if(response.status != "success")
+        if (response.status != "success")
             throw new NotImplementedException();
 
         var payment = _context.Payment.FirstOrDefault(x => x.Paymentrefernce == response.reference);
