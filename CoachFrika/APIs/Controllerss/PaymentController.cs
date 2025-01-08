@@ -23,7 +23,7 @@ public class PaymentController : Controller
         // Redirect the user to Paystack for payment
         return Ok(transactionUrl);
     }
-
+    [AllowAnonymous]
     [HttpPut("VerifyTransaction")]
     public async Task<IActionResult> VerifyTransaction(string reference)
     {

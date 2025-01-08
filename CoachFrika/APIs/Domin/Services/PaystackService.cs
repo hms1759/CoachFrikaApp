@@ -72,7 +72,7 @@ public class PaystackService : IPaystackService
     public async Task<BaseResponse<PaymentVerifyData>> VerifyTransactionAsync(string reference,string logo)
     {
 
-        SentrySdk.CaptureMessage($"VerifyTransactionAsync", level: SentryLevel.Error);
+        SentrySdk.CaptureMessage($"VerifyTransactionAsync", level: SentryLevel.Info);
         var res = new BaseResponse<PaymentVerifyData>();
         res.Status = true;
 
@@ -86,7 +86,7 @@ public class PaystackService : IPaystackService
            var payment = _context.Payment.FirstOrDefault(x => x.Paymentrefernce == reference);
 
 
-        SentrySdk.CaptureMessage($"VerifyTransactionAsync refcode: {payment.Id}", level: SentryLevel.Info);
+        SentrySdk.CaptureMessage($"VerifyTransactionAsync PaymentId: {payment.Id}", level: SentryLevel.Info);
         if (response.IsSuccessStatusCode)
         {
 
