@@ -9,10 +9,12 @@ using CoachFrika.Extensions;
 using CoachFrika.Models;
 using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
+using coachfrikaaaa.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using SharpRaven.Data.Context;
 using System.Text;
 using System.Text.RegularExpressions;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
@@ -28,8 +30,10 @@ namespace CoachFrika.APIs.Domin.Services
         public readonly IWebHelpers _webHelpers;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly UiSiteConfigSettings _uiSite;
+        private readonly IPaystackService _paymentService;
+        private readonly AppDbContext _context;
         public AccountService(UserManager<CoachFrikaUsers> userManager, SignInManager<CoachFrikaUsers> signInManager,
-            IJwtService jwtService, IEmailService emailService, IOptions<UiSiteConfigSettings> uiSite, IWebHelpers webHelpers, ICloudinaryService cloudinaryService)
+            IJwtService jwtService, IEmailService emailService, IOptions<UiSiteConfigSettings> uiSite, IWebHelpers webHelpers, ICloudinaryService cloudinaryService, IPaystackService paymentService, AppDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -38,6 +42,8 @@ namespace CoachFrika.APIs.Domin.Services
             _webHelpers = webHelpers;
             _uiSite = uiSite.Value;
             _cloudinaryService = cloudinaryService;
+            _paymentService = paymentService;
+            _context = context;
         }
 
         public async Task<BaseResponse<LoginDetails>> Login(LoginDto login)
@@ -60,6 +66,11 @@ namespace CoachFrika.APIs.Domin.Services
                     res.Message = "Invalid credentials";
                     res.Status = false;
                     return res;
+                }
+                if (user.Role == 0 && user.Stages == 5)
+                {
+                  var pay = await  _context.Payment.FirstOrDefaultAsync(x => x.CreatedBy == user.Email);
+                  await _paymentService.VerifyTransactionAsync(pay.Paymentrefernce, "");
                 }
 
                 // Get the roles of the user

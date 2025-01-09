@@ -87,7 +87,13 @@ public class PaystackService : IPaystackService
 
             var response = await _httpClient.SendAsync(requestMessage);
 
-            var payment = _context.Payment.FirstOrDefault(x => x.Paymentrefernce == reference);
+            var payment = _context.Payment.FirstOrDefault(x => x.Paymentrefernce == reference );
+            if (payment != null && payment.PaymentStatus == PaymentStatus.Approved)
+            {
+                res.Status = false;
+                res.Message = "Payment already approved";
+                return res;
+            }
             var dd = JsonConvert.SerializeObject(response); 
             var ddpayment = JsonConvert.SerializeObject(payment);
 
