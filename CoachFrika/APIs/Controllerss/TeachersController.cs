@@ -66,10 +66,11 @@ namespace CoachFrika.APIs.Controllerss
             var result = _teacherService.GetMySchedule(query);
             return Ok(result);
         }
-        [HttpPost("SelectCoach")]
-        public async Task<IActionResult> SelectCoach([FromBody] SelectCoachDto Coach)
+
+        [HttpPut("SelectCoach")]
+        public async Task<IActionResult> SelectCoach([FromQuery] Guid CoachId)
         {
-            var result = await _teacherService.SelectCoach(Coach.Id);
+            var result = await _teacherService.SelectCoach(CoachId);
             return Ok(result);
         }
         [HttpGet("GetTeacherById")]
