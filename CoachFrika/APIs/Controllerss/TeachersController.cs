@@ -66,7 +66,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = _teacherService.GetMySchedule(query);
             return Ok(result);
         }
-
+        [AllowAnonymous]
         [HttpPut("SelectCoach")]
         public async Task<IActionResult> SelectCoach([FromQuery] Guid CoachId)
         {

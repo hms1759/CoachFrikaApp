@@ -1,11 +1,13 @@
 ﻿
 using CoachFrika.APIs.ViewModel;
 using coachfrikaaaa.APIs.Entity;
+using System.ComponentModel;
 
 namespace CoachFrika.Common.AutoMapper
 {
     public class ProfileMapper
     {
+
         // Method to map from CoachFrikaUsers to ProfileDto
         public static ProfileDto MapToProfileDto(CoachFrikaUsers coachFrikaUser)
         {
@@ -36,7 +38,7 @@ namespace CoachFrika.Common.AutoMapper
                 Stages = coachFrikaUser.Stages,
                 CoachId = coachFrikaUser.CoachId,
                 TeacherId = coachFrikaUser.TeacherId,
-                ProfileImageUrl = coachFrikaUser.ProfileImageUrl,
+                ProfileImageUrl = coachFrikaUser.ProfileImageUrl ?? "https://res.cloudinary.com/dypzygnwv/image/upload/v1736015226/e9nkdgor1elfhzntjl63.jpg",
                 IsPasswordDefault = coachFrikaUser.IsPasswordDefault,
                 SchoolName= coachFrikaUser.SchoolName,
                 LocalGov = coachFrikaUser.LocalGov,
