@@ -262,11 +262,18 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
+                var userRole = _webHelpers.CurrentUserRole();
+                if (!string.IsNullOrEmpty(userRole) && userRole =="Teacher")
+                {
+                    var user = _context.CoachFrikaUsers.FirstOrDefault(x =>x.Email == _webHelpers.CurrentUser());
+                    query.CoachId = user != null && !string.IsNullOrEmpty(user.CoachId)? user.CoachId: null;
+                }
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from coach in _context.CoachFrikaUsers
-                          where coach.Role == 1 && coach.Stages == 4 && 
-                          (string.IsNullOrEmpty(query.Name) || coach.FullName.Contains(query.Name))
+                          where coach.Role == 1 && coach.Stages == 4 &&
+                          (string.IsNullOrEmpty(query.Name) || coach.FullName.Contains(query.Name)) &&
+                          (string.IsNullOrEmpty(query.CoachId) || coach.Id.ToLower() == query.CoachId.ToLower())
                           let numberOfStudent = _context.CoachFrikaUsers.Where(x => x.CoachId == coach.Id).Count()
                           select new ProfileDto
                           {

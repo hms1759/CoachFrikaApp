@@ -86,6 +86,8 @@ namespace CoachFrika.APIs.ViewModel
     public class GetAllCoaches : Pagination
     {
         public string? Name { get; set; }
+        [JsonIgnore]
+        public string? CoachId { get; set; }
         public bool IsPaginated { get; set; }
 
     }
