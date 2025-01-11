@@ -218,7 +218,8 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from teacher in _context.CoachFrikaUsers
-                          where teacher.CoachId == userId
+                          where teacher.CoachId == userId &&
+                          (string.IsNullOrEmpty(query.Name) || teacher.FullName.Contains(query.Name))
                           select new ProfileDto
                           {
                               Id = teacher.Id,
@@ -235,9 +236,9 @@ namespace CoachFrika.APIs.Domin.Services
                           };
 
                 // Apply pagination using Skip and Take
-                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                var pagedData = query.IsPaginated? (cos.Skip((query.PageNumber - 1) * query.Pagesize)
                                    .Take(query.Pagesize)
-                                   .ToList();
+                                   .ToList()) : cos.ToList();
 
                 // Set the response data
                 res.Data = pagedData;
@@ -293,9 +294,9 @@ namespace CoachFrika.APIs.Domin.Services
                           };
 
                 // Apply pagination using Skip and Take
-                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                var pagedData = query.IsPaginated ? cos.Skip((query.PageNumber - 1) * query.Pagesize)
                                    .Take(query.Pagesize)
-                                   .ToList();
+                                   .ToList(): cos.ToList();
 
                 // Set the response data
                 res.Data = pagedData;
@@ -364,7 +365,7 @@ namespace CoachFrika.APIs.Domin.Services
                     return res;
                 }
 
-                var teach = await _context.CoachFrikaUsers.Where(x => x.CoachId == userId && x.Subscriptions == schedule.Focus).FirstOrDefaultAsync();
+                var teach = await _context.CoachFrikaUsers.Where(x => x.Id == model.TeacherId).FirstOrDefaultAsync();
                 if (teach == null)
                 {
                     res.Status = false;

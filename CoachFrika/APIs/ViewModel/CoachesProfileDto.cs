@@ -80,6 +80,7 @@ namespace CoachFrika.APIs.ViewModel
     }
     public class GetTeachers : Pagination
     {
+        public bool IsPaginated { get; set; } = true;
         public string? Name { get; set; }
 
     }
@@ -102,6 +103,7 @@ namespace CoachFrika.APIs.ViewModel
     public class CoachRecommendation
     {
         public Guid? ScheduleId { get; set; }
+        public string? TeacherId { get; set; }
         public string? Recommendation { get; set; }
 
     }
