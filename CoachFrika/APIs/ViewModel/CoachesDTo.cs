@@ -44,6 +44,10 @@ namespace CoachFrika.APIs.ViewModel
     {
         public string? Title { get; set; }
     }
+    public class SelectCoachDto
+    {
+        public Guid Id { get; set; }
+    }
     public class CoursesViewModel
     {
         public Guid Id { get; set; }
