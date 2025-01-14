@@ -103,7 +103,8 @@ namespace CoachFrika.APIs.ViewModel
     public class CoachRecommendation
     {
         public Guid? ScheduleId { get; set; }
-        public string? TeacherId { get; set; }
+        public bool isAll { get; set; }
+        public List<string>? TeacherIds { get; set; }
         public string? Recommendation { get; set; }
 
     }

@@ -16,6 +16,7 @@ using Org.BouncyCastle.Crypto.Macs;
 using System.Text;
 using System.Text.RegularExpressions;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CoachFrika.APIs.Domin.Services
 {
@@ -65,6 +66,86 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
+        public BaseResponse<List<SchedulesViewModel>> GetScheduleList()
+        {
+            var user = _webHelpers.CurrentUser();
+            var res = new BaseResponse<List<SchedulesViewModel>>();
+            res.Status = true;
+            try
+            {
+                var day = DateTime.Now.Date;
+                // Apply filters based on the query parameters
+                var cos = from schedule in _context.Schedule
+                          where schedule.CreatedBy == user
+                          select new SchedulesViewModel
+                          {
+                              Id = schedule.Id,
+                              Title = schedule.Title,
+                              Focus = schedule.Focus.ToString(),
+                              MeetingUrl = schedule.MeetingLink,
+                              StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
+                              EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
+                          };
+
+                // Set the response data
+                res.Data = cos.ToList();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        public BaseResponse<List<ProfileDto>> GetTeacherList(string ScheduleId)
+        {
+            var res = new BaseResponse<List<ProfileDto>>();
+            res.Status = true;
+            try
+            {
+                var schedule = _context.Schedule.Where(x => x.Id.ToString() == ScheduleId).FirstOrDefault();
+                // Apply filters based on the query parameters
+                if (schedule== null)
+                {
+                    res.Status = false;
+                    return res;
+                }
+                var cos = from teacher in _context.CoachFrikaUsers
+                where teacher.CoachId == schedule.CoachId && teacher.Subscriptions == schedule.Focus
+                          select new ProfileDto
+                          {
+                              Id = teacher.Id,
+                              Title = teacher.Title,
+                              FullName = teacher.FullName,
+                              ProfessionalTitle = teacher.ProfessionalTitle,
+                              NumbersOfStudents = teacher.NumbersOfStudents,
+                              Description = teacher.Description,
+                              LinkedInUrl = teacher.LinkedInUrl,
+                              FacebookUrl = teacher.FacebookUrl,
+                              TweeterUrl = teacher.TweeterUrl,
+                              Email = teacher.Email,
+                              PhoneNumber = teacher.PhoneNumber   // Using DateTime.MinValue if EndDate is null
+                          };
+                // Set the response data
+                res.Data = cos.ToList();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+
+
         public BaseResponse<List<SchedulesViewModel>> GetCoachSchedule(GetSchedules query)
         {
             var user = _webHelpers.CurrentUser();

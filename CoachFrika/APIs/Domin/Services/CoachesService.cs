@@ -27,9 +27,9 @@ namespace CoachFrika.APIs.Domin.Services
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
         private readonly UserManager<CoachFrikaUsers> _userManager;
-        private readonly UiSiteConfigSettings _uiSite; 
-        public CoachesService(IUnitOfWork unitOfWork, 
-            AppDbContext context,  
+        private readonly UiSiteConfigSettings _uiSite;
+        public CoachesService(IUnitOfWork unitOfWork,
+            AppDbContext context,
             IWebHelpers webHelpers, IOptions<UiSiteConfigSettings> uiSite,
             UserManager<CoachFrikaUsers> userManager)
         {
@@ -75,17 +75,17 @@ namespace CoachFrika.APIs.Domin.Services
             try
             {
                 var user = _webHelpers.CurrentUser();
-                if(user == null)
+                if (user == null)
                 {
                     res.Status = false;
                     res.Message = "User not found";
                     return res;
                 }
-             
-                    var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
-                    if (!phoneNumberValid)
-                    {
-                        res.Message = "Phone number must be in the format: 0800 000 0000";
+
+                var phoneNumberValid = Validators.ValidatePhoneNumber(model.PhoneNumber);
+                if (!phoneNumberValid)
+                {
+                    res.Message = "Phone number must be in the format: 0800 000 0000";
                     res.Status = false;
                     return res;
                 }
@@ -236,7 +236,7 @@ namespace CoachFrika.APIs.Domin.Services
                           };
 
                 // Apply pagination using Skip and Take
-                var pagedData = query.IsPaginated? (cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                var pagedData = query.IsPaginated ? (cos.Skip((query.PageNumber - 1) * query.Pagesize)
                                    .Take(query.Pagesize)
                                    .ToList()) : cos.ToList();
 
@@ -264,10 +264,10 @@ namespace CoachFrika.APIs.Domin.Services
             try
             {
                 var userRole = _webHelpers.CurrentUserRole();
-                if (!string.IsNullOrEmpty(userRole) && userRole =="Teacher")
+                if (!string.IsNullOrEmpty(userRole) && userRole == "Teacher")
                 {
-                    var user = _context.CoachFrikaUsers.FirstOrDefault(x =>x.Email == _webHelpers.CurrentUser());
-                    query.CoachId = user != null && !string.IsNullOrEmpty(user.CoachId)? user.CoachId: null;
+                    var user = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == _webHelpers.CurrentUser());
+                    query.CoachId = user != null && !string.IsNullOrEmpty(user.CoachId) ? user.CoachId : null;
                 }
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
@@ -289,14 +289,14 @@ namespace CoachFrika.APIs.Domin.Services
                               TweeterUrl = coach.TweeterUrl,
                               Email = coach.Email,
                               PhoneNumber = coach.PhoneNumber,
-                              ProfileImageUrl = coach.ProfileImageUrl?? _uiSite.ProfileUrl,
+                              ProfileImageUrl = coach.ProfileImageUrl ?? _uiSite.ProfileUrl,
                               // Using DateTime.MinValue if EndDate is null
                           };
 
                 // Apply pagination using Skip and Take
                 var pagedData = query.IsPaginated ? cos.Skip((query.PageNumber - 1) * query.Pagesize)
                                    .Take(query.Pagesize)
-                                   .ToList(): cos.ToList();
+                                   .ToList() : cos.ToList();
 
                 // Set the response data
                 res.Data = pagedData;
@@ -332,7 +332,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var profile = ProfileMapper.MapToProfileDto(coach);
                 res.Data = profile;
                 return res;
-            } 
+            }
             catch (Exception ex)
             {
                 res.Message = ex.Message;
@@ -364,25 +364,74 @@ namespace CoachFrika.APIs.Domin.Services
                     res.Message = "schedule not found";
                     return res;
                 }
-
-                var teach = await _context.CoachFrikaUsers.Where(x => x.Id == model.TeacherId).FirstOrDefaultAsync();
-                if (teach == null)
+                if (model.isAll)
                 {
-                    res.Status = false;
-                    res.Message = "Teacher not found";
-                    return res;
+                    var listrecm = new List<Recommendations>();
+                    var teachs = _context.CoachFrikaUsers.Where(x => x.CoachId == schedule.CoachId && x.Subscriptions == schedule.Focus);
+                    if(teachs != null || teachs.Count() > 0 )
+                        {
+
+                        foreach (var tch in teachs)
+                        {
+
+                            var recm = new Recommendations()
+                            {
+                                CoachId = userId,
+                                TeacherId = tch.Id,
+                                ScheduleId = schedule.Id.ToString(),
+                                Recommendation = model.Recommendation
+
+                            };
+                            listrecm.Add(recm);
+                        }
+
+                        _context.Recommendations.AddRange(listrecm);
+                        await _context.SaveChangesAsync();
+                        return res;
+                    }
+                    else
+                    {
+                        res.Message = "No teacher attached to this schedule ";
+                        res.Status = false;
+                        return res;
+
+                    }
                 }
-                var recom = new Recommendations()
+                else
                 {
-                    CoachId = userId,
-                    TeacherId = teach.Id,
-                    ScheduleId = schedule.Id.ToString(),
-                    Recommendation = model.Recommendation
+                    var listrecm = new List<Recommendations>();
+                    foreach (var tch in model.TeacherIds)
+                    {
+                        var teach = _context.CoachFrikaUsers.Where(x => x.Id == tch).FirstOrDefault();
 
-                };
-                _context.Recommendations.Add(recom);
-                await _context.SaveChangesAsync();
-                return res;
+                        if (teach != null)
+                        {
+                            var recm = new Recommendations()
+                            {
+                                CoachId = userId,
+                                TeacherId = teach.Id,
+                                ScheduleId = schedule.Id.ToString(),
+                                Recommendation = model.Recommendation
+
+                            };
+                            listrecm.Add(recm);
+                        }
+                        else
+                        {
+
+                            res.Message = $"No teacher with {tch} does not exist";
+                            res.Status = false;
+                            return res;
+
+                        }
+                    }
+
+                    _context.Recommendations.AddRange(listrecm);
+                    await _context.SaveChangesAsync();
+                    return res;
+
+                }
+
 
             }
             catch (Exception ex)
@@ -408,7 +457,7 @@ namespace CoachFrika.APIs.Domin.Services
                     return res;
                 }
                 recomm.Recommendation = model.Recommendation;
-               
+
                 _context.Recommendations.Update(recomm);
                 await _context.SaveChangesAsync();
                 return res;
