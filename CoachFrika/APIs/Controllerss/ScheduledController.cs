@@ -32,22 +32,18 @@ namespace CoachFrika.APIs.Controllerss
             var result = _service.GetCoachSchedule(query);
             return Ok(result);
         }
-        [AllowAnonymous]
         [HttpGet("GetScheduleList")]
         public IActionResult GetScheduleList()
         {
             var result = _service.GetScheduleList();
             return Ok(result);
         }
-        [AllowAnonymous]
         [HttpGet("GetTeacherList")]
         public IActionResult GetTeacherList(string ScheduleId)
         {
             var result = _service.GetTeacherList(ScheduleId);
             return Ok(result);
         }
-
-
 
         [HttpPut("EditSchedule")]
         public IActionResult EditSchedule([FromBody] EditScheduleDto query)
@@ -63,7 +59,6 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
-        [AllowAnonymous]
         [HttpGet("GetScheduleById")]
         public IActionResult GetScheduleById([FromQuery] Guid Id)
         {
