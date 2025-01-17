@@ -537,10 +537,10 @@ namespace CoachFrika.APIs.Domin.Services
 
         }
 
-        public BaseResponse<List<GetCoachesRecommendationResponse>> Recommendations(GetTeacherRecommendations query)
+        public BaseResponse<List<GetTeacherRecommendationResponse>> Recommendations(GetTeacherRecommendations query)
         {
             var userId = _webHelpers.CurrentUserId();
-            var res = new BaseResponse<List<GetCoachesRecommendationResponse>>();
+            var res = new BaseResponse<List<GetTeacherRecommendationResponse>>();
             res.Status = true;
             try
             {
@@ -551,13 +551,14 @@ namespace CoachFrika.APIs.Domin.Services
 
                           where rec.TeacherId == userId
                           && (string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
-                          select new GetCoachesRecommendationResponse
+                          select new GetTeacherRecommendationResponse
                           {
                               Id = rec.Id.ToString(),
                               CoachName = coach.FullName,
                               ScheduleTitle = schd.Title,
                               Recommendation = rec.Recommendation,
                               ScheduleId = rec.ScheduleId,
+                              Remark = rec.TeacherRemark,
 
                           };
 

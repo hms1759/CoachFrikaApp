@@ -478,42 +478,59 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                // Apply filters based on the query parameters
-                var cos = from rec in _context.Recommendations
-                          join teach in _context.CoachFrikaUsers on rec.TeacherId equals teach.Id
-                          join schd in _context.Schedule on rec.ScheduleId equals schd.Id.ToString()
+                // Base query with joins and filtering
+                var queryable = from rec in _context.Recommendations
+                                join teach in _context.CoachFrikaUsers on rec.TeacherId equals teach.Id
+                                join schd in _context.Schedule on rec.ScheduleId equals schd.Id.ToString()
+                                where rec.CoachId == userId
+                                && (string.IsNullOrEmpty(query.TeachersName) || teach.FullName.Contains(query.TeachersName))
+                                && (string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
+                                select new
+                                {
+                                    rec,
+                                    teach,
+                                    schd
+                                };
 
-                          where rec.CoachId == userId
-                          && (string.IsNullOrEmpty(query.TeachersName) || teach.FullName.Contains(query.TeachersName))
-                          && (string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
-                          select new GetCoachesRecommendationResponse
-                          {
-                              Id = rec.Id.ToString(),
-                              TeachersName = teach.FullName,
-                              ScheduleTitle = schd.Title,
-                              Recommendation = rec.Recommendation,
-                              ScheduleId = rec.ScheduleId,
+                // Materialize the query to avoid EF Core translation issues
+                var groupedData = queryable
+                    .AsEnumerable() // Forces execution and avoids EF translation issues
+                    .GroupBy(g => new { g.schd.Id, g.schd.Title })
+                    .Select(grouped => new GetCoachesRecommendationResponse
+                    {
+                        Id = grouped.Key.Id.ToString(),
+                        ScheduleTitle = grouped.Key.Title,
+                        Recommendation = grouped.FirstOrDefault()?.rec.Recommendation ?? string.Empty,
+                        TeacherRemark = grouped.Select(g => new TeachersRemarks
+                        {
+                            TeachersRemark = g.rec.TeacherRemark ?? string.Empty,
+                            TeachersName = g.teach.FullName ?? string.Empty
+                        }).ToList()
+                    });
 
-                          };
+                // Total count for pagination
+                var totalCount = groupedData.Count();
 
-                // Apply pagination using Skip and Take
-                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
-                                   .Take(query.Pagesize)
-                                   .ToList();
+                // Apply pagination
+                var pagedData = groupedData
+                    .Skip((query.PageNumber - 1) * query.Pagesize)
+                    .Take(query.Pagesize)
+                    .ToList();
 
-                // Set the response data
+                // Set response data
                 res.Data = pagedData;
                 res.PageNumber = query.PageNumber;
                 res.PageSize = query.Pagesize;
-                res.TotalCount = cos.Count();
+                res.TotalCount = totalCount;
+
                 return res;
             }
             catch (Exception ex)
             {
+                // Log and handle the exception
                 res.Message = ex.Message;
                 res.Status = false;
                 return res;
-
             }
 
         }

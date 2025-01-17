@@ -6,6 +6,7 @@ using CoachFrika.Common.AppUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace CoachFrika.APIs.Controllerss
 {
@@ -80,6 +81,7 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
+        [ProducesResponseType(typeof(BaseResponse<List<GetTeacherRecommendationResponse>>), (int)HttpStatusCode.OK)]
         [HttpGet("GetAllRecommendations")]
         public async Task<IActionResult> GetAllRecommendations([FromQuery] GetTeacherRecommendations model)
         {

@@ -135,14 +135,28 @@ namespace CoachFrika.APIs.ViewModel
         public string? ScheduleTitle { get; set; }
 
     }
-    public class GetCoachesRecommendationResponse 
+    public class GetTeacherRecommendationResponse
     {
         public string? Id { get; set; }
         public string? ScheduleTitle { get; set; }
         public string? Recommendation { get; set; }
         public string? TeachersName { get; set; }
         public string? CoachName { get; set; }
+        public string? Remark { get; set; }
         public string? ScheduleId { get; set; }
 
+    }
+    public class GetCoachesRecommendationResponse
+    {
+        public string? Id { get; set; }
+        public string? ScheduleTitle { get; set; }
+        public string? Recommendation { get; set; }
+        public List<TeachersRemarks>? TeacherRemark { get; set; }
+
+    }
+    public class TeachersRemarks
+    {
+        public string? TeachersRemark{ get; set; }
+        public string? TeachersName { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace CoachFrika.APIs.Controllerss
 {
@@ -86,6 +87,7 @@ namespace CoachFrika.APIs.Controllerss
             return Ok(result);
         }
 
+        [ProducesResponseType(typeof(BaseResponse<List<GetCoachesRecommendationResponse>>), (int)HttpStatusCode.OK)]
         [HttpGet("GetAllRecommendations")]
         public async Task<IActionResult> GetAllRecommendations([FromQuery] GetCoachesRecommendations model)
         {
