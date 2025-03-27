@@ -38,6 +38,35 @@ namespace CoachFrika.Controllers
         {
             return View();
         }
+        public IActionResult About()
+        {
+            return View();
+        }
+        public IActionResult Contact()
+        {
+            return View();
+        }
+        public IActionResult Pricing()
+        {
+            return View();
+        }
+        public IActionResult Service()
+        {
+            return View();
+        }
+        public IActionResult Blog()
+        {
+            return View();
+        }
+        public IActionResult Dashboard()
+        {
+            return View();
+        }
+
+        public IActionResult JoinUs()
+        {
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> ContactUs(ContactUs model)
         {

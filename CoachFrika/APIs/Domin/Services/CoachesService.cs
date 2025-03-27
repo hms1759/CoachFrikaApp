@@ -10,7 +10,6 @@ using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
 using coachfrikaaaa.Common;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Build.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Crypto.Macs;

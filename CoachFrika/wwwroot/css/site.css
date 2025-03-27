@@ -1,22 +1,75 @@
-html {
-  font-size: 14px;
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: red !important;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.content {
+    flex: 1;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.footer {
+    background-color: #f8f9fa;
+    padding: 10px 0;
+}
+.card-spacing {
+    margin-bottom: 30px;
 }
 
-body {
-  margin-bottom: 60px;
+.wide-space {
+    display: flex;
+    justify-content: space-between;
+    gap: 50px;
 }
+/* Section Styling */
+.section {
+    min-height: 50vh; /* Flexible height */
+    padding: 20px;
+}
+
+/* Section Backgrounds */
+.bg-green {
+    background-color: green;
+}
+
+.bg-lightgray {
+    background-color: #f8f9fa;
+}
+
+.bg-darkgray {
+    background-color: #dee2e6;
+}
+
+.bg-blue {
+    background-color: #007bff;
+}
+
+/* Scrollable Cards */
+.scrollable-cards {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Custom Card Styling */
+.big-card {
+    background-color: green;
+    color: white;
+    padding: 40px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .d-flex {
+        flex-direction: column; /* Stack items on small screens */
+        text-align: center;
+    }
+}
+
