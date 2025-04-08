@@ -1,7 +1,186 @@
 html, body {
+    box-sizing: content-box !important;
     height: 100%;
-    margin: 0;
-    background-color: red !important;
+    margin: 0 !important;
+    background-color: rgb(244,252,243) !important;
+}
+.scrollable-cards {
+    max-height: 600px !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scrollable-cards::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-link.active {
+    position: relative;
+    /*font-weight: bold;*/
+}
+
+    .nav-link.active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -3px;
+        width: 100%;
+        height: 2px;
+        background-color: greenyellow; /* Change to match your theme */
+    }
+
+.boxel {
+    margin: 30px 0px;
+}
+
+.nna {
+    padding-top: 10px;
+    margin: 10px 5px;
+}
+
+.nav-link {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.nna_join {
+    font-size: 20px;
+    border: 2px solid green;
+    border-radius: 7px;
+    padding: 10px 25px;
+}
+
+.nnb_join {
+    font-size: 20px;
+    background-color: green;
+    color: white;
+    text-align: center;
+    width: 150px;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-top: 60px;
+}
+
+.nnWH_join {
+    font-size: 20px;
+    color: green;
+    text-align: center;
+    width: 150px;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-top: 20px;
+    border: 1px solid green;
+}
+
+/* Apply a height of 20cm to the input field */
+.custom-input {
+    height: 50px;
+}
+
+.Subscribe-Contain {
+    margin: 20px;
+}
+/* Style the button with a green background */
+.btn-green {
+    color: white !important;
+    height: 50px;
+    padding: 10px 30px !important;
+    background-color: green !important;
+}
+
+.record-child {
+    padding: 10px;
+    color: rgba(190, 242, 0, 1);
+}
+
+.record-child-value {
+    font-family: 'Roboto Flex', sans-serif;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 100%;
+    text-align: center;
+    justify-content: center;
+}
+/*.mission-child-1-backgrnd {
+    background-color: rgba(190, 242, 0, 1);
+    border-radius : 10px 0px 10px 0px;
+    padding:10px;
+}*/
+.mission-child-mission {
+    display: flex;
+    margin: 20px;
+}
+
+.mission-child-radios {
+    display: flex;
+    align-items: center; /* Ensures proper vertical alignment */
+    gap: 10px; /* Adds spacing between image and text */
+    margin-bottom: 10px;
+}
+
+.mission-child-content {
+    font-family: 'Roboto Flex', sans-serif;
+    /*font-weight: 700;*/
+    font-size: 16px;
+    line-height: 100%;
+    text-align: justify;
+}
+
+.mission-child-header {
+    font-family: 'Roboto Flex', sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 100%;
+    text-align: center;
+    margin: 10px 0px;
+    justify-content: center;
+}
+
+.mission-child-2-header {
+    font-family: 'Roboto Flex', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 100%;
+    /*text-align: justify;*/
+    margin: 10px 0px;
+}
+
+.mission {
+    padding: 10rem 7rem 2rem 7rem;
+    /*margin: 10px 20px;*/
+}
+
+.mission-child-2 {
+    margin: 10px;
+    width: 50%;
+    margin: 10px 20px;
+}
+
+.mission-child-1 {
+    margin: 10px 20px;
+    padding: 20px;
+    width: 50%;
+    background-color: rgba(221, 243, 197, 1);
+    /*margin-left: 15rem;*/
+    border-radius: 47px 0px;
+}
+
+.record-child-const {
+    font-family: 'Roboto Flex', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 100%;
+    text-align: center;
+    margin: 10px 0px;
+    justify-content: center;
+}
+
+.record {
+    padding: 20px 30px;
+    color: rgba(190, 242, 0, 1);
+    background-color: rgba(1, 33, 18, 1);
 }
 
 .wrapper {
@@ -18,6 +197,7 @@ html, body {
     background-color: #f8f9fa;
     padding: 10px 0;
 }
+
 .card-spacing {
     margin-bottom: 30px;
 }
@@ -57,19 +237,335 @@ html, body {
 }
 
 /* Custom Card Styling */
-.big-card {
-    background-color: green;
+
+.side-image {
+    max-width: 50%; /* 1/2 of the screen width */
+    margin: 20px 0px 0px 30px;
+}
+
+    .side-image img {
+        width: 100%;
+        height: auto;
+        display: block; /* Remove any unwanted space below the image */
+    }
+
+.side-text1 {
+    margin: 40px 0px;
+    max-width: 50%;
+    padding-top: 20px;
+}
+
+.Empowering-text-box {
+    font-family: 'Roboto Flex', sans-serif;
+    font-size: 16px;
+    text-align: left;
+    /*display: flex;*/
+    justify-content: left;
+    align-items: flex-end;
+    margin: 30px 0px;
+    padding-right: 250px;
+}
+
+.mission-child-topic {
+    font-family: 'Roboto Flex', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 100%;
+    text-align: center;
+    justify-content: left;
+    margin-right: 20px;
+}
+
+.mission-child-body {
+    font-family: 'Roboto Flex', sans-serif;
+    font-size: 16px;
+    line-height: 100%;
+    text-align: justify;
+}
+
+.Personalized-text-box {
+    font-family: 'Roboto Flex', sans-serif;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 100%;
+    text-align: left;
+    justify-content: left;
+    align-items: flex-end;
+    padding: 20px 70px 0px 0px;
+}
+
+.Supported-text-box {
+    font-family: 'Roboto Flex', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 100%;
+    text-align: left;
+    /*display: flex;*/
+    justify-content: left;
+    align-items: flex-end;
+    margin: 10px 0px;
+    padding-right: 50px;
+}
+
+.group-img {
+    margin: 0px 10px;
+}
+
+.support-board {
+    width: 50%;
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+.grouped-img-box {
+    margin-top: 20px;
+    padding-top: 20px;
+    display: flex;
+}
+.carousel-bottom-controls .carousel-indicators button {
+    background-color: greenyellow;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 4px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: greenyellow;
+    border-radius: 50%;
+    margin: 30px;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: greenyellow;
+    border-radius: 50%;
+}
+.Featured-Coaches-Header {
+    margin: 30px;
     color: white;
-    padding: 40px;
+    font-family: 'Roboto Flex', sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 100%;
+    text-align: center;
+    justify-content: center;
+}
+.Featured-coach-img img {
+    border-radius: 10px;
+}
+.Featured-Coaches {
+    margin-top: 5rem;
+    padding: 15px;
+    background-color: rgba(1, 33, 18, 1);
+}
+.Featured-coach-img {
+    padding-bottom: 10px;
+    border-radius: 10px;
+}
+.Featured-coach {
+    margin: 20px 5px;
+    padding: 3px;
+    padding-bottom: 30px
+}
+
+.Featured-coach-text {
+    margin: 20px 0px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+}
+.educator{
+    margin: 20px 0px;
+}
+.EventHeader,
+.EducatorHeader {
+    padding: 0cm 10cm;
+    margin: 8rem 0rem;
+    font-family: "Roboto Flex", sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 100%;
+    text-align: center; /* horizontal alignment */
+    display: flex;
+    align-items: center; /* vertical alignment */
+    justify-content: center; /* also centers horizontally if in a flex container */
+    height: 100%; /* needed for vertical centering to work */
+}
+.EventHeader {
+    margin-bottom: 1rem; 
+}
+.Eventtext{
+    padding: 0cm 8cm;
+    margin-top: 20px;
+    font-weight: 400;
+    font-size: 16px;
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 8rem;
+}
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    height: 20%;
+    margin-bottom: 10px;
+}
+
+.profile-section {
+    display: flex;
+    width: 50%;
+}
+
+.profile-img-wrapper {
+    border-radius: 60px;
+    background-color: green;
+    padding: 2px;
+    margin-right: 5px;
+}
+
+.profile-info {
+    font-family: Manrope;
+    font-size: 12px;
+}
+
+.profile-name,
+.profile-location {
+    text-align: left;
+    margin: 5px 0;
+}
+
+.school-info {
+    font-family: Manrope;
+    font-weight: 700;
+    width: 50%;
+    font-size: 12px;
+    text-align: right;
+}
+
+.card-body {
+    font-family: Manrope;
+    font-size: 12px;
+    margin: 10px 0;
+    text-align: justify;
+}
+
+.alignleft{
+    text-align:left;
+
+}
+.evenDate{
+   font-size:12px;
+}
+.eventContent {
+    font-family: "Roboto Flex", sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 100%;
+}
+.Readmore {
+    font-family: "Roboto Flex", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+}
+.evenImage {
+    padding: 10px;
+}
+.evenImage img{
+    width: 100%;
+}
+.eventCard {
+    width: 32%;
+    margin: 20px 0px;
+}
+.eventBody{
+    margin-top:20px;
+}
+.big-card-content {
+    color: black;
+    padding: 20px;
+    font-family: "Roboto Flex", sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 100%;
+    text-align: center; /* horizontal alignment */
+    display: flex;
+    align-items: center; /* vertical alignment */
+    justify-content: center; /* also centers horizontally if in a flex container */
+    height: 100%; /* needed for vertical centering to work */
+}
+.big-card-text {
+    font-family: "Roboto Flex", sans-serif;
+    color: black;
+    padding: 0px 100px;
+    font-weight: 400;
+    font-size: 16px;
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 8rem;
+    margin: 20px 0px;
+}
+.big-card {
+    font-family: "Roboto Flex", sans-serif;
+    color: black;
+    padding-top: 10px;
+    width: 70%;
     text-align: center;
     border-radius: 10px;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .d-flex {
-        flex-direction: column; /* Stack items on small screens */
-        text-align: center;
+.bigcardContainer {
+    margin: 30px;
+    padding: 30px;
+    background-color:rgba(121, 199, 1, 1);
+    border-radius: 10px
+}
+.event_join {
+    text-align: center;
+    justify-content: center;
+    font-size: 20px;
+    background: rgba(0, 0, 0, 1);
+    color: white;
+    text-align: center;
+    width: 200px;
+    border-radius: 4px;
+    padding: 10px 15px;
+    margin-top: 4rem;
+}
+/* Make the text responsive */
+@media (max-width: 576px) {
+    .Personalized-text-box {
+        font-size: 28px;
+        padding: 20px;
     }
 }
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .Personalized-text-box {
+        font-size: 36px;
+        height: auto;
+        margin: 20px;
+    }
 
+    .grouped-img-box {
+        display: block;
+    }
+
+    .side-text1 {
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .d-flex {
+        flex-direction: column-reverse; /* Stack items on small screens */
+        text-align: center;
+    }
+
+    .custom-input {
+        height: auto;
+        padding: 0.5rem;
+    }
+    /* Optional: Adjustments for smaller screens if needed */
+    .side-image {
+        max-width: 1000%; /* Increase the width to half of the screen width for smaller screens */
+    }
+}

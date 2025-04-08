@@ -15,54 +15,116 @@
                 <div class="container">
                     <!-- Left-aligned logo -->
                     <a class="navbar-brand" href="index.html">
-                        <img src="images/logo.png" class="top_logo" alt="">
-                    </a>
+                        <img src="~/images/logo-removebg-preview.jpg" />
+                       </a>
 
                     <!-- Toggle button for mobile -->
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-
                     <!-- Right-aligned navigation links -->
                     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                         <ul class="navbar-nav">
-                            <li class="nav-item nna"><a class="nav-link" href="">Home</a></li>
-                            <li class="nav-item nna"><a class="nav-link" asp-controller="Home" asp-action="About">About</a></li>
-                            <li class="nav-item nna"><a class="nav-link" asp-controller="Home" asp-action="Pricing">Pricing</a></li>
-                            <li class="nav-item nna"><a class="nav-link" asp-controller="Home" asp-action="Contact">Contact Us</a></li>
-                            <li class="nav-item nna"><a class="nav-link" asp-controller="Home" asp-action="Service">Services</a></li>
-                            <li class="nav-item nna"><a class="nav-link" asp-controller="Home" asp-action="Blog">Blog</a></li>
-                            <li class="nav-item nna"><a class="nav-link" asp-controller="Home" asp-action="Dashboard">Dashboard</a></li>
-                            <li class="nav-item nna"><a class="nav-link" asp-controller="Home" asp-action="JoinUs">Join Us</a></li>
-                   
+                            <li class="nav-item nna">
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                                   asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item nna">
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")"
+                                   asp-controller="Home" asp-action="About">About</a>
+                            </li>
+                            <li class="nav-item nna">
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Pricing" ? "active" : "")"
+                                   asp-controller="Home" asp-action="Pricing">Pricing</a>
+                            </li>
+                            <li class="nav-item nna">
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")"
+                                   asp-controller="Home" asp-action="Contact">Contact Us</a>
+                            </li>
+                            <li class="nav-item nna">
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Service" ? "active" : "")"
+                                   asp-controller="Home" asp-action="Service">Services</a>
+                            </li>
+                            <li class="nav-item nna">
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Blog" ? "active" : "")"
+                                   asp-controller="Home" asp-action="Blog">Blog</a>
+                            </li>
+                            <li class="nav-item nna">
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")"
+                                   asp-controller="Home" asp-action="Dashboard">Dashboard</a>
+                            </li>
+                            <li class="nav-item nna_join">
+                                <a class="nav-link"
+                                   asp-controller="Home" asp-action="JoinUs">Join Us</a>
+                            </li>
                         </ul>
                     </div>
+
                 </div>
             </nav>
         </div>
         <br />
         <!-- Main Content -->
-        <div class="container mt-4 content">
+        <div class=" container">
             @RenderBody()
         </div>
 
         <!-- div 8: Text + Input Field -->
-        <div class="div text-center bg-lightgray">
-            <h2>Subscribe</h2>
-            <input type="text" class="form-control w-75 w-md-50 mx-auto" placeholder="Enter your email">
+        <div class="text-center Subscribe-Contain ">
+            <h2>Subscribe to our newsletter</h2>
+            <br/>
+            <p>We recommend you to subscribe to our newsletter, drop your <br/>email below to get daily updates about us.</p>
+
+            <br />
+            <div class="d-flex justify-content-center align-items-center">
+                <input type="email" class="form-control w-50 custom-input" placeholder="Enter your email address">
+                <button type="submit" class="btn btn-green ms-2">Subscribe</button>
+            </div>
+
+            <br />
         </div>
+
         <!-- Footer -->
         <div class="footer">
             <div class="bg-light text-center">
                 <div class="d-flex justify-content-between">
-                    <span class="mx-2">Item 1</span>
-                    <span class="mx-2">Item 2</span>
-                    <span class="mx-2">Item 3</span>
-                    <span class="mx-2">Item 4</span>
+                    <span class="mx-2">
+                        <a>
+                            Coachfrika is an innovative edtech 
+                            social enterprise that provides 
+                            personalized coaching support to 
+                            teachers in public and private 
+                            schools across Nigeria. .....
+                            <br/>
+                            <img src="~/images/logo.jpg" />
+                    </a></span>
+                    <span class="mx-2">
+                        <a>
+                             Quick Links
+
+                            Home
+                            About
+                            Sign Up
+                        </a>
+                    </span>
+                    <span class="mx-2">
+                        <a>
+                            Company
+
+                            Service
+                            Contact
+                            Privacy Policy
+                        </a>
+                    </span>
+                    <span class="mx-2">
+                        <a>
+                            Connect with us
+                        </a>
+                    </span>
                 </div>
             </div>
             <div class="text-center bg-lightgray">
-                <h4>Homemade</h4>
+                <h4>© Coachfrika. All rights reserved.</h4>
             </div>
         </div>
     </div>
