@@ -2,14 +2,27 @@ html, body {
     box-sizing: content-box !important;
     height: 100%;
     margin: 0 !important;
-    background-color: rgb(244,252,243) !important;
 }
+    /* Home Page Background */
+    body.home-page {
+        background-color: rgb(244,252,243) !important;
+    }
+
+    /* About Page Background */
+    body.about-page {
+        background-color: white;
+    }
+
 .scrollable-cards {
     max-height: 600px !important;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
+}
+
+.bgg-light {
+    padding-top: 2cm;
 }
 
 .scrollable-cards::-webkit-scrollbar {
@@ -80,7 +93,7 @@ html, body {
 }
 
 .Subscribe-Contain {
-    margin: 20px;
+    margin: 2cm 0cm;
 }
 /* Style the button with a green background */
 .btn-green {
@@ -194,8 +207,24 @@ html, body {
 }
 
 .footer {
-    background-color: #f8f9fa;
-    padding: 10px 0;
+    background-color: black;
+    color: white;
+    padding: .4cm 1cm;
+    font-size: 16px;
+}
+
+.ft {
+    padding: 20px;
+    margin: 10px;
+}
+
+.edtech {
+    width: 30%;
+    text-align: left;
+}
+
+.ft-topic {
+    font-weight: 600;
 }
 
 .card-spacing {
@@ -206,6 +235,10 @@ html, body {
     display: flex;
     justify-content: space-between;
     gap: 50px;
+}
+
+.copyright {
+    color: white;
 }
 /* Section Styling */
 .section {
@@ -322,6 +355,7 @@ html, body {
     padding-top: 20px;
     display: flex;
 }
+
 .carousel-bottom-controls .carousel-indicators button {
     background-color: greenyellow;
     width: 10px;
@@ -336,11 +370,13 @@ html, body {
     border-radius: 50%;
     margin: 30px;
 }
+
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
     background-color: greenyellow;
     border-radius: 50%;
 }
+
 .Featured-Coaches-Header {
     margin: 30px;
     color: white;
@@ -351,18 +387,22 @@ html, body {
     text-align: center;
     justify-content: center;
 }
+
 .Featured-coach-img img {
     border-radius: 10px;
 }
+
 .Featured-Coaches {
     margin-top: 5rem;
     padding: 15px;
     background-color: rgba(1, 33, 18, 1);
 }
+
 .Featured-coach-img {
     padding-bottom: 10px;
     border-radius: 10px;
 }
+
 .Featured-coach {
     margin: 20px 5px;
     padding: 3px;
@@ -370,14 +410,16 @@ html, body {
 }
 
 .Featured-coach-text {
-    margin: 20px 0px;
+    margin: 20px 10px;
     padding: 20px;
     background-color: white;
     border-radius: 10px;
 }
-.educator{
+
+.educator {
     margin: 20px 0px;
 }
+
 .EventHeader,
 .EducatorHeader {
     padding: 0cm 10cm;
@@ -392,10 +434,13 @@ html, body {
     justify-content: center; /* also centers horizontally if in a flex container */
     height: 100%; /* needed for vertical centering to work */
 }
+
 .EventHeader {
-    margin-bottom: 1rem; 
+    padding: 0cm 10cm;
+    margin-bottom: 1rem;
 }
-.Eventtext{
+
+.Eventtext {
     padding: 0cm 8cm;
     margin-top: 20px;
     font-weight: 400;
@@ -404,6 +449,7 @@ html, body {
     justify-content: center;
     margin-bottom: 8rem;
 }
+
 .card-header {
     display: flex;
     justify-content: space-between;
@@ -449,38 +495,84 @@ html, body {
     text-align: justify;
 }
 
-.alignleft{
-    text-align:left;
+.alignleft {
+    text-align: left;
+}
 
+.evenDate {
+    font-size: 12px;
 }
-.evenDate{
-   font-size:12px;
-}
+
 .eventContent {
     font-family: "Roboto Flex", sans-serif;
     font-weight: 700;
     font-size: 36px;
     line-height: 100%;
 }
+
 .Readmore {
     font-family: "Roboto Flex", sans-serif;
     font-weight: 600;
     font-size: 16px;
 }
+
 .evenImage {
     padding: 10px;
 }
-.evenImage img{
-    width: 100%;
-}
+
+    .evenImage img {
+        width: 100%;
+    }
+
 .eventCard {
     width: 32%;
     margin: 20px 0px;
 }
-.eventBody{
-    margin-top:20px;
+
+.eventBody {
+    margin-top: 20px;
 }
-.big-card-content {
+
+.abouteventBody {
+    background-color: white;
+    margin-top: 20px;
+    padding: 20px;
+    box-shadow: 2px 2px 2px lightgray;
+}
+
+.abouteventCard {
+    width: 32%;
+    margin: 20px 10px;
+}
+
+.aboutevenImage img {
+    width: 100%;
+}
+
+.abouteventContent, .about_titile {
+    color: black;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 180%;
+    letter-spacing: -0.02em; /* -2% letter spacing */
+    vertical-align: middle;
+}
+
+.about-tii {
+    margin: 50px 10px
+}
+
+.about-our {
+    color: black;
+    padding: 20px;
+    font-family: "Roboto Flex", sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 100%;
+}
+
+.big-card-content, .contactAddress-topic {
     color: black;
     padding: 20px;
     font-family: "Roboto Flex", sans-serif;
@@ -493,6 +585,7 @@ html, body {
     justify-content: center; /* also centers horizontally if in a flex container */
     height: 100%; /* needed for vertical centering to work */
 }
+
 .big-card-text {
     font-family: "Roboto Flex", sans-serif;
     color: black;
@@ -504,6 +597,7 @@ html, body {
     margin-bottom: 8rem;
     margin: 20px 0px;
 }
+
 .big-card {
     font-family: "Roboto Flex", sans-serif;
     color: black;
@@ -515,10 +609,12 @@ html, body {
 
 .bigcardContainer {
     margin: 30px;
+    margin-top: 2cm;
     padding: 30px;
-    background-color:rgba(121, 199, 1, 1);
+    background-color: rgba(121, 199, 1, 1);
     border-radius: 10px
 }
+
 .event_join {
     text-align: center;
     justify-content: center;
@@ -531,41 +627,186 @@ html, body {
     padding: 10px 15px;
     margin-top: 4rem;
 }
-/* Make the text responsive */
-@media (max-width: 576px) {
-    .Personalized-text-box {
-        font-size: 28px;
-        padding: 20px;
-    }
+
+.about-founder-countainer {
+    margin: 40px 20px;
+    background-color: white;
 }
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .Personalized-text-box {
-        font-size: 36px;
-        height: auto;
-        margin: 20px;
+
+.about-founder, .contact-founder {
+    width: 50%;
+    padding: 20px;
+    display:flex;
+    justify-content: center;
+    align-items : center
+}
+
+.contact-founder {
+    padding: 40px;
+}
+
+.about-content, .abt {
+    margin: 40px 0px;
+}
+
+.about-founder img {
+    width: 100%;
+}
+
+.about-content {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 26px;
+    letter-spacing: 0;
+    text-align: justify;
+    vertical-align: middle;
+}
+
+.founder-Image {
+    margin-top: 40px
+}
+
+.contact-submit {
+    width: 100%
+}
+.contactAddress{
+    width :70%;
+}
+.contactBody-topic {
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0;
+    text-align: justify;
+    vertical-align: middle;
+}
+.contactAddress-topic {
+    color: white;
+    font-size: 20px;
+}
+.contactAddress {
+    color: white !important;
+    border-radius: 10px;
+    background-color: green;
+    padding: 40px;
+}
+.contactBody-BB{
+    padding-left :10px;
+}
+.contact-submit{
+    margin-top: 30px;
+    background-color :green;
+    padding:10px;
+}
+.contactus-form {
+    box-shadow: 1px 1px 2px 1px lightgrey;
+}
+.space {
+    margin: 40px 0px;
+}
+.accordion{
+    margin-top: 40px;
+    width: 60%;
+}
+/* --- Responsive Enhancements Only --- */
+/* Tablets and below (<= 992px) */
+@media (max-width: 992px) {
+    .eventCard {
+        width: 48%;
+    }
+
+    .big-card {
+        width: 90%;
     }
 
     .grouped-img-box {
-        display: block;
+        justify-content: center;
+    }
+}
+
+/* Mobile landscape and below (<= 768px) */
+@media (max-width: 768px) {
+    .mission,
+    .mission-child-mission {
+        flex-direction: column;
+        align-items: center;
     }
 
-    .side-text1 {
-        margin: 10px;
-        padding: 10px;
+    .mission-child-1,
+    .mission-child-2 {
+        width: 100%;
     }
 
-    .d-flex {
-        flex-direction: column-reverse; /* Stack items on small screens */
+    .Featured-Coaches-Header,
+    .eventContent,
+    .big-card-content {
+        font-size: 1.75rem;
+    }
+
+    .eventCard {
+        width: 100%;
+    }
+
+    .Personalized-text-box {
+        font-size: 2rem;
+        padding: 1rem;
+    }
+
+    .side-text1,
+    .Empowering-text-box,
+    .Supported-text-box {
+        padding: 1rem;
+    }
+
+    .side-image img {
+        width: 100%;
+        height: auto;
+    }
+
+    .grouped-img-box {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer {
         text-align: center;
     }
+}
 
-    .custom-input {
-        height: auto;
-        padding: 0.5rem;
+/* Mobile portrait and smaller (<= 576px) */
+@media (max-width: 576px) {
+    .Personalized-text-box {
+        font-size: 1.5rem;
+        padding: 1rem;
     }
-    /* Optional: Adjustments for smaller screens if needed */
-    .side-image {
-        max-width: 1000%; /* Increase the width to half of the screen width for smaller screens */
+
+    .EventHeader,
+    .EducatorHeader {
+        font-size: 1.5rem;
+        padding: 0 10px;
+    }
+
+    .big-card-text,
+    .Eventtext {
+        padding: 0 10px;
+    }
+
+    .nnWH_join,
+    .nnb_join,
+    .nna_join {
+        width: 100%;
+        font-size: 1.1rem;
+    }
+
+    .record-child-value {
+        font-size: 2.25rem;
+    }
+
+    .scrollable-cards {
+        max-height: none;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 }

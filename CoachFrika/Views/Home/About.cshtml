@@ -1,27 +1,105 @@
 ﻿@{
     ViewData["Title"] = "About";
+    ViewData["BodyClass"] = "about-page";
 }
-<div class="container">
-    <!-- First Segment -->
-    <div class="row mb-5">
-        <div class="col-md-5 p-4 bg-white shadow-lg rounded-3">First Child</div>
-        <div class="col-md-5 offset-md-2 p-4 bg-white shadow-lg rounded-3">Second Child</div>
-    </div>
+<!-- First Segment -->
+<div class="d-flex justify-content-between about-founder-countainer">
+    <div class="about-founder founder-text">
+        <div class="d-flex justify-content-left about_titile ">Afeez Iyiola - FOUNDER</div>
+        <div class="about-content">
+            Coachfrika is an innovative edtech social enterprise
+            that provides personalized coaching support to teachers
+            in public and private schools across Nigeria.
+        </div>
 
+        <div class="about-content">
+            Our mission is to bridge the education inequality
+            gap by empowering teachers with the skills and resources they need to become
+            purposeful, effective, and efficient leaders in their classrooms. Through our
+            hybridized one-on-one coaching approach, we help teachers develop better leadership,
+            problem-solving, and communication skills, ultimately improving the quality of
+            lesson delivery and enhancing learning outcomes. Our unique platform connects
+            passionate educational and leadership coaches with teachers, creating a dynamic
+            ecosystem that fosters professional growth and development.
+        </div>
+        <div class="about-content">
+            Our goal is to provide top-notch coaching to educators throughout Africa to help
+            them become purposeful, effective, and efficient teacher-leaders in their classrooms.
+            We believe that through our coaching, teachers will experience greater job satisfaction
+            and career fulfillment while accelerating their progress. Our approach involves coaching,
+            tracking and assessing growth, and seeking feedback from stakeholders. We also believe
+            that coaching can help teachers make wise decisions about their future career paths
+            and develop sustainable leaders who can solve problem
+        </div>
+    </div>
+    <div class="about-founder founder-Image">
+        <div>
+            <img src="~/images/founder.png" />
+
+        </div>
+    </div>
+</div>
+<div class="abt">
     <!-- Second Segment -->
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">Centralized Topic</h2>
+    <div class="about-tii">
+        <div class="d-flex justify-content-center about-our">Our Team</div>
+        <div class="d-flex justify-content-center about-meet">Meet Our Exceptional Team of Seasoned Professionals</div>
     </div>
 
     <!-- Card List -->
     <div class="row g-4">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-            <div class="col"><div class="card p-3">Card 1</div></div>
-            <div class="col"><div class="card p-3">Card 2</div></div>
-            <div class="col"><div class="card p-3">Card 3</div></div>
-            <div class="col"><div class="card p-3">Card 4</div></div>
-            <div class="col"><div class="card p-3">Card 5</div></div>
-            <div class="col"><div class="card p-3">Card 6</div></div>
+
+        <div class="d-flex justify-content-between">
+            <div class="abouteventCard">
+                <div class="aboutevenImage">
+                    <img src="~/images/sol1.png" />
+                </div>
+                <div class="abouteventBody">
+                    <div class="abouteventContent alignleft">Solomon Asuquo</div>
+                    <div class="aboutevenDate alignleft">Head of Coaches</div>
+                </div>
+            </div>
+            <div class="abouteventCard">
+                <div class="aboutevenImage">
+                    <img src="~/images/sol2.png" />
+                </div>
+                <div class="abouteventBody">
+                    <div class="abouteventContent alignleft">Ufuoma Emmanuel</div>
+                    <div class="aboutevenDate alignleft">Teacher Development Officer</div>
+                </div>
+            </div>
+            <div class="abouteventCard">
+                <div class="aboutevenImage">
+                    <img src="~/images/sol3.png" />
+                </div>
+                <div class="abouteventBody">
+                    <div class="abouteventContent alignleft">Toheeb Opeyemi</div>
+                    <div class="aboutevenDate alignleft">Fullstack Developer</div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <div class="abouteventCard">
+                <div class="aboutevenImage">
+                    <img src="~/images/sol4.png" />
+                </div>
+                <div class="abouteventBody">
+                    <div class="abouteventContent alignleft">Abdulwasiu Akinremi</div>
+                    <div class="aboutevenDate alignleft">Product Designer</div>
+                </div>
+            </div>
+
+            <div class="abouteventCard">
+                <div class="aboutevenImage">
+                    <img src="~/images/sol5.png" />
+                </div>
+                <div class="abouteventBody">
+                    <div class="abouteventContent alignleft">Saratu Saheed</div>
+                    <div class="aboutevenDate alignleft">Financial Officer</div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+
