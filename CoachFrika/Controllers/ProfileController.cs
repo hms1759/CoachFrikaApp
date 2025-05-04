@@ -10,74 +10,19 @@ namespace CoachFrika.Controllers
         {
             return View();
         }
-
-        // GET: ProfileController/Details/5
-        public ActionResult Details(int id)
+        public IActionResult Dashboard()
         {
-            return View();
+            return PartialView("_Dashboard");
         }
 
-        // GET: ProfileController/Create
-        public ActionResult Create()
+        public IActionResult Report()
         {
-            return View();
+            return PartialView("_Report");
         }
 
-        // POST: ProfileController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public IActionResult Settings()
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ProfileController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ProfileController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ProfileController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ProfileController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return PartialView("_Settings");
         }
     }
 }

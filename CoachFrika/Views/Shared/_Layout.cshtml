@@ -52,8 +52,10 @@
                                    asp-controller="Home" asp-action="Blog">Blog</a>
                             </li>
                             <li class="nav-item nna">
-                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")"
-                                   asp-controller="Home" asp-action="Dashboard">Dashboard</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                                   asp-controller="Profile" asp-action="Index">
+                                    Dashboard
+                                </a>
                             </li>
                             <li class="nav-item nna_join">
                                 <a class="nav-link"

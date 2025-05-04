@@ -1,0 +1,88 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "Dashboard";
+}
+<div class="dashboard-container">
+    <h2>Welcome, Bukky!</h2>
+
+    <section class="profile-banner">
+        <div class="banner-content">
+            <div class="profile-photo">
+                <img src="~/images/profile.jpg" alt="Profile photo" />
+            </div>
+            <div class="profile-text">
+                <h3>MRS. B. Adeyemi</h3>
+                <p class="role">Professional Teacher/ Educator</p>
+                <p class="bio">Hello, I'm Mrs. B Adeleye – an enthusiastic educator dedicated to shaping young minds and fostering a love for learning. With a passion for creating dynamic and engaging classroom environments, I strive to inspire curiosity and empower my students to reach their full potential.</p>
+                <div class="details">
+                    <div><i class="fas fa-book"></i> Subjects: Basic Science, English, Maths</div>
+                    <div><i class="fas fa-users"></i> 20 Students</div>
+                    <div><i class="fas fa-school"></i> Ikate Primary School 1</div>
+                    <div><i class="fas fa-map-marker-alt"></i> Odogbolu Local govt. Ogun State</div>
+                </div>
+                <div class="follow-section">
+                    <span>Follow me on:</span>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <span class="experience">3+ <span>Years Of Experience</span></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="activities">
+        <div class="activities-header">
+            <h3>Activities</h3>
+            <div class="search-bar">
+                <input type="text" placeholder="Search..." />
+                <button><i class="fas fa-external-link-alt"></i> View All</button>
+            </div>
+        </div>
+        <div class="activity-cards">
+            <div class="activity-card ongoing">
+                <h4>Teachers As Leaders</h4>
+                <p>Batch 1st Cohort</p>
+                <p><i class="far fa-clock"></i> 12:40 P:M</p>
+                <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
+                <span class="status ongoing">Status : Ongoing</span>
+                <button>Join Now</button>
+            </div>
+
+            <div class="activity-card starting">
+                <h4>Mindset Coaching</h4>
+                <p>Batch 1st Cohort</p>
+                <p><i class="far fa-clock"></i> 01:40 P:M</p>
+                <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
+                <span class="status starting">Status : Starting in 60 Minutes</span>
+                <button>Join Now</button>
+            </div>
+
+            <div class="activity-card not-started">
+                <h4>Pedagogical Coaching</h4>
+                <p>Batch 1st Cohort</p>
+                <p><i class="far fa-clock"></i> 01:40 P:M</p>
+                <p><i class="far fa-calendar-alt"></i> 12 Jan 2024</p>
+                <span class="status not-started">Status : Not Started</span>
+                <button>Join Now</button>
+            </div>
+        </div>
+    </section>
+</div>
+
+@* 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.querySelector('.search-bar input');
+        const cards = document.querySelectorAll('.activity-card');
+
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        });
+    });
+</script> *@
+
