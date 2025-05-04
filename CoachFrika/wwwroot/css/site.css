@@ -637,7 +637,7 @@ html, body {
     width: 50%;
     padding: 20px;
     justify-content: center;
-    align-items : center
+    align-items: center
 }
 
 .contact-founder {
@@ -670,9 +670,11 @@ html, body {
 .contact-submit {
     width: 100%
 }
-.contactAddress{
-    width :70%;
+
+.contactAddress {
+    width: 70%;
 }
+
 .contactBody-topic {
     font-family: 'Ubuntu', sans-serif;
     font-weight: 600;
@@ -682,60 +684,94 @@ html, body {
     text-align: justify;
     vertical-align: middle;
 }
+
 .contactAddress-topic {
     color: white;
     font-size: 20px;
 }
+
 .contactAddress {
     color: white !important;
     border-radius: 10px;
     background-color: green;
     padding: 40px;
 }
-.contactBody-BB{
-    padding-left :10px;
+
+.contactBody-BB {
+    padding-left: 10px;
 }
-.contact-submit{
+
+.contact-submit {
     margin-top: 30px;
-    background-color :green;
-    padding:10px;
+    background-color: green;
+    padding: 10px;
 }
+
 .contactus-form {
     box-shadow: 1px 1px 2px 1px lightgrey;
 }
+
 .space {
     margin: 40px 0px;
 }
-.accordion{
+
+.accordion {
     margin-top: 40px;
     width: 60%;
 }
-.faqheader{
+
+.faqheader {
     margin-top: 30px;
 }
-.price-card{
-    height : 7rem
+
+.price-card {
+    height: 7rem
 }
-.card-spacing{
-    width :30%;
-    height : 743px !important;
-    display : flex;
-    flex-direction:column;
+
+.card-spacing {
+    width: 30%;
+    height: 743px !important;
+    display: flex;
+    flex-direction: column;
     justify-content: space-between;
     justify-content: center;
     margin: 20px;
-
-       
 }
+
 .price-card-title {
-    padding:20px 40px;
+    padding: 20px 40px;
     height: 99px;
 }
+
 .t1 {
     background: rgba(224, 241, 197, 1);
 }
-.price-card-body{
+
+.price-card-body {
 }
+
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    background-color: white;
+    padding-top: 60px;
+    box-shadow: 1px 1px 1px gray
+}
+
+    .sidebar a {
+        color: black;
+        padding: 12px 20px;
+        display: block;
+        text-decoration: none;
+    }
+
+        .sidebar a:hover {
+            background-color: forestgreen;
+            color: white;
+        }
 /* --- Responsive Enhancements Only --- */
 /* Tablets and below (<= 992px) */
 @media (max-width: 992px) {

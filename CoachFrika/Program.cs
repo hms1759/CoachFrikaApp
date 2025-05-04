@@ -246,7 +246,7 @@ void ConfigureApp(WebApplication app)
     app.UseAuthorization();   // Enable authorization middleware
 
     // Endpoint to display task count
-    app.MapGet("/dashboard", (IBackgroundTaskQueue taskQueue) =>
+    app.MapGet("/hangfiredashboard", (IBackgroundTaskQueue taskQueue) =>
     {
         var queuedTaskCount = (taskQueue as BackgroundTaskQueue)?.GetQueuedTaskCount() ?? 0;
         return Results.Json(new { QueuedTasks = queuedTaskCount });
