@@ -1,5 +1,4 @@
-﻿// JavaScript for Authentication Pages
-
+﻿
 document.addEventListener('DOMContentLoaded', function () {
     // Tab switching functionality
     const userTypeTabs = document.querySelectorAll('.user-type-btn');
@@ -33,67 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     
-
-    // Create notification system
-    function showNotification(message, type) {
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.innerHTML = message;
-
-        // Add to document
-        document.body.appendChild(notification);
-
-        // Trigger animation
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 10);
-
-        // Remove after 3 seconds
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 300);
-        }, 3000);
-    }
-
-    // Add notification styles
-    const notificationStyles = document.createElement('style');
-    notificationStyles.innerHTML = `
-      .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 24px;
-        background-color: white;
-        color: #333;
-        border-radius: 4px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
-      }
-      
-      .notification.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      
-      .notification-success {
-        background-color: #d4edda;
-        color: #155724;
-        border-left: 4px solid #28a745;
-      }
-      
-      .notification-error {
-        background-color: #f8d7da;
-        color: #721c24;
-        border-left: 4px solid #dc3545;
-      }
-    `;
-    document.head.appendChild(notificationStyles);
 
     // Handle "Forgot Password" link
     const forgotPasswordLink = document.getElementById('forgotPasswordLink');
@@ -140,25 +78,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const forgotPasswordModal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
             forgotPasswordModal.show();
 
-            // Handle send reset link button
-            document.getElementById('sendResetLink').addEventListener('click', function () {
-                const resetForm = document.getElementById('resetPasswordForm');
-
-                if (!resetForm.checkValidity()) {
-                    resetForm.classList.add('was-validated');
-                    return;
-                }
-
-                const email = document.getElementById('resetEmail').value;
-                console.log('Password reset requested for:', email);
-
-                // Show success message
-                forgotPasswordModal.hide();
-                showNotification('Password reset link sent! Check your email.', 'success');
-
-                // Clean up modal after hiding
-                document.body.removeChild(modalContainer);
-            });
         });
     }
 });
