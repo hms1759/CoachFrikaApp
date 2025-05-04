@@ -1,0 +1,120 @@
+﻿@model UserSignUpViewModel
+@{
+    ViewData["Title"] = "Sign Up";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+
+<div class="container-fluid p-0 vh-100">
+    <div class="row g-0 h-100">
+        <!-- Left Column -->
+        <div class="col-lg-5 d-none d-lg-block brand-column">
+            <img src="~/images/coach.png" alt="brand" class="brand-image" />
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-7 col-md-12 auth-column">
+            <div class="container auth-container">
+                <div class="auth-wrapper">
+                    <div class="auth-header text-center mb-4">
+                        <h1 class="auth-title">Sign Up As</h1>
+                    </div>
+
+                    <!-- Tabs (using JS to set UserType hidden input) -->
+                    <div class="user-type-tabs mb-4" id="userTypeTabs">
+                        <div class="row">
+                            <div class="col-6 p-0">
+                                <button class="btn user-type-btn active" data-user-type="coach">COACH</button>
+                            </div>
+                            <div class="col-6 p-0">
+                                <button class="btn user-type-btn" data-user-type="teacher">TEACHER</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form -->
+                    <form asp-action="SignUp" method="post" class="needs-validation" novalidate>
+                        <input type="hidden" name="UserType" id="UserType" value="coach" />
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" placeholder="Enter Full Name" required />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" placeholder="sample@gmail.com" required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Password</label>
+                            <div class="password-input-group">
+                                <input asp-for="Password" class="form-control" placeholder="••••••••••••••••••" required />
+                                <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                                    <i class="fas fa-eye-slash"></i>
+                                </button>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                            <div class="password-input-group">
+                                <input asp-for="ConfirmPassword" class="form-control" placeholder="••••••••••••••••••" required />
+                                <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+                                    <i class="fas fa-eye-slash"></i>
+                                </button>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Sign Up</button>
+                    </form>
+                </div>
+                <div class="text-center mb-2">
+                    <p class="auth-divider">Quick Sign Up With</p>
+                    <div class="social-login">
+                        <button type="button" class="btn btn-social btn-google">
+                            <img src="~/images/google.png" alt="Google" width="20" height="20">
+                        </button>
+                        <button type="button" class="btn btn-social btn-facebook">
+                            <img src="~/images/facebook.png" alt="Facebook" width="10" height="20">
+                        </button>
+                        <button type="button" class="btn btn-social btn-twitter">
+                            <img src="~/images/twitter.svg" alt="Twitter" width="20" height="20">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="auth-links text-center">
+                    <p>
+                        Already have an account?
+                        <a asp-action="Login" asp-controller="Account" class="auth-link highlight">Login</a>
+                    </p>
+                </div>
+
+                <!-- Decorative dots -->
+                <div class="dots-decoration dots-top-right"></div>
+                <div class="dots-decoration dots-bottom-left"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Set UserType on button click
+        document.querySelectorAll('[data-user-type]').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.getElementById('UserType').value = this.getAttribute('data-user-type');
+                document.querySelectorAll('.user-type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+    <script src="~/js/auth.js"></script>
+}

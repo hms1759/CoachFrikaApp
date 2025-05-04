@@ -1137,3 +1137,164 @@ sidebar.collapsed {
         white-space: nowrap;
     }
 }
+
+
+.package-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    background-color: white;
+    overflow: hidden;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.package-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-header-wrapper {
+    color: white;
+    padding: 10px 15px;
+}
+
+    .card-header-wrapper.header-one {
+        background-color: #A1D154;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .card-header-wrapper.header-two {
+        background-color: rgb(102, 206, 102);
+    }
+
+    .card-header-wrapper.header-three {
+        background-color: green;
+        border-radius: 8px 8px 0 0;
+    }
+
+.package-title {
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.package-price {
+    font-size: 2rem;
+    color: black;
+    margin-bottom: 20px;
+    font-weight: 700;
+    line-height: 3rem;
+}
+
+.package-features {
+    list-style: none;
+    padding: 0 20px;
+    margin-bottom: 20px;
+    flex-grow: 1; /* Allows features to take up remaining space */
+}
+
+    .package-features li {
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        padding-left: 1.2em; /* Space for the dot */
+        position: relative; /* For absolute positioning of the dot */
+    }
+
+        .package-features li::before {
+            content: '';
+            display: inline-block;
+            position: absolute;
+            left: 0;
+            top: 0.4em; /* Adjust vertical alignment as needed */
+            width: 0.6em;
+            height: 0.6em;
+            border-radius: 50%;
+            background-color: green;
+        }
+
+.btn-success {
+    padding: 15px 30px;
+    font-size: 1.2em;
+}
+
+.btn-choose {
+    background-color: transparent;
+    color: #28a745;
+    border: 1px solid #28a745;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 15px;
+    align-self: center;
+}
+
+    .btn-choose:hover {
+        background-color: #f8f9fa;
+        color: #1e7e34;
+        text-decoration: none;
+        border-color: #1e7e34;
+    }
+
+.section-container {
+    padding: 50px 0;
+}
+
+.image-container {
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+    .image-container img {
+        width: 100%;
+        height: auto;
+    }
+
+.cta-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+    .cta-button:hover {
+        background-color: #3e8e41;
+    }
+
+.teacher-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+    .teacher-section .text-content {
+        max-width: 500px;
+    }
+
+    .teacher-section img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+@media (max-width: 768px) {
+    .teacher-section {
+        flex-direction: column-reverse; /* Image below text on small screens */
+        justify-content: flex-start; /* Align items to the start of the container */
+    }
+}
+
+@media (min-width: 769px) { /* Apply this style on larger screens */
+    .teacher-section {
+        justify-content: space-between;
+    }
+}
+
