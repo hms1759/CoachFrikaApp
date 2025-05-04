@@ -35,20 +35,20 @@
                         <input type="hidden" name="UserType" id="UserType" value="coach" />
 
                         <div class="mb-3">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" name="Email" required placeholder="sample@gmail.com" />
-                            <div class="invalid-feedback">Please provide a valid email address.</div>
+                            <label asp-for="Email" class="form-label">Email Address</label>
+                            <input asp-for="Email" type="email" class="form-control" required placeholder="sample@gmail.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label">Password</label>
+                            <label asp-for="Password" class="form-label">Password</label>
                             <div class="password-input-group">
-                                <input type="password" class="form-control" name="Password" placeholder="••••••••••••••••••" required />
+                                <input asp-for="Password" type="password" id="password" class="form-control" placeholder="••••••••••••••••••" required />
                                 <button type="button" class="password-toggle" aria-label="Toggle password visibility">
                                     <i class="fas fa-eye-slash"></i>
                                 </button>
                             </div>
-                            <div class="invalid-feedback">Please provide your password.</div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
