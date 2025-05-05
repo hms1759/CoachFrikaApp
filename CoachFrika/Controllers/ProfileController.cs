@@ -15,9 +15,9 @@ namespace CoachFrika.Controllers
             return PartialView("_Dashboard");
         }
 
-        public IActionResult Report()
+        public IActionResult Schedule()
         {
-            return PartialView("_Report");
+            return PartialView("_Schedule");
         }
 
         public IActionResult Settings()
