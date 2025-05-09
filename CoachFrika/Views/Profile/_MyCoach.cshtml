@@ -1,0 +1,64 @@
+﻿
+<div class="schedule-container">
+    <!-- Top Bar -->
+    <div class="schedule-top-bar">
+        <div class="schedule-title">Schedule</div>
+        <div class="schedule-right-section">
+            <input type="text" placeholder="Search..." class="schedule-search-bar" />
+            <i class="schedule-icon schedule-profile-icon">👤</i>
+            <i class="schedule-icon schedule-notification-icon">🔔</i>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="schedule-tabs">
+        <li class="schedule-tab active" data-tab="not-started">Not Started</li>
+        <li class="schedule-tab" data-tab="ongoing">Ongoing Classes</li>
+        <li class="schedule-tab" data-tab="completed">Completed Classes</li>
+        <li class="schedule-tab" data-tab="missed">Missed Classes</li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="schedule-tab-content" id="not-started">
+        <div class="schedule-card-grid">
+            @{
+                var classTitles = new List<string>
+            {
+            "Personal Development Reading with Cohort 1",
+            "Workshop Planning and Material Preparation",
+            "Curriculum Review and Enhancements",
+            "Individual Coaching Sessions"
+            };
+            }
+            @foreach (var title in classTitles)
+            {
+                <div class="schedule-card">
+                    <div class="schedule-card-title">@title</div>
+                    <a href="#" class="schedule-view-details">View Details</a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="schedule-tab-content schedule-hidden" id="ongoing">No ongoing classes.</div>
+    <div class="schedule-tab-content schedule-hidden" id="completed">No completed classes.</div>
+    <div class="schedule-tab-content schedule-hidden" id="missed">No missed classes.</div>
+</div>
+<script>
+    document.querySelectorAll(".schedule-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+            // Remove active class
+            document.querySelectorAll(".schedule-tab").forEach(t => t.classList.remove("active"));
+            tab.classList.add("active");
+
+            // Hide all tab content
+            document.querySelectorAll(".schedule-tab-content").forEach(content => {
+                content.classList.add("schedule-hidden");
+            });
+
+            // Show selected tab content
+            const selected = tab.getAttribute("data-tab");
+            document.getElementById(selected).classList.remove("schedule-hidden");
+        });
+    });
+</script>

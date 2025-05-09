@@ -20,9 +20,9 @@ namespace CoachFrika.Controllers
             return PartialView("_Schedule");
         }
 
-        public IActionResult Settings()
+        public IActionResult MyCoach()
         {
-            return PartialView("_Settings");
+            return PartialView("_MyCoach");
         }
     }
 }
