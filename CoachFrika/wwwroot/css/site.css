@@ -830,10 +830,10 @@ html, body {
     background-color: #ffe6e6;
     color: #d9534f;
 }
-    .logout-btn:hover {
-        background-color: #f8d7da;
-        color: #c82333;
-    }
+.logout-btn:hover {
+    background-color: #f8d7da;
+    color: #c82333;
+}
 
 
 .main-content {
