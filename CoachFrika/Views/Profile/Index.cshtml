@@ -70,18 +70,14 @@
             // Handle sidebar navigation
             $(".sidebar-item").on("click", function (e) {
                 e.preventDefault();
-                const target = $(this).attr("href").substring(1); // remove '#'
+                $(".sidebar-item").removeClass("active");
+                $(this).addClass("active");
+
+                const target = $(this).attr("href").substring(1);
                 $("#page-container").load(`/Profile/${target}`);
             });
         });
-        $(".sidebar-item").on("click", function (e) {
-            e.preventDefault();
-            $(".sidebar-item").removeClass("active");
-            $(this).addClass("active");
-
-            const target = $(this).attr("href").substring(1);
-            $("#page-container").load(`/Profile/${target}`);
-        });
+        
 
     </script>
    
