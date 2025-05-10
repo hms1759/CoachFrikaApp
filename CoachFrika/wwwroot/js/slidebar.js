@@ -9,7 +9,7 @@
             sidebar.classList.toggle('collapsed');
             mainContent.classList.toggle('collapsed');
 
-            toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '>>>' : '<<<';
+            toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '>>' : '<<';
         });
     }
 

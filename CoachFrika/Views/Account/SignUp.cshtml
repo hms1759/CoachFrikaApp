@@ -73,6 +73,13 @@
                         <button type="submit" class="btn btn-primary w-100 mb-3">Sign Up</button>
                     </form>
                 </div>
+                <div class="auth-links text-center">
+                    <p>
+                        Already have an account?
+                        <a asp-action="Login" asp-controller="Account" class="auth-link highlight">Login</a>
+                    </p>
+                </div>
+
                 <div class="text-center mb-2">
                     <p class="auth-divider">Quick Sign Up With</p>
                     <div class="social-login">
@@ -86,13 +93,6 @@
                             <img src="~/images/twitter.svg" alt="Twitter" width="20" height="20">
                         </button>
                     </div>
-                </div>
-
-                <div class="auth-links text-center">
-                    <p>
-                        Already have an account?
-                        <a asp-action="Login" asp-controller="Account" class="auth-link highlight">Login</a>
-                    </p>
                 </div>
 
                 <!-- Decorative dots -->
