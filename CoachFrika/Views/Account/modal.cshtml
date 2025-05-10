@@ -1,0 +1,133 @@
+﻿@{
+    Layout = "";
+
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-Step Modal</title>
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+
+<!-- Background Blur Layer -->
+<div class="modal-background">
+    <img src="~/images/blurbackgd.png" alt="Background" class="modal-bg-img">
+</div>
+
+<!-- Modal Overlay -->
+<div id="modalOverlay" class="modal-overlay">
+
+    <!-- Step 1 -->
+    <div id="modalStep1" class="modal-box modal-visible">
+        <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+        <h2 class="modal-heading">Welcome Bukky!</h2>
+        <p class="modal-subtext">Let us quickly set up your profile</p>
+        <div class="modal-steps">
+            <div class="modal-step modal-active">1</div>
+            <div class="modal-step">2</div>
+            <div class="modal-step">3</div>
+            <div class="modal-step">4</div>
+            <div class="modal-step">5</div>
+        </div>
+        <div class="modal-form">
+            <label for="modalTitle">Tell us about yourself</label>
+            <select id="modalTitle">
+                <option value="">Select your Title</option>
+                <option>Mr</option>
+                <option>Mrs</option>
+                <option>Miss</option>
+                <option>Dr</option>
+            </select>
+            <textarea placeholder="Enter your background information"></textarea>
+            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="modalStep2" class="modal-box">
+        <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+        <h2 class="modal-heading">More Details</h2>
+        <p class="modal-subtext">Help us know you better</p>
+        <div class="modal-steps">
+            <div class="modal-step modal-active">1</div>
+            <div class="modal-step modal-active">2</div>
+            <div class="modal-step">3</div>
+            <div class="modal-step">4</div>
+            <div class="modal-step">5</div>
+        </div>
+        <div class="modal-form">
+            <label for="modalBio">Your Experience</label>
+            <textarea id="modalBio" placeholder="Describe your background..."></textarea>
+            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="modalStep3" class="modal-box">
+        <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+        <h2 class="modal-heading">Almost There</h2>
+        <p class="modal-subtext">A few more questions...</p>
+        <div class="modal-steps">
+            <div class="modal-step modal-active">1</div>
+            <div class="modal-step modal-active">2</div>
+            <div class="modal-step modal-active">3</div>
+            <div class="modal-step">4</div>
+            <div class="modal-step">5</div>
+        </div>
+        <div class="modal-form">
+            <label for="modalGoals">Your Goals</label>
+            <textarea id="modalGoals" placeholder="What do you hope to achieve?"></textarea>
+            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+        </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div id="modalStep4" class="modal-box">
+        <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+        <h2 class="modal-heading">Almost There</h2>
+        <p class="modal-subtext">A few more questions...</p>
+        <div class="modal-steps">
+            <div class="modal-step modal-active">1</div>
+            <div class="modal-step modal-active">2</div>
+            <div class="modal-step modal-active">3</div>
+            <div class="modal-step modal-active">4</div>
+            <div class="modal-step">5</div>
+        </div>
+        <div class="modal-form">
+            <label for="modalGoals">Your Goals</label>
+            <textarea id="modalGoals" placeholder="What do you hope to achieve?"></textarea>
+            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+        </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div id="modalStep5" class="modal-box">
+        <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+        <h2 class="modal-heading">Almost There</h2>
+        <p class="modal-subtext">A few more questions...</p>
+        <div class="modal-steps">
+            <div class="modal-step modal-active">1</div>
+            <div class="modal-step modal-active">2</div>
+            <div class="modal-step modal-active">3</div>
+            <div class="modal-step modal-active">4</div>
+            <div class="modal-step modal-active">5</div>
+        </div>
+        <div class="modal-form">
+            <label for="modalGoals">Your Goals</label>
+            <textarea id="modalGoals" placeholder="What do you hope to achieve?"></textarea>
+            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+        </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div id="modalStep5" class="modal-box">
+        
+    </div>
+</div>
+<script src="~/js/modal-script.js"></script>
+
+</body>
+</html>

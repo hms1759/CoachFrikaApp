@@ -16,13 +16,17 @@ namespace CoachFrika.Controllers
             if (ModelState.IsValid)
             {
                 // Save user to DB, hash password, etc.
-                return RedirectToAction("Login");
+                return RedirectToAction("Modal");
             }
 
             return View(model);
         }
 
         public IActionResult Login()
+        {
+            return View(); // Placeholder for login page
+        }
+        public IActionResult Modal()
         {
             return View(); // Placeholder for login page
         }

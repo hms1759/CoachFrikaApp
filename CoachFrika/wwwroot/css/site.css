@@ -1128,6 +1128,128 @@ sidebar.collapsed {
     display: none;
 }
 
+/* Background Blur */
+.modal-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -2;
+}
+
+.modal-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(8px);
+}
+
+/* Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Modal Box */
+.modal-box {
+    display: none;
+    width: 500px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    padding: 2rem;
+    color: #333;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.modal-visible {
+    display: block;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+
+.modal-heading {
+    margin: 0;
+    font-size: 24px;
+}
+
+.modal-subtext {
+    margin: 0.5rem 0 1.5rem;
+}
+
+.modal-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.modal-step {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ccc;
+    text-align: center;
+    line-height: 36px;
+    font-weight: bold;
+    color: white;
+}
+
+    .modal-step.modal-active {
+        background: #28a745;
+    }
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+}
+
+    .modal-form label {
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-form select,
+    .modal-form textarea {
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        width: 100%;
+    }
+
+    .modal-form textarea {
+        resize: vertical;
+        height: 100px;
+    }
+
+.modal-next-btn {
+    background-color: #28a745;
+    border: none;
+    padding: 0.75rem;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
 
 /* --- Responsive Enhancements Only --- */
 /* Tablets and below (<= 992px) */
