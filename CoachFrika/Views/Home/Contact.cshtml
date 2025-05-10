@@ -2,92 +2,56 @@
     ViewData["Title"] = "Contact";
     ViewData["BodyClass"] = "about-page";
 }
+
 <!-- First Segment: Contains 1 Child -->
 <div class="space"> </div>
-<div class="container d-flex contact justify-content-around">
-    <div class="about-founder-countaine contact-founder">
-        <div class="contactAddress">
-            <div class="contactAddress-topic">
-                Get in Touch
+<!-- First Segment: Contains 1 Child -->
+<div class="space"> </div>
+<br />
+<div class="contact-container">
+    <div class="contact-info-card">
+        <h2 class="contact-heading">Get in Touch</h2>
+        <div class="contact-info-item">
+            <span class="contact-icon">
+                <img src="~/images/email.png" />
+            </span>
+            <div>
+                <strong>Email Address</strong>
+                <p>info@coachtfklab.org</p>
             </div>
-            <br />
-            <div class="contactBody">
-                <div class="d-flex">
-                    <div>
-                        <img src="~/images/email.png" />
-
-                    </div>
-                    <div class="contactBody-BB">
-                        <div class="contactBody-topic">Email Address</div>
-                        <div>info@coachfrika.org</div>
-                    </div>
-                </div>
-            </div>
-
-            <br />
-            <div class="contactBody"> 
-                <div class="d-flex ">
-                    <div>
-                        <img src="~/images/vector.png" />
-                    </div>
-                    <div class="contactBody-BB">
-                        <div class="contactBody-topic">Phone Number</div>
-                        <div>+234 816 412 4811  </div>
-                    </div>
-                </div>
-            </div>
-
-            <br />
-            <div class="contactBody">
-                <div class="d-flex">
-                    <div>
-                        <img src="~/images/vector1.png" />
-                    </div>
-                    <div class="contactBody-BB">
-                        <div class="contactBody-topic">Office Address</div>
-                        <div>
-                            No 3, Alakaloka, Phase 2,
-                            Sanni Road, Olomoore,
-                            Abeokuta, Ogun State,
-                            Nigeria.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <br />
         </div>
-
+        <div class="contact-info-item">
+            <span class="contact-icon">
+                <img src="~/images/vector.png" />
+            </span>
+            <div>
+                <strong>Phone Number</strong>
+                <p>+234 816 412 4811</p>
+            </div>
+        </div>
+        <div class="contact-info-item">
+            <span class="contact-icon">
+                <img src="~/images/vector1.png" />
+            </span>
+            <div>
+                <strong>Office Address</strong>
+                <p>No. 3 Alakosoak, Phase 2, Sanni Road, Okunore, Abeokuta, Ogun State, Nigeria.</p>
+            </div>
+        </div>
     </div>
-    <div class=" about-founder-countaine about-founder contactus-form">
-        <form class="p-4">
-            <div class="mb-3">
-                <label for="fullName" class="form-label">Enter Your Full Name</label>
-                <input type="text" class="form-control" id="fullName" placeholder="Enter Your Full Name" required>
-            </div>
 
-            <div class="row">
-                <div class="mb-3 col-md-6">
-                    <label for="email" class="form-label">Your Email Address</label>
-                    <input type="email" class="form-control" id="email" placeholder="Your Email Address" required>
-                </div>
-                <div class="mb-3 col-md-6">
-                    <label for="phone" class="form-label">Your Phone Number</label>
-                    <input type="tel" class="form-control" id="phone" placeholder="Your Phone Number" required>
-                </div>
+    <div class="contact-form-card">
+        <h2 class="contact-form-title">Send Us Direct Message</h2>
+        <form id="contact-form">
+            <input type="text" class="contact-input" placeholder="Enter Your Full Name" required />
+            <div class="contact-row">
+                <input type="email" class="contact-input" placeholder="Your Email Address" required />
+                <input type="tel" class="contact-input" placeholder="Your Phone Number" required />
             </div>
-
-            <div class="mb-3">
-                <label for="message" class="form-label">Write Your Message *</label>
-                <textarea class="form-control" id="message" rows="5" placeholder="Write Your Message *" required></textarea>
-            </div>
-
-            <div class="d-flex justify-content-center align-items-center">
-                <button type="submit" class="contact-submit">Submit</button>
-            </div>
+            <textarea class="contact-textarea" placeholder="Write a message about your request" required></textarea>
+            <button type="submit" class="contact-button">Send</button>
         </form>
-
     </div>
 </div>
-
+<div class="space"> </div>
 <div class="space"> </div>

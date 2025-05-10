@@ -108,7 +108,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
 
         return new Cloudinary(account);
     });
-
+    services.AddHttpClient();
     // Controllers with authorization
     services.AddControllersWithViews();
     // Get the CORS_ORIGIN array from the appsettings

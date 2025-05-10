@@ -1,4 +1,6 @@
-﻿using CoachFrika.Extensions;
+﻿using CoachFrika.APIs.ViewModel;
+using CoachFrika.Common;
+using CoachFrika.Extensions;
 using CoachFrika.GoogleExtension;
 using CoachFrika.Models;
 using CoachFrika.Services;
@@ -20,23 +22,25 @@ namespace CoachFrika.Controllers
         public readonly IConfiguration configuration;
         public readonly IEmailService _emailService;
         private readonly EmailConfigSettings _emailConfig;
-        private HttpClient m_Client; 
-        const string SPREADSHEET_ID = "1RrG88SEXb5p85PzQUXhfzccHDa97hdAXyeueoqnUbSk";
-        const string SHEET_NAME = "Sheets";
-        SpreadsheetsResource.ValuesResource _googleSheetValues;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public HomeController(ILogger<HomeController> logger, GoogleSheetsHelper googleSheetsHelper, IEmailService emailService, IOptions<EmailConfigSettings> emailConfig)
+
+        public HomeController(ILogger<HomeController> logger,
+            IEmailService emailService, IOptions<EmailConfigSettings> emailConfig,
+            IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _emailConfig = emailConfig.Value;
             _emailService = emailService;
-            m_Client = new HttpClient();
-            _googleSheetValues = googleSheetsHelper.Service.Spreadsheets.Values;
+            _httpClientFactory = httpClientFactory;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>("http://localhost:5037/api/Public/GetLandingPageCount");
+
+            return View(response?.Data);
         }
         public IActionResult About()
         {
@@ -106,67 +110,6 @@ namespace CoachFrika.Controllers
             await _emailService.SendEmail(message);
 
 
-            return RedirectToAction("Index");
-
-        }
-        [HttpPost]
-        public async Task<IActionResult> RequestPlan(ContactUs model)
-        {
-            var range = "Sheet1!A1:D5";
-            var valueRange = new ValueRange
-            {
-                Values = GoogleMapper.MapToRangeData(model)
-            };
-
-            var appendRequest = _googleSheetValues.Append(valueRange, SPREADSHEET_ID, range);
-            appendRequest.ValueInputOption = AppendRequest.ValueInputOptionEnum.USERENTERED;
-            appendRequest.Execute();
-
-            // sending email
-            var mailSubject = _emailConfig.RequestTopic;
-            var body = await _emailService.ReadTemplate("planRequest");
-            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
-
-            //inserting variable
-            var messageToParse = new Dictionary<string, string>
-                    {
-                        { "{Fullname}", model.FullName},
-                        { "{logo}", logoUrl},
-                    };
-
-            //  email notification
-            var messageBody = body.ParseTemplate(messageToParse);
-            var message = new Message(new List<string>{ model.Email }, mailSubject, messageBody);
-
-            await _emailService.SendEmail(message);
-       
-            // sending email
-            var Subject = _emailConfig.ContactTopic;
-            var Recivedmail = _emailConfig.MailTo.ToList();
-            var mailbody = await _emailService.ReadTemplate("requestNotification");
-
-            //inserting variable
-            var messagebodyToParse = new Dictionary<string, string>
-                    {
-                        { "{Fullname}", model.FullName},
-                        { "{Phone}", model.PhoneNumber},
-                        { "{Plan}", model.Plan.ToString()},
-                        { "{Email}", model.Email},
-                        { "{School}", model.SchoolAddress},
-                        { "{Address}", model.SchoolName},
-                        { "{logo}", logoUrl},
-                    };
-
-            //  email notification
-            var mailBody = mailbody.ParseTemplate(messagebodyToParse);
-            var mailmessage = new Message(Recivedmail, Subject, mailBody);
-
-           var check = await _emailService.SendEmail(mailmessage);
-
-            if(check == null)
-            {
-
-            }
             return RedirectToAction("Index");
 
         }
