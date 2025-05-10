@@ -749,60 +749,71 @@ html, body {
 
 .price-card-body {
 }
-
+.img-spacing {
+    margin-right: 15px; 
+}
 
 
 .sidebar {
     width: 250px;
-    background-color: #fff; /* White background */
+    background-color: #fff;
     color: #333;
     position: fixed;
     height: 100%;
     border-right: 1px solid #ccc;
     transition: transform 0.3s ease;
+    padding-top: 20px;
 }
 
 .sidebar-header {
-    padding: 20px;
     text-align: center;
-    position: relative;
+    margin-bottom: 30px;
 }
 
-.sidebar .logo {
+.logo {
     width: 100px;
-}
-
-.sidebar .close-btn {
-    background: none;
-    border: none;
-    font-size: 26px;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    cursor: pointer;
 }
 
 .sidebar-menu {
     list-style: none;
-    margin-top: 30px;
+    padding: 0;
+    margin: 0;
 }
 
-    .sidebar-menu .sidebar-item {
-        display: block;
-        padding: 15px 20px;
-        color: #333;
-        text-decoration: none;
-        border-bottom: 1px solid #eee;
-        transition: background-color 0.3s;
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+    gap: 10px;
+}
+
+    .sidebar-item i {
+        width: 20px;
+        text-align: center;
+        color: #999;
     }
 
-        .sidebar-menu .sidebar-item i {
-            margin-right: 10px;
+    .sidebar-item:hover {
+        background-color: #f0f8ff;
+        color: #28a745;
+    }
+
+        .sidebar-item:hover i {
+            color: #28a745;
         }
 
-        .sidebar-menu .sidebar-item:hover {
-            background-color: #d4edda; /* Light green */
-            color: #155724;
+    /* Active link */
+    .sidebar-item.active {
+        background-color: #eef3ff;
+        color: #28a745;
+    }
+
+        .sidebar-item.active i {
+            color: #28a745;
         }
 
 .logout-btn {
@@ -810,17 +821,20 @@ html, body {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    border: none;
-    color: black;
-    padding: 10px;
     width: 80%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
     cursor: pointer;
-    border-radius: 4px;
+    background-color: #ffe6e6;
+    color: #d9534f;
 }
-
-    .logout-btn i {
-        margin-right: 8px;
+    .logout-btn:hover {
+        background-color: #f8d7da;
+        color: #c82333;
     }
+
 
 .main-content {
     margin-left: 250px;

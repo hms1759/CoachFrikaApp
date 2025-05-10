@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   @*   <link rel="stylesheet" href="~/css/styles.css"> *@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
@@ -21,12 +23,32 @@
                 <button class="close-btn" id="toggleBtn">x</button>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="#dashboard" class="sidebar-item"><img src="~/images/vector2.png" />Dashboard</a></li>
-                <li><a href="#schedule" class="sidebar-item"><img src="~/images/vector3.png" />Schedule</a></li>
-                <li><a href="#myCoach" class="sidebar-item"><img src="~/images/ppl.png" />My Coach and I</a></li>
+                <li>
+                    <a href="#dashboard" class="sidebar-item">
+                        <i class="fas fa-house"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#dashboard" class="sidebar-item">
+                        <i class="fas fa-broadcast-tower"></i> Live
+                    </a>
+                </li>
+                <li>
+                    <a href="#schedule" class="sidebar-item">
+                        <i class="fas fa-calendar-alt"></i> Schedule
+                    </a>
+                </li>
+                <li>
+                    <a href="#myCoach" class="sidebar-item">
+                        <i class="fas fa-user-friends"></i> My Coach and I
+                    </a>
+                </li>
             </ul>
-            <button class="logout-btn" id="logoutBtn">Logout</button>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
         </nav>
+
 
         <!-- Main Content Area -->
         <div class="main-content">
@@ -52,6 +74,15 @@
                 $("#page-container").load(`/Profile/${target}`);
             });
         });
+        $(".sidebar-item").on("click", function (e) {
+            e.preventDefault();
+            $(".sidebar-item").removeClass("active");
+            $(this).addClass("active");
+
+            const target = $(this).attr("href").substring(1);
+            $("#page-container").load(`/Profile/${target}`);
+        });
+
     </script>
    
 
