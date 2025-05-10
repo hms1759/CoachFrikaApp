@@ -5,12 +5,31 @@
     const mainContent = document.querySelector('.main-content');
 
     if (toggleBtn && sidebar && mainContent) {
+        //toggleBtn.addEventListener('click', function () {
+        //    sidebar.classList.toggle('collapsed');
+        //    mainContent.classList.toggle('collapsed');
+
+        //    toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '>>' : '<<';
+        //});
+        
+
+        const icon = toggleBtn.querySelector('i');
+
+        // Set correct icon on initial load
+        icon.className = sidebar.classList.contains('collapsed')
+            ? 'fas fa-angle-double-right'
+            : 'fas fa-angle-double-left';
+
         toggleBtn.addEventListener('click', function () {
             sidebar.classList.toggle('collapsed');
             mainContent.classList.toggle('collapsed');
 
-            toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '>>' : '<<';
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            icon.className = isCollapsed
+                ? 'fas fa-angle-double-right'
+                : 'fas fa-angle-double-left';
         });
+
     }
 
     const items = document.querySelectorAll('.sidebar-item');
