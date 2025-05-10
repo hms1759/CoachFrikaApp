@@ -967,7 +967,7 @@ sidebar.collapsed {
 
 .bio {
     margin: 10px 0;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
     color: #e0f7df;
 }
@@ -977,7 +977,7 @@ sidebar.collapsed {
     grid-template-columns: 1fr 1fr;
     gap: 5px;
     margin-top: 10px;
-    font-size: 14px;
+    font-size: 16px;
 }
 
     .details i {

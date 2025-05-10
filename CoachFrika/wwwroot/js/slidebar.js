@@ -11,23 +11,7 @@
 
         //    toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '>>' : '<<';
         //});
-
-        //const icon = toggleBtn.querySelector('i');
-
-        //// Set correct icon on load
-        ////if (sidebar.classList.contains('collapsed')) {
-        ////    icon.className = 'fas fa-angle-double-right';
-        ////} else {
-        ////    icon.className = 'fas fa-angle-double-left';
-        ////}
-
-        //toggleBtn.addEventListener('click', function () {
-        //    sidebar.classList.toggle('collapsed');
-        //    mainContent.classList.toggle('collapsed');
-
-        //    const isCollapsed = sidebar.classList.contains('collapsed');
-        //    icon.className = isCollapsed ? 'fas fa-angle-double-right' : 'fas fa-angle-double-left';
-        //});
+        
 
         const icon = toggleBtn.querySelector('i');
 
