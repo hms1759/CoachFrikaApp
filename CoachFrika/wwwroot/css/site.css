@@ -973,12 +973,15 @@ sidebar.collapsed {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    gap: 10px;
 }
 
     .activities-header input {
         padding: 5px 10px;
-        border-radius: 5px;
+        border-radius: 20px;
         border: 1px solid #ccc;
+        flex-grow: 1;
     }
 
     .activities-header button {
@@ -989,6 +992,32 @@ sidebar.collapsed {
         border-radius: 4px;
         margin-left: 10px;
     }
+    @media (max-width: 576px) {
+        .activities-header {
+            flex-wrap: wrap;
+        }
+
+            .activities-header h3 {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+        .search-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .search-bar input {
+                flex-grow: 1;
+            }
+
+            .search-bar button {
+                margin-left: 10px;
+            }
+    }
+
 
 .activity-cards {
     display: grid;
