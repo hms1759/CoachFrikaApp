@@ -17,10 +17,10 @@
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
-        <nav class="sidebar">
+        <nav class="sidebar collapsed">
             <div class="sidebar-header">
                 <img src="~/images/logo-removebg-preview.jpg" />
-                <button class="close-btn" id="toggleBtn">x</button>
+                @* <button class="close-btn" id="toggleBtn">x</button> *@
             </div>
             <ul class="sidebar-menu">
                 <li>
@@ -48,10 +48,13 @@
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </nav>
+        <button id="toggleBtn" class="sidebar-toggle-btn">
+            <i class="fas fa-angle-double-right"></i>
+        </button>
 
 
         <!-- Main Content Area -->
-        <div class="main-content">
+        <div class="main-content collapsed">
             <div id="page-container" class="page-content">
 
             </div>

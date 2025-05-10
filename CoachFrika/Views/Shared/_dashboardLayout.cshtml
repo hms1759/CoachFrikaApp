@@ -16,7 +16,7 @@
 
 <body class="@ViewData["BodyClass"]">
     <div class="d-flex" id="layoutContainer">
-        <div class="sidebar" id="sidebar">
+        <div class="sidebar collapsed" id="sidebar">
             <div class="sidebar-header">
                 <img src="~/images/dashdoardlogo.png" class="logo" />
             </div>
@@ -46,8 +46,8 @@
         </div>
 
 
-        <div class="main-content flex-grow-1 p-3" id="mainContent">
-            <button id="openSidebar" class="btn btn-outline-secondary mb-2 d-none">☰ Menu</button>
+        <div class="main-content collapsed flex-grow-1 p-3" id="mainContent">
+            @* <button id="openSidebar" class="btn btn-outline-secondary mb-2 d-none">☰ Menu</button> *@
             @RenderBody()
 
         </div>

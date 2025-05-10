@@ -812,9 +812,45 @@ html, body {
         color: #28a745;
     }
 
-        .sidebar-item.active i {
-            color: #28a745;
-        }
+    .sidebar-item.active i {
+        color: #28a745;
+    }
+.sidebar-toggle-btn {
+    position: absolute;
+    top: 1rem;
+    left: 250px; 
+    width: 40px;
+    height: 40px;
+    background-color: #f8f9fa;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: left 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar.collapsed + .sidebar-toggle-btn {
+    left: 0.5rem; 
+}
+
+.sidebar-toggle-btn i {
+    font-size: 18px;
+}
+.sidebar.collapsed {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+.main-content.collapsed {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+}
+
+
 
 .logout-btn {
     position: absolute;
