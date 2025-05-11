@@ -39,7 +39,11 @@ namespace CoachFrika.Controllers
         {
             var client = _httpClientFactory.CreateClient();
             var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>("http://localhost:5037/api/Public/GetLandingPageCount");
+            if(response.Data == null)
+            {
+                return View();
 
+            }
             return View(response?.Data);
         }
         public IActionResult About()

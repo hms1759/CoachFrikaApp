@@ -20,13 +20,22 @@ namespace CoachFrika.APIs.Controllerss
         public async Task<IActionResult> GetPublicCount()
         {
             var result = await _publicService.GetPublicCount();
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
+        [AllowAnonymous]
         [HttpPost("NewSubscription")]
         public async Task<IActionResult> NewSubscription([FromBody] SubscriptionDto model)
         {
             var result = await _publicService.NewSubscription(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpPost("ContactUs")]
@@ -35,7 +44,11 @@ namespace CoachFrika.APIs.Controllerss
             var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
             model.logoUrl = logoUrl;
             var result = await _publicService.ContactUs(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpPost("SchoolEnrollment")]
         public async Task<IActionResult> SchoolEnroll([FromBody] SchoolEnrollmentDto model)
@@ -43,7 +56,11 @@ namespace CoachFrika.APIs.Controllerss
             var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
             model.logoUrl = logoUrl;
             var result = await _publicService.SchoolEnrollment(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpPost("CorsChecker")]
@@ -52,7 +69,11 @@ namespace CoachFrika.APIs.Controllerss
             var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
             model.logoUrl = logoUrl;
             var result = await _publicService.SchoolEnrollment(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpPost("SponsorAChild")]
@@ -61,7 +82,11 @@ namespace CoachFrika.APIs.Controllerss
             var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
             model.logoUrl = logoUrl;
             var result = await _publicService.SponsorAchild(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

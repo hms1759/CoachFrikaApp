@@ -1410,6 +1410,131 @@ sidebar.collapsed {
         background-color: #007f2d;
     }
 
+
+
+
+
+
+
+.services-section {
+    padding: 60px 20px;
+}
+
+.services-container,
+.services-cta-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.services-reverse {
+    flex-direction: row-reverse;
+}
+
+.services-text {
+    flex: 1;
+}
+
+.services-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.services-description {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.services-image {
+    flex: 1;
+    text-align: center;
+}
+
+.services-img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* CTA Section */
+.services-cta {
+    background-color: #2aa745;
+    color: white;
+}
+
+.services-cta-text {
+    flex: 1;
+}
+
+.services-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #fff;
+    color: #2aa745;
+    font-weight: bold;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-decoration: none;
+}
+
+    .services-button:hover {
+        background-color: #e0ffe7;
+    }
+
+/* Testimonials */
+.services-testimonials {
+    background-color: #f8f8f8;
+    text-align: center;
+}
+
+.services-title-center {
+    font-size: 2rem;
+    margin-bottom: 40px;
+}
+
+.services-testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.services-testimonial-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.services-testimonial-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.services-testimonial-text {
+    font-style: italic;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.services-testimonial-author {
+    font-weight: bold;
+    color: #2aa745;
+}
 /* --- Responsive Enhancements Only --- */
 /* Tablets and below (<= 992px) */
 @media (max-width: 992px) {

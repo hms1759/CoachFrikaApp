@@ -111,13 +111,8 @@ namespace CoachFrika.APIs.Domin.Services
                     return res;
                 }
                 // Validate email format
-                var emailValid = Validators.ValidateEmail(model.Email);
-                if (!emailValid)
-                {
-                    res.Message = "Invalid email format.";
-                    res.Status = false;
-                    return res;
-                }
+                if (IsValidEmail(model.Email) && await HasMxRecord(model.Email))
+                { 
                 var dto = new coachfrikaaaa.APIs.Entity.ContactUs();
                 dto.Email = model.Email;
                 dto.FullName = model.FullName;
@@ -146,6 +141,12 @@ namespace CoachFrika.APIs.Domin.Services
                 //await _emailService.SendEmail(message);
 
                 return res;
+                }else
+                {
+                    res.Message = "Invalid email format.";
+                    res.Status = false;
+                    return res;
+                }
             }
             catch (Exception ex)
             {
@@ -194,21 +195,24 @@ namespace CoachFrika.APIs.Domin.Services
             var res = new BaseResponse<string>();
             res.Status = true;
             try
-            { // Validate email format
-                var emailValid = Validators.ValidateEmail(model.Email);
-                if (!emailValid)
+            { 
+                // Validate email format
+                if (IsValidEmail(model.Email) && await HasMxRecord(model.Email))
+                {
+                    var dto = new NewsSubscription();
+                    dto.Email = model.Email;
+                    var newsRepository = _unitOfWork.GetRepository<NewsSubscription>();
+                    await newsRepository.AddAsync(dto);
+                    await _unitOfWork.SaveChangesAsync();
+                    res.Message = "Successful";
+                    return res;
+                }
+                else
                 {
                     res.Message = "Invalid email format.";
                     res.Status = false;
                     return res;
                 }
-                var dto = new NewsSubscription();
-                dto.Email = model.Email;
-                var newsRepository = _unitOfWork.GetRepository<NewsSubscription>();
-                await newsRepository.AddAsync(dto);
-                await _unitOfWork.SaveChangesAsync();
-                res.Message = "Successful";
-                return res;
             }
             catch (Exception ex)
             {
@@ -428,6 +432,27 @@ namespace CoachFrika.APIs.Domin.Services
                 return res;
 
             }
+        }
+        public bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public async Task<bool> HasMxRecord(string email)
+        {
+            var domain = email.Split('@').LastOrDefault();
+            if (string.IsNullOrEmpty(domain)) return false;
+
+            var lookup = new DnsClient.LookupClient();
+            var result = await lookup.QueryAsync(domain, DnsClient.QueryType.MX);
+            return result.Answers.MxRecords().Any();
         }
     }
 }

@@ -24,4 +24,23 @@ namespace CoachFrika.Models
         public string? WhyInterested { get; set; }
 
     }
+
+
+    public class ContactFormModel
+    {
+        [Required(ErrorMessage = "Full name is required.")]
+        public string? FullName { get; set; }
+
+        [Required(ErrorMessage = "Email address is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address format.")]
+        public string? Email { get; set; }
+
+        [Required(ErrorMessage = "Phone number is required.")]
+        [RegularExpression(@"^\+?[0-9]{7,15}$", ErrorMessage = "Invalid phone number format.")]
+        public string? PhoneNumber { get; set; }
+
+        [Required(ErrorMessage = "Message is required.")]
+        public string? Message { get; set; }
+    }
+
 }

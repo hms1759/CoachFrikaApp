@@ -3,35 +3,39 @@
     ViewData["BodyClass"] = "about-page";
 }
 
-<!-- First Segment: Contains 1 Child -->
-<div class="space"> </div>
-<!-- First Segment: Contains 1 Child -->
-<div class="space"> </div>
+<!-- Spacing Segments -->
+<div class="space"></div>
+<div class="space"></div>
 <br />
+
 <div class="contact-container">
+    <!-- Contact Information -->
     <div class="contact-info-card">
         <h2 class="contact-heading">Get in Touch</h2>
+
         <div class="contact-info-item">
             <span class="contact-icon">
-                <img src="~/images/email.png" />
+                <img src="~/images/email.png" alt="Email Icon" />
             </span>
             <div>
                 <strong>Email Address</strong>
                 <p>info@coachtfklab.org</p>
             </div>
         </div>
+
         <div class="contact-info-item">
             <span class="contact-icon">
-                <img src="~/images/vector.png" />
+                <img src="~/images/vector.png" alt="Phone Icon" />
             </span>
             <div>
                 <strong>Phone Number</strong>
                 <p>+234 816 412 4811</p>
             </div>
         </div>
+
         <div class="contact-info-item">
             <span class="contact-icon">
-                <img src="~/images/vector1.png" />
+                <img src="~/images/vector1.png" alt="Location Icon" />
             </span>
             <div>
                 <strong>Office Address</strong>
@@ -40,18 +44,98 @@
         </div>
     </div>
 
+    <!-- Contact Form -->
     <div class="contact-form-card">
         <h2 class="contact-form-title">Send Us Direct Message</h2>
         <form id="contact-form">
-            <input type="text" class="contact-input" placeholder="Enter Your Full Name" required />
+            <input type="text" class="contact-input" name="FullName" placeholder="Enter Your Full Name" required />
+
             <div class="contact-row">
-                <input type="email" class="contact-input" placeholder="Your Email Address" required />
-                <input type="tel" class="contact-input" placeholder="Your Phone Number" required />
+                <input type="email" class="contact-input" name="Email" placeholder="Your Email Address" required />
+                <input type="tel" class="contact-input" name="PhoneNumber"
+                       placeholder="Your Phone Number"
+                       pattern="^\+?[0-9]{7,15}$"
+                       title="Enter a valid phone number (7-15 digits, optional + at start)"
+                       required />
             </div>
-            <textarea class="contact-textarea" placeholder="Write a message about your request" required></textarea>
+
+            <textarea class="contact-textarea" name="Message" placeholder="Write a message about your request" required></textarea>
+
+            <!-- Anti-bot Checkbox -->
+            <div style="margin: 10px 0;">
+                <input type="checkbox" id="not-robot" required />
+                <label for="not-robot">I'm not a robot</label>
+            </div>
+
             <button type="submit" class="contact-button">Send</button>
         </form>
+
+        <!-- Feedback Message -->
+        <div id="contact-message" style="margin-top: 10px;"></div>
     </div>
 </div>
-<div class="space"> </div>
-<div class="space"> </div>
+
+<div class="space"></div>
+<div class="space"></div>
+
+<!-- JavaScript --><script>
+                       document.getElementById('contact-form').addEventListener('submit', function (e) {
+                           e.preventDefault();
+
+                           const fullName = document.querySelector('input[name="FullName"]').value.trim();
+                           const email = document.querySelector('input[name="Email"]').value.trim();
+                           const phone = document.querySelector('input[name="PhoneNumber"]').value.trim();
+                           const message = document.querySelector('textarea[name="Message"]').value.trim();
+                           const isHuman = document.getElementById('not-robot').checked;
+                           const feedback = document.getElementById('contact-message');
+
+                           // Basic validation
+                           const phoneRegex = /^\+?[0-9]{7,15}$/;
+                           if (!phoneRegex.test(phone)) {
+                               feedback.textContent = 'Invalid phone number format.';
+                               feedback.style.color = 'red';
+                               return;
+                           }
+
+                           if (!isHuman) {
+                               feedback.textContent = 'Please confirm you are not a robot.';
+                               feedback.style.color = 'red';
+                               return;
+                           }
+
+                           // Build JSON payload
+                           const payload = {
+                               fullName: fullName,
+                               email: email,
+                               phoneNumber: phone,
+                               message: message
+                           };
+
+                           // Send to API
+                           fetch('/api/ContactUs/CreateContactUs', {
+                               method: 'POST',
+                               headers: {
+                                   'Content-Type': 'application/json'
+                               },
+                               body: JSON.stringify(payload)
+                           })
+                           console.log(response);
+                                                      .then(response => {
+                               console.log(response);
+                                   console.log(response);
+                                   if (!response.ok) throw new Error("Network error");
+                                   return response.json();
+                               })
+                               .then(data => {
+                                   console.log(data);
+                                   feedback.textContent = 'Message sent successfully!';
+                                   feedback.style.color = 'green';
+                               })
+                               .catch(error => {
+                                   console.error('Error:', error);
+                                   feedback.textContent = 'Failed to send message.';
+                                   feedback.style.color = 'red';
+                               });
+                       });
+</script>
+

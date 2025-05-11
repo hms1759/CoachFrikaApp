@@ -24,31 +24,51 @@ namespace CoachFrika.APIs.Controllerss
         public async Task<IActionResult> CreateStage1(TitleDto model)
         {
             var result = await _coachesService.CreateStage1(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpPost("CreateStage2")]
         public async Task<IActionResult> CreateStage2(PhoneYearsDto model)
         {
             var result = await _coachesService.CreateStage2(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpPost("CreateStage3")]
         public async Task<IActionResult> CreateStage3(DescriptionDto model)
         {
             var result = await _coachesService.CreateStage3(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpPost("CreateStage4")]
         public async Task<IActionResult> CreateStage4(SocialMediaDto model)
         {
             var result = await _coachesService.CreateStage4(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
         [HttpPost("CreateStage5")]
         public async Task<IActionResult> CreateStage5(SubscriptionsDto model)
         {
             var result = await _coachesService.CreateStage5(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
 
@@ -56,35 +76,55 @@ namespace CoachFrika.APIs.Controllerss
         public IActionResult MyTeachers([FromQuery]GetTeachers model)
         {
             var result =  _coachesService.MyTeachers(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpGet("GetAllCoaches")]
         public async Task<IActionResult> GetAllCoaches([FromQuery] GetAllCoaches model)
         {
             var result =  _coachesService.GetAllCoaches(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpGet("GetCoacheById")]
         public async Task<IActionResult> GetCoacheById([FromQuery] string Id)
         {
             var result = await _coachesService.GetCoachById(Id);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpPost("AddTeachersRecomendatins")]
         public async Task<IActionResult> AddRecomendatins(CoachRecommendation model)
         {
             var result = await _coachesService.AddRecomendations(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpPut("EditRecommendation")]
         public async Task<IActionResult> EditRecommendation(EditRecommendation model)
         {
             var result = await _coachesService.EditRecommendation(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [ProducesResponseType(typeof(BaseResponse<List<GetCoachesRecommendationResponse>>), (int)HttpStatusCode.OK)]
@@ -92,7 +132,11 @@ namespace CoachFrika.APIs.Controllerss
         public async Task<IActionResult> GetAllRecommendations([FromQuery] GetCoachesRecommendations model)
         {
             var result = _coachesService.Recommendations(model);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
 
@@ -100,7 +144,11 @@ namespace CoachFrika.APIs.Controllerss
         public async Task<IActionResult> GetRecommendationById([FromQuery] string Id)
         {
             var result = await _coachesService.GetRecommendationById(Id);
-            return Ok(result);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

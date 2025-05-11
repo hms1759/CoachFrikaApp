@@ -75,18 +75,19 @@
 
         <!-- div 8: Text + Input Field -->
         <div class="text-center Subscribe-Contain ">
+            <div id="subscribe-message" class="text-center mt-2"></div>
+            <br />
             <h2>Subscribe to our newsletter</h2>
             <br />
             <p>We recommend you to subscribe to our newsletter, drop your <br />email below to get daily updates about us.</p>
 
-            <br />
-            <br />
+            <br /><br />
             <div class="d-flex justify-content-center align-items-center">
-                <input type="email" class="form-control w-50 custom-input" placeholder="Enter your email address">
-                <button type="submit" class="btn btn-green ms-2">Subscribe</button>
+                <input type="email" id="subscribe-email" class="form-control w-50 custom-input" placeholder="Enter your email address" required />
+                <button type="button" id="subscribe-btn" class="btn btn-green ms-2">Subscribe</button>
             </div>
+            
 
-            <br />
         </div>
 
         <!-- Footer -->
@@ -148,6 +149,42 @@
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script>
+        document.getElementById('subscribe-btn').addEventListener('click', function () {
+            const emailInput = document.getElementById('subscribe-email');
+            const email = emailInput.value.trim();
+            const messageBox = document.getElementById('subscribe-message');
+
+            const apiUrl = '@Url.Content("~/api/Public/NewSubscription")';
+            if (!email) {
+                messageBox.textContent = 'Please enter your email.';
+                messageBox.style.color = 'red';
+                return;
+            }
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error('Network error');
+                    return response.json();
+                })
+                .then(data => {
+                    messageBox.textContent = 'Subscription successful!';
+                    messageBox.style.color = 'green';
+                    emailInput.value = '';
+                })
+                .catch(error => {
+                    console.error(error);
+                    messageBox.textContent = 'Failed to subscribe. Please try again.';
+                    messageBox.style.color = 'red';
+                });
+        });
+    </script>
+
 </body>
 
 </html>

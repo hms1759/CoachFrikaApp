@@ -21,8 +21,9 @@ namespace CoachFrika.Common.Extension
         // Helper method to validate phone number format (e.g., 08068783985)
         public static bool ValidatePhoneNumber(string phoneNumber)
         {
-            var phoneRegex = new Regex(@"^0\d{10}$");  // Starts with '0' followed by 10 digits
-            return phoneRegex.IsMatch(phoneNumber);
+            return Regex.IsMatch(phoneNumber, @"^\+?[0-9]{7,15}$");
+            //var phoneRegex = new Regex(@"^0\d{10}$");  // Starts with '0' followed by 10 digits
+            //return phoneRegex.IsMatch(phoneNumber);
         }
 
        
