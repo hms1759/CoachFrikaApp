@@ -1,4 +1,4 @@
-﻿
+﻿@* 
 <div class="schedule-container">
     <!-- Top Bar -->
     <div class="schedule-top-bar">
@@ -12,37 +12,92 @@
 
     <!-- Tabs -->
     <ul class="schedule-tabs">
-        <li class="schedule-tab active" data-tab="not-started">Not Started</li>
-        <li class="schedule-tab" data-tab="ongoing">Ongoing Classes</li>
-        <li class="schedule-tab" data-tab="completed">Completed Classes</li>
-        <li class="schedule-tab" data-tab="missed">Missed Classes</li>
+        <li class="schedule-tab active" data-tab="MyCoach">Not Started</li>
+        
+        <li class="schedule-tab" data-tab="recommendations">Recommendations</li>
+        <li class="schedule-tab" data-tab="coaching">Missed Classes</li>
     </ul>
 
     <!-- Tab Content -->
-    <div class="schedule-tab-content" id="not-started">
-        <div class="schedule-card-grid">
-            @{
-                var classTitles = new List<string>
-            {
-            "Personal Development Reading with Cohort 1",
-            "Workshop Planning and Material Preparation",
-            "Curriculum Review and Enhancements",
-            "Individual Coaching Sessions"
-            };
-            }
-            @foreach (var title in classTitles)
-            {
-                <div class="schedule-card">
-                    <div class="schedule-card-title">@title</div>
-                    <a href="#" class="schedule-view-details">View Details</a>
+    <div class="schedule-tab-content" id="MyCoach">
+        <div class="row">
+            <!-- Coach 1 -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="coach-card h-100">
+                    <div class="row g-0 h-100">
+                        <div class="col-md-4 coach-img-container">
+                            <img src="~/images/21.webp" class="coach-img" alt="Afeez Iyiola">
+                        </div>
+                        <div class="col-md-8 coach-content d-flex flex-column">
+                            <h5>Afeez Iyiola</h5>
+                            <p class="text-muted">CEO/Founder CoachFrika</p>
+                            <div class="mt-auto">
+                                <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            }
+            </div>
+
+            <!-- Coach 2 -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="coach-card h-100">
+                    <div class="row g-0 h-100">
+                        <div class="col-md-4 coach-img-container">
+                            <img src="~/images/21.webp" class="coach-img" alt="Mubarak Oyedele">
+                        </div>
+                        <div class="col-md-8 coach-content d-flex flex-column">
+                            <h5>Mubarak Oyedele</h5>
+                            <p class="text-muted">CEO/Founder CoachFrika</p>
+                            <div class="mt-auto">
+                                <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coach 3 -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="coach-card h-100">
+                    <div class="row g-0 h-100">
+                        <div class="col-md-4 coach-img-container">
+                            <img src="~/images/21.webp" class="coach-img" alt="Solomon Asuguo">
+                        </div>
+                        <div class="col-md-8 coach-content d-flex flex-column">
+                            <h5>Solomon Asuguo</h5>
+                            <p class="text-muted">CEO/Founder CoachFrika</p>
+                            <div class="mt-auto">
+                                <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coach 4 -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="coach-card h-100">
+                    <div class="row g-0 h-100">
+                        <div class="col-md-4 coach-img-container">
+                            <img src="~/images/dudu.webp" class="coach-img" alt="Akeem Badru">
+                        </div>
+                        <div class="col-md-8 coach-content d-flex flex-column">
+                            <h5>Akeem Badru</h5>
+                            <p class="text-muted">CEO/Founder CoachFrika</p>
+                            <div class="mt-auto">
+                                <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="schedule-tab-content schedule-hidden" id="ongoing">No ongoing classes.</div>
-    <div class="schedule-tab-content schedule-hidden" id="completed">No completed classes.</div>
-    <div class="schedule-tab-content schedule-hidden" id="missed">No missed classes.</div>
+    <div class="schedule-tab-content schedule-hidden" id="recommendations">recommendations.</div>
+    <div class="schedule-tab-content schedule-hidden" id="coaching">Coaching session.</div>
 </div>
 <script>
     document.querySelectorAll(".schedule-tab").forEach(tab => {
@@ -62,3 +117,205 @@
         });
     });
 </script>
+ *@
+
+ 
+
+<div class="container py-4">
+    <h1 class="mb-4">My Coach & I</h1>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="coaches-tab" data-bs-toggle="tab" data-bs-target="#coaches" type="button" role="tab" aria-controls="coaches" aria-selected="true">My Coaches</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="chats-tab" data-bs-toggle="tab" data-bs-target="#chats" type="button" role="tab" aria-controls="chats" aria-selected="false">Chats</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="recommendations-tab" data-bs-toggle="tab" data-bs-target="#recommendations" type="button" role="tab" aria-controls="recommendations" aria-selected="false">Recommendations</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sessions-tab" data-bs-toggle="tab" data-bs-target="#sessions" type="button" role="tab" aria-controls="sessions" aria-selected="false">Coaching session</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="myTabContent">
+        <!-- My Coaches Tab -->
+        <div class="tab-pane fade show active" id="coaches" role="tabpanel" aria-labelledby="coaches-tab">
+            <!-- Search and View All -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-control" placeholder="Search coaches...">
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="btn btn-outline-secondary">View All Coaches</a>
+                </div>
+            </div>
+
+            <!-- Coaches List -->
+            <div class="row">
+                <!-- Coach 1 -->
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="coach-card h-100">
+                        <div class="row g-0 h-100">
+                            <div class="col-md-4 coach-img-container">
+                                <img src="~/images/21.webp" class="coach-img" alt="Afeez Iyiola">
+                            </div>
+                            <div class="col-md-8 coach-content d-flex flex-column">
+                                <h5>Afeez Iyiola</h5>
+                                <p class="text-muted">CEO/Founder CoachFrika</p>
+                                <div class="mt-auto">
+                                    <a href="#" class="btn btn-sm btn-outline-success">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coach 2 -->
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="coach-card h-100">
+                        <div class="row g-0 h-100">
+                            <div class="col-md-4 coach-img-container">
+                                <img src="~/images/21.webp" class="coach-img" alt="Mubarak Oyedele">
+                            </div>
+                            <div class="col-md-8 coach-content d-flex flex-column">
+                                <h5>Mubarak Oyedele</h5>
+                                <p class="text-muted">CEO/Founder CoachFrika</p>
+                                <div class="mt-auto">
+                                    <a href="#" class="btn btn-sm btn-outline-success">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coach 3 -->
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="coach-card h-100">
+                        <div class="row g-0 h-100">
+                            <div class="col-md-4 coach-img-container">
+                                <img src="~/images/21.webp" class="coach-img" alt="Solomon Asuguo">
+                            </div>
+                            <div class="col-md-8 coach-content d-flex flex-column">
+                                <h5>Solomon Asuguo</h5>
+                                <p class="text-muted">CEO/Founder CoachFrika</p>
+                                <div class="mt-auto">
+                                    <a href="#" class="btn btn-sm btn-outline-success">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chats Tab -->
+        <div class="tab-pane fade" id="chats" role="tabpanel" aria-labelledby="chats-tab">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-control" placeholder="Search chats...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Afeez Iyiola</h5>
+                        <small>3 mins ago</small>
+                    </div>
+                    <p class="mb-1">Hello, how are you doing with your goals this week?</p>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Mubarak Oyedele</h5>
+                        <small>1 hour ago</small>
+                    </div>
+                    <p class="mb-1">Don't forget our session tomorrow at 2pm</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recommendations Tab -->
+        <div class="tab-pane fade" id="recommendations" role="tabpanel" aria-labelledby="recommendations-tab">
+            <div class="alert alert-info">
+                <h4>Recommended Coaches For You</h4>
+                <p>Based on your profile and preferences, we recommend these coaches:</p>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card">
+                        <img src="~/images/21.webp" class="card-img-top" alt="Recommended Coach">
+                        <div class="card-body">
+                            <h5 class="card-title">John Smith</h5>
+                            <p class="card-text">Leadership Development Specialist</p>
+                            <a href="#" class="btn btn-primary">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card">
+                        <img src="~/images/21.webp" class="card-img-top" alt="Recommended Coach">
+                        <div class="card-body">
+                            <h5 class="card-title">Sarah Johnson</h5>
+                            <p class="card-text">Career Transition Coach</p>
+                            <a href="#" class="btn btn-primary">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coaching Sessions Tab -->
+        <div class="tab-pane fade" id="sessions" role="tabpanel" aria-labelledby="sessions-tab">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-control" placeholder="Search sessions...">
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="btn btn-primary">Schedule New Session</a>
+                </div>
+            </div>
+
+            <div class="activity-cards">
+                <div class="activity-card ongoing">
+                    <h4>Teachers As Leaders</h4>
+                    <p>Batch 1st Cohort</p>
+                    <p><i class="far fa-clock"></i> 12:40 P:M</p>
+                    <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
+                    <span class="status ongoing">Status : Ongoing</span>
+                    <button>Join Now</button>
+                </div>
+
+                <div class="activity-card starting">
+                    <h4>Mindset Coaching</h4>
+                    <p>Batch 1st Cohort</p>
+                    <p><i class="far fa-clock"></i> 01:40 P:M</p>
+                    <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
+                    <span class="status starting">Status : Starting in 60 Minutes</span>
+                    <button>Join Now</button>
+                </div>
+
+                <div class="activity-card not-started">
+                    <h4>Pedagogical Coaching</h4>
+                    <p>Batch 1st Cohort</p>
+                    <p><i class="far fa-clock"></i> 01:40 P:M</p>
+                    <p><i class="far fa-calendar-alt"></i> 12 Jan 2024</p>
+                    <span class="status not-started">Status : Not Started</span>
+                    <button>Join Now</button>
+                </div>
+        </div>
+    </div>
+</div>

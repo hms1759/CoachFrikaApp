@@ -1469,3 +1469,69 @@ sidebar.collapsed {
     }
 }
 
+.nav-tabs .nav-link.active {
+    background-color: transparent;
+    border-bottom: 3px solid #28c76f;
+    color: #28c76f;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+    padding: 10px 20px;
+}
+
+.coach-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: transform 0.3s;
+    height: 100%;
+}
+
+    .coach-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+.coach-img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.search-box {
+    position: relative;
+}
+
+    .search-box i {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: #6c757d;
+    }
+
+    .search-box input {
+        padding-left: 35px;
+    }
+
+.coach-content {
+    padding: 15px;
+}
+
+.coach-img-container {
+    height: 140px;
+}
+
+.tab-content {
+    padding-top: 20px;
+}
+
+@media (min-width: 768px) {
+    .coach-img-container {
+        height: 100%;
+    }
+}
