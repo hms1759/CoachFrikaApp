@@ -26,7 +26,7 @@ namespace CoachFrika.Controllers
             return PartialView("_MyCoach");
         }
 
-        [HttpPost]
+        
         public IActionResult Setup()
         {
             return View();
