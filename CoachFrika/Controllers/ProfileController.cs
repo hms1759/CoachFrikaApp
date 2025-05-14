@@ -54,6 +54,11 @@ namespace CoachFrika.Controllers
         //    return RedirectToAction("Dashboard");
         //}
 
+        public IActionResult ViewCoach()
+        {
+            return View();
+
+        }
 
     }
 }

@@ -489,7 +489,7 @@ html, body {
 }
 
 .card-body {
-    font-family: Manrope;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     margin: 10px 0;
     text-align: justify;
@@ -1534,4 +1534,51 @@ sidebar.collapsed {
     .coach-img-container {
         height: 100%;
     }
+}
+.coach-item {
+    border: 2px solid transparent;
+    border-top: 2px solid transparent !important;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+    .coach-item:hover {
+        border-color: #198754;
+        border-top-color: #198754 !important
+    }
+
+    .coach-item.active {
+        background-color: #d1e7dd;
+        font-weight: bold;
+        /* border-color: #198754;
+      border-top-color: #198754 !important; */
+        border-color: transparent;
+    }
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.coach-badge {
+    font-size: 0.8rem;
+}
+.badge-category {
+    margin: 0 5px 5px 0;
+    font-size: 0.85rem;
+}
+
+.vcoach-avatar {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 3px solid #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.address-card {
+    border-left: 4px solid #198754;
 }

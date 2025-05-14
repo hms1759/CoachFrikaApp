@@ -170,7 +170,7 @@
                                 <h5>Afeez Iyiola</h5>
                                 <p class="text-muted">CEO/Founder CoachFrika</p>
                                 <div class="mt-auto">
-                                    <a href="#" class="btn btn-sm btn-outline-success">View Details</a>
+                                    <a asp-action="ViewCoach" asp-controller="Profile" class="btn btn-sm btn-outline-success">View Details</a>
                                 </div>
                             </div>
                         </div>
@@ -246,30 +246,69 @@
 
         <!-- Recommendations Tab -->
         <div class="tab-pane fade" id="recommendations" role="tabpanel" aria-labelledby="recommendations-tab">
-            <div class="alert alert-info">
-                <h4>Recommended Coaches For You</h4>
-                <p>Based on your profile and preferences, we recommend these coaches:</p>
-            </div>
-
+            
             <div class="row">
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
-                    <div class="card">
-                        <img src="~/images/21.webp" class="card-img-top" alt="Recommended Coach">
-                        <div class="card-body">
-                            <h5 class="card-title">John Smith</h5>
-                            <p class="card-text">Leadership Development Specialist</p>
-                            <a href="#" class="btn btn-primary">View Profile</a>
-                        </div>
+                <!-- Coach List -->
+                <div class="col-md-3 mb-3 card">
+                    <div class="list-group">
+                        <h5 class="mt-3 px-3">Coaches</h5>
+                        <a class="list-group-item coach-item active d-flex justify-content-between align-items-center px-1" data-coach="Afeez IyioIa">
+                            <div class="d-flex align-items-center">
+                                <img src="~/images/21.webp" class="avatar" alt="Afeez" />
+                                Afeez IyioIa
+                            </div>
+                            <span class="badge bg-success coach-badge">2</span>
+                        </a>
+                        <a class="list-group-item coach-item d-flex justify-content-between align-items-center px-1" data-coach="Akeem Badru">
+                            <div class="d-flex align-items-center">
+                                <img src="~/images/21.webp" class="avatar" alt="Akeem" />
+                                Akeem Badru
+                            </div>
+                            <span class="badge bg-secondary coach-badge">6</span>
+                        </a>
+                        <a class="list-group-item coach-item d-flex justify-content-between align-items-center px-1" data-coach="Solomon Asuquo">
+                            <div class="d-flex align-items-center">
+                                <img src="~/images/21.webp" class="avatar" alt="Solomon" />
+                                Solomon Asuquo
+                            </div>
+                            <span class="badge bg-secondary coach-badge">1</span>
+                        </a>
+                        <a class="list-group-item coach-item d-flex justify-content-between align-items-center px-1" data-coach="Mubarak Oyedele">
+                            <div class="d-flex align-items-center">
+                                <img src="~/images/21.webp" class="avatar" alt="Mubarak" />
+                                Mubarak Oyedele
+                            </div>
+                            <span class="badge bg-secondary coach-badge">3</span>
+                        </a>
+                        <a class="list-group-item coach-item d-flex justify-content-between align-items-center px-1" data-coach="Bolatito Gbadamosi">
+                            <div class="d-flex align-items-center">
+                                <img src="~/images/21.webp" class="avatar" alt="Bolatito" />
+                                Bolatito Gbadamosi
+                            </div>
+                            <span class="badge bg-secondary coach-badge">2</span>
+                        </a>
+                        <a class="list-group-item coach-item d-flex justify-content-between align-items-center px-1" data-coach="Henry Victor">
+                            <div class="d-flex align-items-center">
+                                <img src="~/images/21.webp" class="avatar" alt="Henry" />
+                                Henry Victor
+                            </div>
+                            <span class="badge bg-secondary coach-badge">2</span>
+                        </a>
                     </div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
-                    <div class="card">
-                        <img src="~/images/21.webp" class="card-img-top" alt="Recommended Coach">
-                        <div class="card-body">
-                            <h5 class="card-title">Sarah Johnson</h5>
-                            <p class="card-text">Career Transition Coach</p>
-                            <a href="#" class="btn btn-primary">View Profile</a>
-                        </div>
+
+                <!-- Recommendations Area -->
+                <div class="col-md-9">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 id="coachName">Recommendations</h5>
+                        <select class="form-select w-auto">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                        </select>
+                    </div>
+
+                    <div id="recommendationsContainer">
+                        <!-- boss Cards will be inserted here from the js script -->
                     </div>
                 </div>
             </div>
@@ -284,9 +323,9 @@
                         <input type="text" class="form-control" placeholder="Search sessions...">
                     </div>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <a href="#" class="btn btn-primary">Schedule New Session</a>
-                </div>
+                @* <div class="col-md-6 text-md-end">
+                    <a href="#" class="btn btn-success">Schedule New Session</a>
+                </div> *@
             </div>
 
             <div class="activity-cards">
@@ -319,3 +358,86 @@
         </div>
     </div>
 </div>
+    <script>
+        const coachData = {
+            "Afeez IyioIa": [
+                {
+                    title: "Class Assessment",
+                    details: [
+                        { label: "Differentiated Instruction", content: "Use diverse strategies..." },
+                        { label: "Inclusive Practices", content: "Ensure inclusivity..." }
+                    ],
+                    date: "Tuesday, 8th Jan, 2024",
+                    time: "2:45 PM"
+                },
+                {
+                    title: "Time Management",
+                    details: [
+                        { label: "Effective Scheduling", content: "Break time into manageable parts..." },
+                        { label: "Classroom Efficiency", content: "Reduce downtime between transitions..." }
+                    ],
+                    date: "Tuesday, 8th Jan, 2024",
+                    time: "2:43 PM"
+                }
+            ],
+            "Akeem Badru": [
+                {
+                    title: "Learning Strategies",
+                    details: [
+                        { label: "Interactive Lessons", content: "Use hands-on learning materials..." }
+                    ],
+                    date: "Monday, 7th Jan, 2024",
+                    time: "3:00 PM"
+                }
+            ],
+            "Solomon Asuquo": [
+                {
+                    title: "Communication Skills",
+                    details: [
+                        { label: "Student Engagement", content: "Ask open-ended questions..." }
+                    ],
+                    date: "Monday, 7th Jan, 2024",
+                    time: "1:15 PM"
+                }
+            ]
+            // Add more data if needed
+        };
+
+        function renderRecommendations(coach) {
+            const container = document.getElementById('recommendationsContainer');
+            const coachName = document.getElementById('coachName');
+            const data = coachData[coach] || [];
+
+            coachName.textContent = `Recommendations - ${coach}`;
+            container.innerHTML = '';
+
+            data.forEach(rec => {
+                const card = document.createElement('div');
+                card.className = 'card mb-3';
+                card.innerHTML = `
+                  <div class="card-body">
+                    <h6 class="text-success">${rec.title}:</h6>
+                    ${rec.details.map(d => `<p><strong>${d.label}:</strong> ${d.content}</p>`).join('')}
+                    <div class="d-flex justify-content-between">
+                      <small class="text-muted">${rec.date} | <span class="text-danger">${rec.time}</span></small>
+                      <a href="#" class="text-danger small">Mark as read</a>
+                    </div>
+                  </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Initial Load
+        renderRecommendations("Afeez IyioIa");
+
+        // Click Event
+        document.querySelectorAll(".coach-item").forEach(item => {
+            item.addEventListener("click", function () {
+                document.querySelectorAll(".coach-item").forEach(el => el.classList.remove("active"));
+                this.classList.add("active");
+                const coachName = this.getAttribute("data-coach");
+                renderRecommendations(coachName);
+            });
+        });
+    </script>

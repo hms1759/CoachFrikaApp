@@ -1,0 +1,92 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Coach Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <style>
+        .badge-category {
+            margin: 0 5px 5px 0;
+            font-size: 0.85rem;
+        }
+
+        .vcoach-avatar {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 3px solid #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .address-card {
+            border-left: 4px solid #198754;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <h4 class="mb-4"><a href="#"><i class="fas fa-arrow-left text-success"></i></a> Coach’s Profile</h4>
+
+    <div class="row align-items-start">
+        <div class="col-md-4 order-md-1">
+            <div class="d-flex align-items-center mb-3">
+                <img src="~/images/21.webp" class="rounded-circle me-3 vcoach-avatar" width="80" height="80" alt="Coach Image" />
+                <div>
+                    <h5 class="fw-bold mb-1">Mr. Solomon Asuquo</h5>
+                    <p class="mb-1"><strong>Gender:</strong> Male</p>
+                    <p class="mb-0"><strong>Marital Status:</strong> Not Disclosed</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-8 order-md-2">
+            <div class="card h-100 address-card">
+                <div class="card-body row">
+                    <!-- Residential Address Column -->
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Residential Address</h6>
+                        <p>No. 111, Ebinpejo avenue, Ikate, Odogbolu, Ogun State.</p>
+                    </div>
+
+                    <!-- Contact Address Column -->
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Contact Address</h6>
+                        <p class="mb-1">📞 +234 8064 397 125</p>
+                        <p class="mb-0">✉️ coach.solomon@coachafrika.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs my-4">
+        <li class="nav-item">
+            <a class="nav-link active" href="#">General</a>
+        </li>
+
+    </ul>
+
+    <div class="card p-3 mb-4">
+        <p>
+            Hello there! I'm Coach Solomon, a seasoned teacher coach with 3+ years of transformative experience...<br />
+            Let’s elevate your teaching journey together.
+        </p>
+    </div>
+
+    <div class="d-flex flex-wrap">
+        <span class="badge bg-primary badge-category">Mentorship</span>
+        <span class="badge bg-secondary badge-category">Coaching</span>
+        <span class="badge bg-info text-dark badge-category">Learning strategies</span>
+        <span class="badge bg-info text-dark badge-category">Curriculum development</span>
+        <span class="badge bg-danger badge-category">Research and Development</span>
+    </div>
+</div>
+</body>
+</html>
