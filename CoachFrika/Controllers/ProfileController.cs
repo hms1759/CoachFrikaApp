@@ -11,8 +11,12 @@ namespace CoachFrika.Controllers
         {
             return View();
         }
-        public IActionResult Dashboard()
+        public IActionResult Dashboard(userProfileViewModel? model)
         {
+            if(model == null)
+            {
+                return RedirectToAction("SignUp","Account");
+            }
             return PartialView("_Dashboard");
         }
 

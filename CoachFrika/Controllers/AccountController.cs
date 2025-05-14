@@ -45,8 +45,22 @@ namespace CoachFrika.Controllers
             }
 
             var result = await response.Content.ReadFromJsonAsync<BaseResponse<SignpStage1Resp>>();
-
-            return RedirectToAction("Modal", result);
+            if (result != null)
+            {
+                if (model.isCoach)
+                {
+                    return RedirectToAction("CoachModal", result);
+                }
+                else
+                {
+                    return RedirectToAction("Modal", result);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Error Occur");
+                return View();
+            }
 
         }
 
@@ -60,7 +74,7 @@ namespace CoachFrika.Controllers
         public async Task<IActionResult> Login(LoginDto model)
         {
 
-                var request = HttpContext.Request;
+            var request = HttpContext.Request;
             var baseUrl = $"{request.Scheme}://{request.Host}";
             if (!ModelState.IsValid)
             {
@@ -82,7 +96,7 @@ namespace CoachFrika.Controllers
             var resp = result.Data;
             var token = resp.Token;
             var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token); 
+            var jwtToken = handler.ReadJwtToken(token);
 
             var claims = jwtToken.Claims.ToDictionary(c => c.Type, c => c.Value);
 
@@ -96,15 +110,33 @@ namespace CoachFrika.Controllers
                     FullName = profile.FullName,
                     Stage = stage,
                 };
-                return RedirectToAction("Modal", partlySign);
-
+                if (profile.Role == 0)
+                {
+                    return RedirectToAction("Modal", partlySign);
+                }
+                else
+                {
+                    return RedirectToAction("Modal", partlySign);
+                }
             }
 
-            return RedirectToAction("Dashboard", "Profile");
+            return RedirectToAction("Dashboard", "Profile", profile);
         }
+        [HttpGet]
         public IActionResult Modal(SignpStage1Resp partlySign)
         {
             return View(partlySign);
         }
+        [HttpGet]
+        public IActionResult CoachModal(SignpStage1Resp partlySign)
+        {
+            return View(partlySign);
+        }
+        //[HttpPost]
+        //public IActionResult Modal(SignpStage1Resp partlySign)
+        //{
+        //    return View(partlySign);
+        //}
+
     }
 }

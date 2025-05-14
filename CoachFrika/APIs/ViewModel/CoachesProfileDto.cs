@@ -31,7 +31,7 @@ namespace CoachFrika.APIs.ViewModel
     {
         public string? SchoolName { get; set; }
         public string? LocalGov { get; set; }
-        public List<string> Subjects { get; set; }
+        public List<string> Subjects { get; set; } = new List<string>();
     }
 
     public class SubscriptionsDto

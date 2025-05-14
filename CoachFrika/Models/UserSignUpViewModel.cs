@@ -22,6 +22,6 @@ namespace CoachFrika.Models
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; }
 
-        public string UserType { get; set; } // coach or teacher
+        public bool isCoach { get; set; } // coach or teacher
     }
 }

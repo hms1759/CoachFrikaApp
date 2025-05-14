@@ -45,10 +45,10 @@
                 <option>Mr</option>
                 <option>Mrs</option>
                 <option>Miss</option>
-                <option>Dr</option>
-            </select>
-            <textarea placeholder="Enter your background information"></textarea>
-            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+                </select>
+                <input type="text" class="contact-input" name="ProfessionalTitle" placeholder="Professional Title" required />
+                <button class="modal-next-btn" data-step="1" onclick="ModalApp.submitStep(this)">Save and Continue</button>
+
         </div>
     </div>
 
@@ -65,10 +65,13 @@
             <div class="modal-step">4</div>
             <div class="modal-step">5</div>
         </div>
-        <div class="modal-form">
-            <label for="modalBio">Your Experience</label>
-            <textarea id="modalBio" placeholder="Describe your background..."></textarea>
-            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+            <div class="modal-form">
+                <label for="modalTitle">Tell us about yourself</label>
+                <input type="text" class="contact-input" name="PhoneNumber" placeholder="Phone Number" required />
+                <input type="text" class="contact-input" name="NumberOfStudent" placeholder="Number Of Student" required />
+                <input type="text" class="contact-input" name="YearOfExperience" placeholder="Year Of Experience" required />
+
+                <button class="modal-next-btn" data-step="1" onclick="ModalApp.submitStep(this)">Save and Continue</button>
         </div>
     </div>
 
@@ -85,10 +88,13 @@
             <div class="modal-step">4</div>
             <div class="modal-step">5</div>
         </div>
-        <div class="modal-form">
-            <label for="modalGoals">Your Goals</label>
-            <textarea id="modalGoals" placeholder="What do you hope to achieve?"></textarea>
-            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+            <div class="modal-form">
+                <label for="modalTitle">Tell us about yourself</label>
+                <input type="text" class="contact-input" name="StateOfOrigin" placeholder="State Of Origin" required />
+                <input type="text" class="contact-input" name="Nationality" placeholder="Nationality" required />
+                <textarea  id="Description" placeholder="Enter your background information" required />
+
+                <button class="modal-next-btn" data-step="1" onclick="ModalApp.submitStep(this)">Save and Continue</button>
         </div>
     </div>
 
@@ -105,10 +111,15 @@
             <div class="modal-step modal-active">4</div>
             <div class="modal-step">5</div>
         </div>
-        <div class="modal-form">
-            <label for="modalGoals">Your Goals</label>
-            <textarea id="modalGoals" placeholder="What do you hope to achieve?"></textarea>
-            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+            <div class="modal-form">
+                
+                <label for="modalGoals">Your Social Medial Links</label>
+                <input type="text" class="contact-input" name="TweeterUrl" placeholder="Tweeter" required />
+                <input type="text" class="contact-input" name="LinkedInUrl" placeholder="LinkedIn" required />
+                <input type="text" class="contact-input" name="InstagramUrl" placeholder="Instagram" required />
+                <input type="text" class="contact-input" name="FacebookUrl" placeholder="Facebook" required />
+
+                <button class="modal-next-btn" data-step="1" onclick="ModalApp.submitStep(this)">Save and Continue</button>
         </div>
     </div>
 
@@ -126,9 +137,13 @@
             <div class="modal-step modal-active">5</div>
         </div>
         <div class="modal-form">
-            <label for="modalGoals">Your Goals</label>
-            <textarea id="modalGoals" placeholder="What do you hope to achieve?"></textarea>
-            <button class="modal-next-btn" onclick="ModalApp.next()">Save and Continue</button>
+                <label for="modalGoals">Enter Your School Details</label>
+                
+                <input type="text" class="contact-input" name="SchoolNameLocalGov" placeholder="SchoolName" required />
+                <input type="text" class="contact-input" name="LocalGov" placeholder="LocalGov" required />
+                <select class="form-control" id="subjectsSelect" name="Subjects" multiple="multiple" required></select>
+
+                <button class="modal-next-btn" data-step="1" onclick="ModalApp.submitStep(this)">Save and Continue</button>
         </div>
     </div>
 
@@ -138,18 +153,76 @@
     </div>
 </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const allModals = document.querySelectorAll('.modal-box');
-            allModals.forEach(m => m.classList.remove('modal-visible'));
+        const ModalApp = {
+            submitStep: async function (btn) {
+                const step = btn.getAttribute('data-step');
+                btn.disabled = true;
+                btn.textContent = 'Saving...';
 
-            const targetId = '@stepId';
-            const targetModal = document.getElementById(targetId);
-            if (targetModal) {
-                targetModal.classList.add('modal-visible');
+                // Collect data from current modal (adjust selectors as needed)
+                const modal = document.getElementById(`modalStep${step}`);
+                const inputs = modal.querySelectorAll('input, textarea, select');
+                const formData = {};
+
+                inputs.forEach(input => {
+                    if (input.name || input.id) {
+                        const key = input.name || input.id;
+                        formData[key] = input.value;
+                    }
+                });
+
+                try {
+                    const response = await fetch(`/Teachers/CreateStage${step}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        // Move to the next step
+                        ModalApp.next();
+                    } else {
+                        alert('Something went wrong.');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Error submitting data.');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Save and Continue';
+                }
+            },
+
+            next: function () {
+                const current = document.querySelector('.modal-box.modal-visible');
+                if (!current) return;
+
+                const allSteps = [...document.querySelectorAll('.modal-box')];
+                const currentIndex = allSteps.indexOf(current);
+                if (currentIndex >= 0 && currentIndex < allSteps.length - 1) {
+                    current.classList.remove('modal-visible');
+                    allSteps[currentIndex + 1].classList.add('modal-visible');
+                }
+            },
+
+            close: function () {
+                document.querySelectorAll('.modal-box').forEach(modal => modal.classList.remove('modal-visible'));
             }
+        };
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#subjectsSelect').select2({
+                placeholder: "Select or type subjects",
+                tags: true,
+                tokenSeparators: [',', ' ']
+            });
         });
     </script>
-
 <script src="~/js/modal-script.js"></script>
 
 </body>

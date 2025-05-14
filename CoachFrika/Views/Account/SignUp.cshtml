@@ -23,17 +23,17 @@
                     <div class="user-type-tabs mb-4" id="userTypeTabs">
                         <div class="row">
                             <div class="col-6 p-0">
-                                <button class="btn user-type-btn active" data-user-type="coach">COACH</button>
+                                <button type="button" class="btn user-type-btn active" data-is-coach="1">COACH</button>
                             </div>
                             <div class="col-6 p-0">
-                                <button class="btn user-type-btn" data-user-type="teacher">TEACHER</button>
+                                <button type="button" class="btn user-type-btn" data-is-coach="0">TEACHER</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Sign Up Form -->
                     <form asp-action="SignUp" method="post" class="needs-validation" novalidate>
-                        <input type="hidden" name="UserType" id="UserType" value="coach" />
+                        <input type="hidden" name="isCoach" id="isCoach" value=1 />
                         @Html.ValidationSummary(false, "", new { @class = "text-danger text-center mb-3" })
                         <div class="mb-3">
                             <label asp-for="FullName" class="form-label"></label>
@@ -112,7 +112,7 @@
         const passwordInput = form.querySelector("input[name='Password']");
         const confirmPasswordInput = form.querySelector("input[name='ConfirmPassword']");
         const userTypeButtons = document.querySelectorAll(".user-type-btn");
-        const userTypeInput = document.getElementById("UserType");
+        const userTypeInput = document.getElementById("isCoach");
 
         // Disable button after form submit
         form.addEventListener("submit", function (e) {
@@ -121,12 +121,12 @@
         });
 
         // User type selection
-        userTypeButtons.forEach(button => {
-            button.addEventListener("click", () => {
-                userTypeButtons.forEach(b => b.classList.remove("active"));
-                button.classList.add("active");
-                userTypeInput.value = button.dataset.userType;
-            });
+        document.querySelector("#userTypeTabs").addEventListener("click", function (e) {
+            if (e.target.classList.contains("user-type-btn")) {
+                document.querySelectorAll(".user-type-btn").forEach(btn => btn.classList.remove("active"));
+                e.target.classList.add("active");
+                document.getElementById(1).value = e.target.dataset.isCoach;
+            }
         });
 
         // Password toggle
