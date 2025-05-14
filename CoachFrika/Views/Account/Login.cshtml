@@ -1,4 +1,5 @@
-﻿@model UserLoginViewModel
+﻿@using CoachFrika.APIs.ViewModel
+@model LoginDto
 @{
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
     ViewData["Title"] = "Login";
@@ -18,22 +19,11 @@
                         <h1 class="auth-title">Login</h1>
                     </div>
 
-                    <!-- Tabs -->
-                    <div class="user-type-tabs mb-4" id="userTypeTabs">
-                        <div class="row">
-                            <div class="col-6 p-0">
-                                <button class="btn user-type-btn active" data-user-type="coach">COACH</button>
-                            </div>
-                            <div class="col-6 p-0">
-                                <button class="btn user-type-btn" data-user-type="teacher">TEACHER</button>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Login Form -->
                     <form asp-action="Login" method="post" class="needs-validation" novalidate>
-                        <input type="hidden" name="UserType" id="UserType" value="coach" />
 
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+                        <br />
                         <div class="mb-3">
                             <label asp-for="Email" class="form-label">Email Address</label>
                             <input asp-for="Email" type="email" class="form-control" required placeholder="sample@gmail.com" />
@@ -85,34 +75,18 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        const loginButton = form.querySelector("button[type='submit']");
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        // Set UserType on button click
-        document.querySelectorAll('[data-user-type]').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.getElementById('UserType').value = this.getAttribute('data-user-type');
-                document.querySelectorAll('.user-type-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
+        form.addEventListener("submit", function () {
+            loginButton.disabled = true;
+            loginButton.innerText = "Logging in..."; // optional feedback
         });
-    </script>
-    @*//or use this <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const userTypeButtons = document.querySelectorAll(".user-type-btn");
-            const userTypeInput = document.getElementById("UserType");
+    });
+</script>
 
-            userTypeButtons.forEach(button => {
-                button.addEventListener("click", function () {
-                    userTypeButtons.forEach(btn => btn.classList.remove("active"));
-                    this.classList.add("active");
-                    const selectedType = this.getAttribute("data-user-type");
-                    userTypeInput.value = selectedType;
-                });
-            });
-        });
-
-    </script> *@
+ 
     <script src="~/js/auth.js"></script>
 }

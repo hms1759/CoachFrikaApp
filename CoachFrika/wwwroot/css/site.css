@@ -1535,6 +1535,14 @@ sidebar.collapsed {
     font-weight: bold;
     color: #2aa745;
 }
+
+.btn:disabled {
+    background-color: darkgray !important;
+    border-color: #d3d3d3 !important;
+    color: #666666 !important;
+    cursor: not-allowed;
+}
+
 /* --- Responsive Enhancements Only --- */
 /* Tablets and below (<= 992px) */
 @media (max-width: 992px) {

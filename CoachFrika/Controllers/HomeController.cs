@@ -37,8 +37,12 @@ namespace CoachFrika.Controllers
 
         public async Task<IActionResult> Index()
         {
+
+            var request = HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}";
+
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>("http://localhost:5037/api/Public/GetLandingPageCount");
+            var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>($"{baseUrl}/api/Public/GetLandingPageCount");
             if(response.Data == null)
             {
                 return View();

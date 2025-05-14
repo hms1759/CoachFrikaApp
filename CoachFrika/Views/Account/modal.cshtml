@@ -1,4 +1,10 @@
-﻿@{
+﻿@using CoachFrika.APIs.ViewModel
+@model SignpStage1Resp
+@{
+    var stepToShow = Model.Stage + 1;
+    var stepId = $"modalStep{stepToShow}";
+}
+@{
     Layout = "";
 
 }
@@ -23,7 +29,7 @@
     <!-- Step 1 -->
     <div id="modalStep1" class="modal-box modal-visible">
         <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
-        <h2 class="modal-heading">Welcome Bukky!</h2>
+            <h2 class="modal-heading">Welcome @Model.FullName!</h2>
         <p class="modal-subtext">Let us quickly set up your profile</p>
         <div class="modal-steps">
             <div class="modal-step modal-active">1</div>
@@ -48,7 +54,8 @@
 
     <!-- Step 2 -->
     <div id="modalStep2" class="modal-box">
-        <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <h2 class="modal-heading">Hi @Model.FullName!</h2>
         <h2 class="modal-heading">More Details</h2>
         <p class="modal-subtext">Help us know you better</p>
         <div class="modal-steps">
@@ -67,7 +74,8 @@
 
     <!-- Step 3 -->
     <div id="modalStep3" class="modal-box">
-        <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <h2 class="modal-heading">Hi @Model.FullName!</h2>
         <h2 class="modal-heading">Almost There</h2>
         <p class="modal-subtext">A few more questions...</p>
         <div class="modal-steps">
@@ -86,7 +94,8 @@
 
     <!-- Step 4 -->
     <div id="modalStep4" class="modal-box">
-        <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <h2 class="modal-heading">Hi @Model.FullName!</h2>
         <h2 class="modal-heading">Almost There</h2>
         <p class="modal-subtext">A few more questions...</p>
         <div class="modal-steps">
@@ -105,7 +114,8 @@
 
     <!-- Step 5 -->
     <div id="modalStep5" class="modal-box">
-        <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <h2 class="modal-heading">Hi @Model.FullName!</h2>
         <h2 class="modal-heading">Almost There</h2>
         <p class="modal-subtext">A few more questions...</p>
         <div class="modal-steps">
@@ -127,6 +137,19 @@
         
     </div>
 </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const allModals = document.querySelectorAll('.modal-box');
+            allModals.forEach(m => m.classList.remove('modal-visible'));
+
+            const targetId = '@stepId';
+            const targetModal = document.getElementById(targetId);
+            if (targetModal) {
+                targetModal.classList.add('modal-visible');
+            }
+        });
+    </script>
+
 <script src="~/js/modal-script.js"></script>
 
 </body>

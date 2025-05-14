@@ -90,9 +90,9 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
-        public async Task<BaseResponse<SignpUpDto>> SignUp(SignpUpDto model)
+        public async Task<BaseResponse<SignpStage1Resp>> SignUp(SignpUpDto model)
         {
-            var res = new BaseResponse<SignpUpDto>();
+            var res = new BaseResponse<SignpStage1Resp>();
             res.Status = true;
             try
             {
@@ -153,6 +153,7 @@ namespace CoachFrika.APIs.Domin.Services
                     PhoneNumber = model.PhoneNumber,
                     FullName = model.FullName,
                     Role = model.isCoach ? 1 : 0,
+                    Stages = 0
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -166,8 +167,15 @@ namespace CoachFrika.APIs.Domin.Services
                     // Return the error messages from Identity
                     throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
-                model.Password = null;
-                res.Data = model;
+                var resp = new SignpStage1Resp()
+                {
+                    FullName = model.FullName,
+                    PhoneNumber = model.PhoneNumber,
+                    Email = model.Email,
+                    Stage = 0
+                };
+
+                res.Data = resp;
                 return res;
             }
 

@@ -1,9 +1,21 @@
-﻿using CoachFrika.Models;
+﻿using CoachFrika.APIs.ViewModel;
+using CoachFrika.Common;
+using CoachFrika.Models;
+using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 namespace CoachFrika.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public AccountController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
         [HttpGet]
         public IActionResult SignUp()
         {
@@ -11,24 +23,88 @@ namespace CoachFrika.Controllers
         }
 
         [HttpPost]
-        public IActionResult SignUp(UserSignUpViewModel model)
+        public async Task<IActionResult> SignUp(UserSignUpViewModel model)
         {
-            if (ModelState.IsValid)
+
+            var request = HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}";
+            if (!ModelState.IsValid)
             {
-                // Save user to DB, hash password, etc.
-                return RedirectToAction("Modal");
+                ModelState.AddModelError(string.Empty, "Invalid Model");
+                return View(model);
+            }
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsJsonAsync($"{baseUrl}/api/UserAccount/SignUp", model);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadFromJsonAsync<BaseResponse<SignpStage1Resp>>();
+                ModelState.AddModelError(string.Empty, errorContent.Message);
+
+                return View(model);
             }
 
-            return View(model);
+            var result = await response.Content.ReadFromJsonAsync<BaseResponse<SignpStage1Resp>>();
+
+            return RedirectToAction("Modal", result);
+
         }
 
+        [HttpGet]
         public IActionResult Login()
         {
-            return View(); // Placeholder for login page
+            return View();
         }
-        public IActionResult Modal()
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginDto model)
         {
-            return View(); // Placeholder for login page
+
+                var request = HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}";
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid Model");
+                return View(model);
+            }
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsJsonAsync($"{baseUrl}/api/UserAccount/Login", model);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadFromJsonAsync<BaseResponse<LoginDetails>>();
+                ModelState.AddModelError(string.Empty, errorContent.Message);
+
+                return View(model);
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<BaseResponse<LoginDetails>>();
+            var resp = result.Data;
+            var token = resp.Token;
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token); 
+
+            var claims = jwtToken.Claims.ToDictionary(c => c.Type, c => c.Value);
+
+            string profileContent = claims.ContainsKey("Profile") ? claims["Profile"] : null;
+            var profile = JsonConvert.DeserializeObject<userProfileViewModel>(profileContent);
+            var stage = profile.Stages;
+            if (stage < 6)
+            {
+                var partlySign = new SignpStage1Resp()
+                {
+                    FullName = profile.FullName,
+                    Stage = stage,
+                };
+                return RedirectToAction("Modal", partlySign);
+
+            }
+
+            return RedirectToAction("Dashboard", "Profile");
+        }
+        public IActionResult Modal(SignpStage1Resp partlySign)
+        {
+            return View(partlySign);
         }
     }
 }
