@@ -47,14 +47,7 @@ namespace CoachFrika.Controllers
             var result = await response.Content.ReadFromJsonAsync<BaseResponse<SignpStage1Resp>>();
             if (result != null)
             {
-                if (model.isCoach)
-                {
-                    return RedirectToAction("CoachModal", result);
-                }
-                else
-                {
-                    return RedirectToAction("Modal", result);
-                }
+                return RedirectToAction("Login");
             }
             else
             {
@@ -103,27 +96,36 @@ namespace CoachFrika.Controllers
             string profileContent = claims.ContainsKey("Profile") ? claims["Profile"] : null;
             var profile = JsonConvert.DeserializeObject<userProfileViewModel>(profileContent);
             var stage = profile.Stages;
-            if (stage < 6)
+            var partlySign = new SignpStage1Resp()
             {
-                var partlySign = new SignpStage1Resp()
-                {
-                    FullName = profile.FullName,
-                    Stage = stage,
-                };
-                if (profile.Role == 0)
-                {
-                    return RedirectToAction("Modal", partlySign);
-                }
-                else
-                {
-                    return RedirectToAction("Modal", partlySign);
-                }
+                FullName = profile.FullName,
+                Stage = stage,
+                token = token,
+            };
+            if (profile.Role == 1 && stage < 5)
+            {
+                return RedirectToAction("Modal", partlySign);
+            }
+           else if (profile.Role == 0 && stage < 5)
+            {
+                return RedirectToAction("Modal", partlySign);
+            }
+            else if (profile.Role == 0 && stage ==5)
+            {
+                return RedirectToAction("PaymentModal", partlySign);
             }
 
             return RedirectToAction("Dashboard", "Profile", profile);
         }
+
         [HttpGet]
         public IActionResult Modal(SignpStage1Resp partlySign)
+        {
+            return View(partlySign);
+        }
+       
+        [HttpGet]
+        public IActionResult PaymentModal(SignpStage1Resp partlySign)
         {
             return View(partlySign);
         }

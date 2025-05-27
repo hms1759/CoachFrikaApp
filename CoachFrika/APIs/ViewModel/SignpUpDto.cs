@@ -22,6 +22,7 @@ namespace CoachFrika.APIs.ViewModel
         public string? Email { get; set; }
         public bool IsCoach { get; set; }
         public int? Stage { get; set; }
+        public string? token { get; set; }
     }
 
     public class LoginDto

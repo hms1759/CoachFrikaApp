@@ -37,6 +37,7 @@ namespace CoachFrika.Controllers
 
         public async Task<IActionResult> Index()
         {
+            try { 
 
             var request = HttpContext.Request;
             var baseUrl = $"{request.Scheme}://{request.Host}";
@@ -49,6 +50,12 @@ namespace CoachFrika.Controllers
 
             }
             return View(response?.Data);
+            }
+            catch
+            {
+                return View();
+
+            }
         }
         public IActionResult About()
         {

@@ -9,14 +9,14 @@ namespace CoachFrika.Controllers
         // GET: ProfileController
         public ActionResult Index()
         {
+            if (Request.Headers["X-Requested-With"] != "XMLHttpRequest")
+            {
+                return RedirectToAction("SignUp","Account");
+            }
             return View();
         }
         public IActionResult Dashboard(userProfileViewModel? model)
         {
-            if(model == null)
-            {
-                return RedirectToAction("SignUp","Account");
-            }
             return PartialView("_Dashboard");
         }
 

@@ -22,6 +22,7 @@ using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Crypto.Macs;
 using Org.BouncyCastle.Utilities;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
@@ -171,7 +172,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == email);
                 detail.SchoolName = null;
                 detail.LocalGov = null;
-                detail.Subject = null; 
+                detail.Subject = null;
                 detail.FacebookUrl = null;
                 detail.TweeterUrl = null;
                 detail.LinkedInUrl = null;
@@ -285,16 +286,21 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var user = _webHelpers.CurrentUser();
-                if (string.IsNullOrEmpty(user))
+                var loginUser = _webHelpers.CurrentUser();
+                if (string.IsNullOrEmpty(loginUser))
                 {
                     res.Status = false;
                     res.Message = "User not found";
                     return res;
                 }
-
-
-             var existingPayment =await  _context.Payment.FirstOrDefaultAsync(x => x.CreatedBy == user && x.PaymentStatus ==PaymentStatus.Pending);
+                var user = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email.ToLower() == loginUser.ToLower());
+                if (user == null)
+                {
+                    res.Status = false;
+                    res.Message = "User not found";
+                    return res;
+                }
+                var existingPayment = await _context.Payment.FirstOrDefaultAsync(x => x.CreatedBy == loginUser && x.PaymentStatus == PaymentStatus.Pending);
                 if (existingPayment != null)
                 {
                     res.Status = false;
@@ -302,7 +308,7 @@ namespace CoachFrika.APIs.Domin.Services
                     return res;
                 }
                 var sub = model.Subscription;
-                var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == user);
+                var detail = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == loginUser);
                 var amount = model.Subscription switch
                 {
                     Subscriptions.Intentional => _subscrib.Intentional,
@@ -312,55 +318,132 @@ namespace CoachFrika.APIs.Domin.Services
                 };
 
                 detail.Subscriptions = model.Subscription;
-                var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
 
-                if (transactionUrl != null)
+
+                var payment = new Payment()
                 {
-                    var obj = transactionUrl.Data;
-                    if (transactionUrl.Status)
-                    {
-                        detail.Subscriptions = model.Subscription;
+                    Amount = amount,
+                    Subscription = sub,
+                    Paymentrefernce = Guid.NewGuid().ToString("N").Substring(10),
+                    CreatedBy = loginUser,
+                    CreatedDate = DateTime.UtcNow
 
-                        var payment = new Payment()
-                        {
-                            Amount = amount,
-                            Subscription = sub,
-                            Paymentrefernce = obj.reference,
-                            CreatedBy = user,
-                            CreatedDate = DateTime.UtcNow
+                };
+                _context.Payment.Add(payment);
+                await _context.SaveChangesAsync();
 
-                        };
-                        _context.Payment.Add(payment);
-                        await _context.SaveChangesAsync();
-                        res.Data = obj.authorization_url;
+                /*  var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
 
-                        // Queue the background task to process payment after 15 minutes
-                        await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(async token =>
-                        {
-                            SentrySdk.CaptureMessage($"QueueBackgroundWorkItem reference : {obj.reference}, logo {model.Logo} url.", level: SentryLevel.Info);
-                            await Task.Delay(TimeSpan.FromMinutes(5), token); // Delay for 5 minutes
-                            await processPaymentChecker(obj.reference, model.Logo);
-                        });
-                        return res;
-                    }
+                   if (transactionUrl != null)
+                   {
+                       var obj = transactionUrl.Data;
+                       if (transactionUrl.Status)
+                       {
+                           detail.Subscriptions = model.Subscription;
+
+                           var payment = new Payment()
+                           {
+                               Amount = amount,
+                               Subscription = sub,
+                               Paymentrefernce = obj.reference,
+                               CreatedBy = user,
+                               CreatedDate = DateTime.UtcNow
+
+                           };
+                           _context.Payment.Add(payment);
+                           await _context.SaveChangesAsync();
+                           res.Data = obj.authorization_url;
+
+                           // Queue the background task to process payment after 15 minutes
+                           await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(async token =>
+                           {
+                               SentrySdk.CaptureMessage($"QueueBackgroundWorkItem reference : {obj.reference}, logo {model.Logo} url.", level: SentryLevel.Info);
+                               await Task.Delay(TimeSpan.FromMinutes(5), token); // Delay for 5 minutes
+                               await processPaymentChecker(obj.reference, model.Logo);
+                           });
+                           return res;
+                       }
 
 
-                    SentrySdk.CaptureMessage($"transactionUrl Error : {transactionUrl.Message}", level: SentryLevel.Info);
-                    res.Message = transactionUrl.Message;
-                    res.Status = false;
-                    return res;
-                }
+                       SentrySdk.CaptureMessage($"transactionUrl Error : {transactionUrl.Message}", level: SentryLevel.Info);
+                       res.Message = transactionUrl.Message;
+                       res.Status = false;
+                       return res;
+                   }
+                   */
 
-
-                res.Message = "Error Occur: contact The Administration";
+                res.Message = "Payment directive has been sent to your email";
                 res.Status = false;
+
+                var bankName = "GTB";
+                var accountNumber = "0126171085";
+                var accountName = "Iyiola Afeez";
+                var contactEmail = "Iyiola@gmail.com";
+                var WhatsApp = "08068783985";
+                var admin = "toheeb.black@gmail.com";
+                var subject = "Payment Invoice";
+                var userbody = $@"Your request to pay for the {sub} has been received.
+                                   Kindly proceed with your payment using the bank details
+                                below, and use your reference code as the payment description:
+
+                                Bank Name: {bankName}
+                                Account Number: {accountNumber}
+                                Account Name: {accountName}
+
+                                Once payment is made, please send proof of payment 
+                                to {contactEmail} or {WhatsApp} to complete your subscription.
+
+                                 Thank you for choosing us!";
+
+                var bodyTemplate = await _emailService.ReadTemplate("forgetPassword");
+                //inserting variable
+                //inserting variable
+                var UsermessageToParse = new Dictionary<string, string>
+                    {
+                        { "{Fullname}", user.FullName},
+                        { "{Message}", userbody},
+                        { "{logo}", model.Logo},
+                    };
+
+                //  email notification
+                var UsermessageBody = bodyTemplate.ParseTemplate(UsermessageToParse);
+                var message = new Message(new List<string> {loginUser}, subject, UsermessageBody);
+
+                await _emailService.SendEmail(message);
+
+                var Adminsubject = "Payment Notification";
+                var Adminbody = $@"A user has requested to pay for the {sub} package.
+
+                                    Please find the details below:
+
+                                    Name: {user.FullName}
+                                    Subscription: {sub}
+                                    Phone Number: {user.PhoneNumber}
+                                    Email: {user.Email}
+
+                                    Kindly reach out to follow up and verify the payment once it is completed.";
+
+                var adminbodyTemplate = await _emailService.ReadTemplate("forgetPassword");
+                //inserting variable
+                var messageToParse = new Dictionary<string, string>
+                    {
+                        { "{Fullname}", user.FullName},
+                        { "{Message}", userbody},
+                        { "{logo}", model.Logo},
+                    };
+
+                //  email notification
+                var messageBody = bodyTemplate.ParseTemplate(messageToParse);
+                var adminmessage = new Message(new List<string> {admin}, Adminsubject, messageBody);
+
+                await _emailService.SendEmail(adminmessage);
                 return res;
 
             }
             catch (Exception ex)
             {
                 SentrySdk.CaptureMessage($"Message :{ex.Message},StackTrace:{ex.StackTrace}", level: SentryLevel.Info);
-                res.Message = ex.Message;
+                res.Message = "Oops! Error Occur: Kindly try again later";
                 res.Status = false;
                 return res;
 
