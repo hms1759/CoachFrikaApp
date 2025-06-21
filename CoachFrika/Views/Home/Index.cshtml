@@ -35,10 +35,10 @@
 
     <!-- div 2:  4 children -->
     <div class="record boxel d-flex justify-content-around align-items-center text-white flex-wrap">
-        <div class="record-child"> <div class="record-child-value"> @Model.CoachesCount</div> <div class="record-child-const"> Leader Coaches Onboarded</div></div>
-        <div class="record-child"> <div class="record-child-value"> @Model.SchoolCount</div> <div class="record-child-const"> Schools benefitted</div></div>
-        <div class="record-child"> <div class="record-child-value"> @Model.TeachersCount</div> <div class="record-child-const"> Teacher Leaders Onboarded</div></div>
-        <div class="record-child"> <div class="record-child-value"> @Model.StudentCount +</div> <div class="record-child-const"> students Impacted</div></div>
+        <div class="record-child"> <div class="record-child-value"> @(Model != null ? Model.CoachesCount : 0)</div> <div class="record-child-const"> Leader Coaches Onboarded</div></div>
+        <div class="record-child"> <div class="record-child-value">@(Model != null ? Model.SchoolCount : 0)</div> <div class="record-child-const"> Schools benefitted</div></div>
+        <div class="record-child"> <div class="record-child-value">@(Model != null ? Model.TeachersCount : 0)</div> <div class="record-child-const"> Teacher Leaders Onboarded</div></div>
+        <div class="record-child"> <div class="record-child-value">@(Model != null ? Model.StudentCount : 0) +</div> <div class="record-child-const"> students Impacted</div></div>
     </div>
 
     <!-- div 3: Two children widely spaced -->

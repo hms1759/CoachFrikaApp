@@ -721,7 +721,7 @@ html, body {
 }
 
 .faqheader {
-    margin-top: 30px;
+    margin-top: 0px;
 }
 
 .price-card {
@@ -1489,8 +1489,8 @@ sidebar.collapsed {
     border: 2px solid black
 }
 .price_services-button {
-    color: green;
-    border: 2px solid green
+    color: #4caf50;
+    border: 2px solid #4caf50
 }
 .services-button:hover {
     background-color: #619f03;
@@ -1887,12 +1887,29 @@ sidebar.collapsed {
 .image-container {
     overflow: hidden;
     border-radius: 8px;
+    padding: 30px
 }
-
-    .image-container img {
-        width: 100%;
-        height: auto;
-    }
+.you_Know, .priceContent {
+    font-family: Roboto Flex;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 100%;
+    vertical-align: middle;
+    margin-bottom: 0px !important;
+}
+.priceContentText {
+    margin-top: 20px !important;
+    font-family: Roboto Flex;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 27px;
+    text-align: justify;
+    vertical-align: middle;
+}
+.image-container img {
+    width: 80%;
+    height: auto;
+}
 
 .cta-button {
     background-color: #4caf50;
