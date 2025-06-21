@@ -1478,7 +1478,7 @@ sidebar.collapsed {
 
 }
 
-.services-button {
+.services-button, .price_services-button {
     display: inline-block;
     padding: 12px 24px;
     color: black;
@@ -1488,10 +1488,13 @@ sidebar.collapsed {
     text-decoration: none;
     border: 2px solid black
 }
-
-    .services-button:hover {
-        background-color: #619f03;
-    }
+.price_services-button {
+    color: green;
+    border: 2px solid green
+}
+.services-button:hover {
+    background-color: #619f03;
+}
 .ddimg {
     background-color: #f9fff8
 }

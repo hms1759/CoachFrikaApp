@@ -11,7 +11,7 @@ namespace CoachFrika.Controllers
         {
             if (Request.Headers["X-Requested-With"] != "XMLHttpRequest")
             {
-                return RedirectToAction("SignUp","Account");
+                return RedirectToAction("Login", "Account");
             }
             return View();
         }
