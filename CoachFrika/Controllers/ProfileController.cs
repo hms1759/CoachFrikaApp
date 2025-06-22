@@ -7,7 +7,7 @@ namespace CoachFrika.Controllers
     public class ProfileController : Controller
     {
         // GET: ProfileController
-        public ActionResult Index()
+        public ActionResult Index(userProfileViewModel? model = null)
         {
             if (Request.Headers["X-Requested-With"] != "XMLHttpRequest")
             {

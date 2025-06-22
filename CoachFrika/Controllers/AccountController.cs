@@ -120,7 +120,7 @@ namespace CoachFrika.Controllers
             //    return RedirectToAction("PostPaymentModal");
             //}
 
-            return RedirectToAction("Dashboard", "Profile", profile);
+            return RedirectToAction("Index", "Profile", profile);
         }
 
         [HttpGet]
