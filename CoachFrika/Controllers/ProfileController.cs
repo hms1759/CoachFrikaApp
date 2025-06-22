@@ -7,9 +7,9 @@ namespace CoachFrika.Controllers
     public class ProfileController : Controller
     {
         // GET: ProfileController
-        public ActionResult Index(userProfileViewModel? model = null)
+        public ActionResult Index(userProfileViewModel? model =null)
         {
-            if (Request.Headers["X-Requested-With"] != "XMLHttpRequest")
+            if (model == null || string.IsNullOrEmpty(model?.Email))
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -19,6 +19,7 @@ namespace CoachFrika.Controllers
         {
             return PartialView("_Dashboard");
         }
+
 
         public IActionResult Schedule()
         {
@@ -57,6 +58,7 @@ namespace CoachFrika.Controllers
 
         //    return RedirectToAction("Dashboard");
         //}
+
 
 
     }
