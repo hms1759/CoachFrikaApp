@@ -1,0 +1,264 @@
+﻿@using CoachFrika.APIs.ViewModel
+@model SignpStage1Resp
+@{
+    var stepToShow = Model.Stage + 1;
+    var stepId = $"modalStep{stepToShow}";
+}
+@{
+    Layout = "~/Views/Shared/_modalLayout.cshtml";
+}
+@Html.AntiForgeryToken()
+<script>
+    const userToken = '@Model.token';
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-Step Modal</title>
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+
+    <!-- Background Blur Layer -->
+    <div class="modal-background">
+        <img src="~/images/blurbackgd.png" alt="Background" class="modal-bg-img">
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="modal-overlay">
+
+        <!-- Step 1 -->
+        <div id="modalStep1" class="modal-box @(stepId == "modalStep1" ? "modal-visible" : "")">
+            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <h2 class="modal-heading">Welcome @Model.FullName!</h2>
+            <p class="modal-subtext">Let us quickly set up your profile</p>
+            <div class="modal-steps">
+                <div class="modal-step modal-active">1</div>
+                <div class="modal-step">2</div>
+                <div class="modal-step">3</div>
+                <div class="modal-step">4</div>
+            </div>
+            <div class="modal-form">
+                <label for="modalTitle">Tell us about yourself</label>
+                <select id="modalTitle" name="Title">
+                    <option value="">Select your Title</option>
+                    <option>Mr</option>
+                    <option>Mrs</option>
+                    <option>Miss</option>
+                </select>
+                <input type="text" class="contact-input" name="ProfessionalTitle" placeholder="Professional Title" required />
+                <button class="modal-next-btn" data-step="1" onclick="ModalApp.submitStep(this)">Save and Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+
+        <div id="modalStep2" class="modal-box @(stepId == "modalStep2" ? "modal-visible" : "")">
+            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <h2 class="modal-heading">Hi @Model.FullName!</h2>
+            <h2 class="modal-heading">More Details</h2>
+            <p class="modal-subtext">Help us know you better</p>
+            <div class="modal-steps">
+                <div class="modal-step modal-active">1</div>
+                <div class="modal-step modal-active">2</div>
+                <div class="modal-step">3</div>
+                <div class="modal-step">4</div>
+            </div>
+            <div class="modal-form">
+                <label for="PhoneNumber">Phone Number</label>
+                <input type="text" class="contact-input" name="PhoneNumber" placeholder="Phone Number" required />
+                 <input type="text" class="contact-input" name="YearOfExperience" placeholder="Year Of Experience" required />
+                <button class="modal-next-btn" data-step="2" onclick="ModalApp.submitStep(this)">Save and Continue</button>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+
+        <div id="modalStep3" class="modal-box @(stepId == "modalStep3" ? "modal-visible" : "")">
+            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <h2 class="modal-heading">Hi @Model.FullName!</h2>
+            <h2 class="modal-heading">Almost There</h2>
+            <p class="modal-subtext">A few more questions...</p>
+            <div class="modal-steps">
+                <div class="modal-step modal-active">1</div>
+                <div class="modal-step modal-active">2</div>
+                <div class="modal-step modal-active">3</div>
+                <div class="modal-step">4</div>
+            </div>
+            <div class="modal-form">
+                <label for="StateOfOrigin">State of Origin</label>
+                <select class="contact-input" name="StateOfOrigin" required>
+                    <option value="">Select State</option>
+                    <option value="Abia">Abia</option>
+                    <option value="Adamawa">Adamawa</option>
+                    <option value="Akwa Ibom">Akwa Ibom</option>
+                    <option value="Anambra">Anambra</option>
+                    <option value="Bauchi">Bauchi</option>
+                    <option value="Bayelsa">Bayelsa</option>
+                    <option value="Benue">Benue</option>
+                    <option value="Borno">Borno</option>
+                    <option value="Cross River">Cross River</option>
+                    <option value="Delta">Delta</option>
+                    <option value="Ebonyi">Ebonyi</option>
+                    <option value="Edo">Edo</option>
+                    <option value="Ekiti">Ekiti</option>
+                    <option value="Enugu">Enugu</option>
+                    <option value="FCT">FCT</option>
+                    <option value="Gombe">Gombe</option>
+                    <option value="Imo">Imo</option>
+                    <option value="Jigawa">Jigawa</option>
+                    <option value="Kaduna">Kaduna</option>
+                    <option value="Kano">Kano</option>
+                    <option value="Katsina">Katsina</option>
+                    <option value="Kebbi">Kebbi</option>
+                    <option value="Kogi">Kogi</option>
+                    <option value="Kwara">Kwara</option>
+                    <option value="Lagos">Lagos</option>
+                    <option value="Nasarawa">Nasarawa</option>
+                    <option value="Niger">Niger</option>
+                    <option value="Ogun">Ogun</option>
+                    <option value="Ondo">Ondo</option>
+                    <option value="Osun">Osun</option>
+                    <option value="Oyo">Oyo</option>
+                    <option value="Plateau">Plateau</option>
+                    <option value="Rivers">Rivers</option>
+                    <option value="Sokoto">Sokoto</option>
+                    <option value="Taraba">Taraba</option>
+                    <option value="Yobe">Yobe</option>
+                    <option value="Zamfara">Zamfara</option>
+                    <option value="FCT-Abuja">Abuja</option>
+                </select>
+
+                <label for="Nationality">Nationality</label>
+                <input type="text" class="contact-input" name="Nationality" value="Nigerian" readonly required />
+
+                <label for="Nationality">Local Government</label>
+                <input type="text" class="contact-input" name="LocalGov" placeholder="Local Government" required />
+
+                <label for="Description">Background Information</label>
+                <textarea id="Description" name="Description" placeholder="Enter your background information" required></textarea>
+
+                <button class="modal-next-btn" data-step="3" onclick="ModalApp.submitStep(this)">Save and Continue</button>
+            </div>
+
+        </div>
+
+        <!-- Step 4 -->
+
+        <div id="modalStep4" class="modal-box @(stepId == "modalStep4" ? "modal-visible" : "")">
+            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <h2 class="modal-heading">Hi @Model.FullName!</h2>
+            <h2 class="modal-heading">Almost There</h2>
+            <p class="modal-subtext">A few more questions...</p>
+            <div class="modal-steps">
+                <div class="modal-step modal-active">1</div>
+                <div class="modal-step modal-active">2</div>
+                <div class="modal-step modal-active">3</div>
+                <div class="modal-step modal-active">4</div>
+            </div>
+            <div class="modal-form">
+                <label for="modalGoals">Your Social Media Links</label>
+                <input type="text" class="contact-input" name="TweeterUrl" placeholder="Twitter" />
+                <input type="text" class="contact-input" name="LinkedInUrl" placeholder="LinkedIn" required />
+                <input type="text" class="contact-input" name="InstagramUrl" placeholder="Instagram" />
+                <input type="text" class="contact-input" name="FacebookUrl" placeholder="Facebook" />
+                <button class="modal-next-btn" data-step="4" onclick="ModalApp.submitStep(this)">Save and Continue</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const ModalApp = {
+            submitStep: async function (btn) {
+                const step = btn.getAttribute('data-step');
+                btn.disabled = true;
+                btn.textContent = 'Saving...';
+
+                const modal = document.getElementById(`modalStep${step}`);
+                const inputs = modal.querySelectorAll('input, textarea, select');
+                const formData = {};
+                let emptyFields = [];
+
+
+                inputs.forEach(input => {
+                    const key = input.name || input.id;
+                    const value = input.value.trim();
+                    formData[key] = value;
+
+                    // Check required fields (skip readonly and optional fields)
+                    if (input.hasAttribute('required') && !input.hasAttribute('readonly') && (value === '' || value == null)) {
+                        emptyFields.push(key);
+                    }
+                });
+                if (formData['Subjects']) {
+                    formData['Subjects'] = $('#subjectsSelect').val(); // Converts to array
+                }
+                // If any required field is empty, alert and stop
+                if (emptyFields.length > 0) {
+                    alert(`Please fill in all required fields before continuing: ${emptyFields.join(', ')}`);
+                    btn.disabled = false;
+                    btn.textContent = 'Save and Continue';
+                    return;
+                }
+                try {
+                    console.log({ step, formData });
+                    const response = await fetch(`/api/Coaches/CreateStage${step}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userToken}`,  // <=== ADD THIS LINE
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    console.log(response);
+                    if (response.ok) {
+                        ModalApp.next();
+                    } else {
+                        alert('Something went wrong.');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Error submitting data.');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Save and Continue';
+                }
+            },
+
+            next: function () {
+                const current = document.querySelector('.modal-box.modal-visible');
+                if (!current) return;
+
+                const allSteps = [...document.querySelectorAll('.modal-box')];
+                const currentIndex = allSteps.indexOf(current);
+                if (currentIndex >= 0 && currentIndex < allSteps.length - 1) {
+                    current.classList.remove('modal-visible');
+                    allSteps[currentIndex + 1].classList.add('modal-visible');
+                }
+            },
+
+            close: function () {
+                document.querySelectorAll('.modal-box').forEach(modal => modal.classList.remove('modal-visible'));
+            }
+        };
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#subjectsSelect').select2({
+                placeholder: "Select or type subjects",
+                tags: true,
+                tokenSeparators: [',', ' ']
+            });
+        });
+    </script>
+
+    <script src="~/js/modal-script.js"></script>
+
+</body>
+</html>

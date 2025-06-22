@@ -1,101 +1,195 @@
-﻿@{
+﻿@model userProfileViewModel
+@{
     Layout = null;
     ViewBag.Title = "Dashboard";
 }
-<div class="dashboard-container">
 
-    <section class="">
+<div class="dashboard-container">
+    <section>
         <div class="profile-card">
+            <!-- Profile Banner -->
             <div class="profile-banner">
                 <div class="profile-banner-text">
-                    <img src="~/images/profilelogo-removebg-preview.png" />
+                    <img src="~/images/profilelogo-removebg-preview.png" alt="logo" />
                     <div class="profile_description">
-                        Hello, I'm Mrs. B Adeleye an enthusiastic educator dedicated to shaping young minds and fostering a love for learning.
-                        With a passion for creating dynamic and engaging classroom environments, I strive to inspire curiosity
-                        and empower my students to reach their full potential.
+                        @(Model.Description ?? "No description provided.")
                     </div>
-                </div><img src="~/images/photoicon.png" alt="camera" class="banner-camera" />
+                </div>
+                <img src="~/images/photoicon.png" alt="camera" class="banner-camera" />
             </div>
 
+            <!-- Profile Info Section -->
             <div class="profile-info">
+                <!-- Profile Image and Socials -->
                 <div class="profile-image">
-                    <img src="~/images/sol3.png" alt="Profile" />
+                    <img src="@(Model.ProfileImageUrl ?? "~/images/default-avatar.png")" alt="Profile" />
                     <div class="social-links">
+                        <div><span>Follow me on</span></div>
                         <div>
-                            <span> Follow me on</span>
-                        </div>
-                        <div>
-                            <a href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            @if (!string.IsNullOrWhiteSpace(Model.FacebookUrl))
+                            {
+                                <a href="@Model.FacebookUrl" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.TweeterUrl))
+                            {
+                                <a href="@Model.TweeterUrl" target="_blank"><i class="fab fa-twitter"></i></a>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.LinkedInUrl))
+                            {
+                                <a href="@Model.LinkedInUrl" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.InstagramUrl))
+                            {
+                                <a href="@Model.InstagramUrl" target="_blank"><i class="fab fa-instagram"></i></a>
+                            }
                         </div>
                     </div>
                 </div>
+
                 <div class="space"></div>
+
+                <!-- Profile Details -->
                 <div class="profile-details">
-                    <div class="d-flex meta-info ">
+                    <div class="d-flex meta-info">
                         <div>
                             <div class="profile_topic">
-                                <div class="profile_name">MRS. B. Adeyemi</div>
-                                <div class="title">Professional Teacher/ Educator</div>
+                                <div class="profile_name">@(Model.FullName?.ToUpper() ?? "No Name")</div>
+                                <div class="title">@(Model.ProfessionalTitle ?? "No Title")</div>
                             </div>
                             <div class="experience">
                                 <strong>3+</strong> <span>Years Of Experience</span>
                             </div>
                         </div>
+
                         <div>
-                            <div><i class="fas fa-book"></i> Subjects: Basic Science, English, Maths</div>
-                            <div><i class="fas fa-users"></i> 20 Students</div>
+                            <div><i class="fas fa-book"></i> Subjects: @(Model.Subject ?? "Not specified")</div>
+                            <div><i class="fas fa-users"></i> @(Model.NumbersOfStudents > 0 ? Model.NumbersOfStudents.ToString() : "No") Students</div>
                         </div>
+
                         <div>
-                            <div><i class="fas fa-school"></i> Ikate Primary School 1</div>
-                            <div><i class="fas fa-map-marker-alt"></i> Odogbolu Local govt. Ogun State.</div>
+                            <div><i class="fas fa-school"></i> @(Model.SchoolName ?? "Unknown School")</div>
+                            <div><i class="fas fa-map-marker-alt"></i> @(Model.LocalGov ?? "Unknown Location")</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </section>
-
     <section class="activities">
-        <div class="activities-header">
-            <h3>Activities</h3>
-            <div class="search-bar">
-                <input type="text" placeholder="Search..." />
-                <button><i class="fas fa-external-link-alt"></i> View All</button>
+        @if (Model.Schedules == null || !Model.Schedules.Any())
+        {
+            <div class="Schedules_null">
+                No Available Classes
             </div>
-        </div>
-        <div class="activity-cards">
-            <div class="activity-card ongoing">
-                <h4>Teachers As Leaders</h4>
-                <p>Batch 1st Cohort</p>
-                <p><i class="far fa-clock"></i> 12:40 P:M</p>
-                <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
-                <span class="status ongoing">Status : Ongoing</span>
-                <button>Join Now</button>
-            </div>
+        }
+        else
+        {
+            <div>
+                <div class="activities-header">
+                    <h3>Activities</h3>
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search..." />
+                        <button><i class="fas fa-external-link-alt"></i> View All</button>
+                    </div>
+                </div>
 
-            <div class="activity-card starting">
-                <h4>Mindset Coaching</h4>
-                <p>Batch 1st Cohort</p>
-                <p><i class="far fa-clock"></i> 01:40 P:M</p>
-                <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
-                <span class="status starting">Status : Starting in 60 Minutes</span>
-                <button>Join Now</button>
-            </div>
+                <div class="activity-cards">
+                    @foreach (var activity in Model.Schedules)
+                    {
+                        var now = DateTime.Now;
+                        string statusClass = "";
+                        string statusText = "";
 
-            <div class="activity-card not-started">
-                <h4>Pedagogical Coaching</h4>
-                <p>Batch 1st Cohort</p>
-                <p><i class="far fa-clock"></i> 01:40 P:M</p>
-                <p><i class="far fa-calendar-alt"></i> 12 Jan 2024</p>
-                <span class="status not-started">Status : Not Started</span>
-                <button>Join Now</button>
+                        if (activity.StartDate.HasValue)
+                        {
+                            var start = activity.StartDate.Value;
+
+                            if (start <= now && activity.EndDate > now)
+                            {
+                                statusClass = "ongoing";
+                                statusText = "Status : Ongoing";
+                            }
+                            else if (start > now && start <= now.AddMinutes(60))
+                            {
+                                statusClass = "starting";
+                                statusText = $"Status : Starting in {(int)(start - now).TotalMinutes} Minutes";
+                            }
+                            else if (start > now)
+                            {
+                                statusClass = "not-started";
+                                statusText = "Status : Not Started";
+                            }
+                            else
+                            {
+                                statusClass = "ended";
+                                statusText = "Status : Ended";
+                            }
+                        }
+
+                        <div class="activity-card @statusClass">
+                            <h4>@activity.Title</h4>
+                            <p>@(activity.Focus?.ToString() ?? "Batch Info")</p>
+                            <p><i class="far fa-clock"></i> @activity.StartDate?.ToString("hh:mm tt")</p>
+                            <p><i class="far fa-calendar-alt"></i> @activity.StartDate?.ToString("dd MMM yyyy")</p>
+                            <span class="status @statusClass">@statusText</span>
+
+                            @if (!string.IsNullOrEmpty(activity.MeetingLink))
+                            {
+                                <a href="@activity.MeetingLink" target="_blank">
+                                    <button>Join Now</button>
+                                </a>
+                            }
+                            else
+                            {
+                                <button disabled>Link Not Available</button>
+                            }
+                        </div>
+                    }
+                </div>
             </div>
-        </div>
+        }
     </section>
+
+
+    @*
+    <section class="activities">
+    <div class="activities-header">
+    <h3>Activities</h3>
+    <div class="search-bar">
+    <input type="text" placeholder="Search..." />
+    <button><i class="fas fa-external-link-alt"></i> View All</button>
+    </div>
+    </div>
+    <div class="activity-cards">
+    <div class="activity-card ongoing">
+    <h4>Teachers As Leaders</h4>
+    <p>Batch 1st Cohort</p>
+    <p><i class="far fa-clock"></i> 12:40 P:M</p>
+    <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
+    <span class="status ongoing">Status : Ongoing</span>
+    <button>Join Now</button>
+    </div>
+
+    <div class="activity-card starting">
+    <h4>Mindset Coaching</h4>
+    <p>Batch 1st Cohort</p>
+    <p><i class="far fa-clock"></i> 01:40 P:M</p>
+    <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
+    <span class="status starting">Status : Starting in 60 Minutes</span>
+    <button>Join Now</button>
+    </div>
+
+    <div class="activity-card not-started">
+    <h4>Pedagogical Coaching</h4>
+    <p>Batch 1st Cohort</p>
+    <p><i class="far fa-clock"></i> 01:40 P:M</p>
+    <p><i class="far fa-calendar-alt"></i> 12 Jan 2024</p>
+    <span class="status not-started">Status : Not Started</span>
+    <button>Join Now</button>
+    </div>
+    </div>
+    </section> *@
+
 </div>
 
 

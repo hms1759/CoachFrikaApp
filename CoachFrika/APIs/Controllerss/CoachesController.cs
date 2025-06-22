@@ -60,16 +60,16 @@ namespace CoachFrika.APIs.Controllerss
             }
             return BadRequest(result);
         }
-        [HttpPost("CreateStage5")]
-        public async Task<IActionResult> CreateStage5(SubscriptionsDto model)
-        {
-            var result = await _coachesService.CreateStage5(model);
-            if (result.Status)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+        //[HttpPost("CreateStage5")]
+        //public async Task<IActionResult> CreateStage5(SubscriptionsDto model)
+        //{
+        //    var result = await _coachesService.CreateStage5(model);
+        //    if (result.Status)
+        //    {
+        //        return Ok(result);
+        //    }
+        //    return BadRequest(result);
+        //}
 
 
         [HttpGet("MyTeachers")]

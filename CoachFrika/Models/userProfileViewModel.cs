@@ -1,4 +1,5 @@
 ﻿using CoachFrika.Common.Enum;
+using coachfrikaaaa.APIs.Entity;
 
 namespace CoachFrika.Models
 {
@@ -31,6 +32,7 @@ namespace CoachFrika.Models
         public string SchoolName { get; set; }
         public string LocalGov { get; set; }
         public string Subject { get; set; }
+        public List<Schedule>? Schedules { get; set; } = new List<Schedule>();
     }
 
 }

@@ -1,5 +1,6 @@
 ﻿using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
+using coachfrikaaaa.APIs.Entity;
 
 namespace CoachFrika.APIs.Domin.IServices
 {
@@ -18,6 +19,7 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<string>> RecommendationRemark(TeachersRemark model);
         BaseResponse<List<GetTeacherRecommendationResponse>> Recommendations(GetTeacherRecommendations query);
         Task<BaseResponse<string>> backStage(string email);
+        BaseResponse<List<SchedulesViewModel>> GetMyScheduleAtLogin(CoachFrikaUsers req);
     }
 }
 

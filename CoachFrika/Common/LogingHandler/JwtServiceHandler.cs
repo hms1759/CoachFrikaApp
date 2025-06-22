@@ -1,4 +1,5 @@
-﻿using CoachFrika.Common.AutoMapper;
+﻿using CoachFrika.APIs.Domin.IServices;
+using CoachFrika.Common.AutoMapper;
 using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -20,12 +21,14 @@ namespace CoachFrika.Common.LogingHandler
             private readonly string _secretKey;
             private readonly string _issuer;
             private readonly string _audience;
+            private readonly ITeacherService _teacherService;
 
-            public JwtService(IConfiguration configuration)
+            public JwtService(IConfiguration configuration, ITeacherService teacherService)
             {
                 _secretKey = configuration["Jwt:SecretKey"];
                 _issuer = configuration["Jwt:Issuer"];
                 _audience = configuration["Jwt:Audience"];
+                _teacherService = teacherService;
             }
 
             public async Task<string> GenerateToken(CoachFrikaUsers user, IList<string> roles)
@@ -34,12 +37,15 @@ namespace CoachFrika.Common.LogingHandler
                 var profile = ProfileMapper.MapToProfileDto(user);
                 // Serialize the object to a JSON string
                 var myObjectJson = JsonSerializer.Serialize(profile);
+                var schd = _teacherService.GetMyScheduleAtLogin(user);
+                var RescheduleObjectJson = JsonSerializer.Serialize(schd);
                 // Create claims for the user
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim("Profile", myObjectJson)
+                    new Claim("Profile", myObjectJson),
+                    new Claim("Schedule", RescheduleObjectJson)
                 };
 
                 // Add each role as a claim

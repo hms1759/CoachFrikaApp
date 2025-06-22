@@ -104,22 +104,17 @@ namespace CoachFrika.Controllers
             };
             if (profile.Role == 1 && stage < 5)
             {
-                return RedirectToAction("Modal", partlySign);
+                return RedirectToAction("CoachModal", partlySign);
             }
            else if (profile.Role == 0 && stage < 5)
             {
                 return RedirectToAction("Modal", partlySign);
             }
-            else if (profile.Role == 0 && stage ==5)
+            else if (profile.Role == 0 && stage == 6 && !profile.hasPaid)
             {
-                return RedirectToAction("PaymentModal", partlySign);
+                return RedirectToAction("PostPaymentModal");
             }
-            //uncomment this 
-            //else if (profile.Role == 0 && stage ==6 && !profile.hasPaid)
-            //{
-            //    return RedirectToAction("PostPaymentModal");
-            //}
-
+            TempData["ProfileData"] = JsonConvert.SerializeObject(profile);
             return RedirectToAction("Index", "Profile", profile);
         }
 

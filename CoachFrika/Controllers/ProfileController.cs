@@ -1,23 +1,37 @@
 ﻿using CoachFrika.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CoachFrika.Controllers
 {
     public class ProfileController : Controller
     {
         // GET: ProfileController
-        public ActionResult Index(userProfileViewModel? model =null)
+        public ActionResult Index(userProfileViewModel? model = null)
         {
-            //if (model == null || string.IsNullOrEmpty(model?.Email))
-            //{
-            //    return RedirectToAction("Login", "Account");
-            //}
+            if (model == null || string.IsNullOrEmpty(model?.Email))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            if (model != null)
+            {
+                return View(model);
+            }
             return View();
         }
-        public IActionResult Dashboard(userProfileViewModel? model)
+        public IActionResult Dashboard()
         {
-            return PartialView("_Dashboard");
+            if (TempData["ProfileData"] is string json)
+            {
+                var model = JsonConvert.DeserializeObject<userProfileViewModel>(json);
+                if (model != null && !string.IsNullOrEmpty(model.Email))
+                {
+                    return PartialView("_Dashboard", model);
+                }
+            }
+
+            return RedirectToAction("Index");
         }
 
 

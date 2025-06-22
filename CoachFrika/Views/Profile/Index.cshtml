@@ -16,11 +16,10 @@
 </head>
 <body>
     <div class="wrapper">
-        <!-- Sidebar -->
-        <nav class="sidebar collapsed">
+        <!-- Sidebar (Opened by default) -->
+        <nav class="sidebar">
             <div class="sidebar-header">
-                <img src="~/images/logo-removebg-preview.jpg" />
-                @* <button class="close-btn" id="toggleBtn">x</button> *@
+                <img src="~/images/logo-removebg-preview.jpg" alt="Logo" />
             </div>
             <ul class="sidebar-menu">
                 <li>
@@ -29,7 +28,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#dashboard" class="sidebar-item">
+                    <a href="#live" class="sidebar-item">
                         <i class="fas fa-broadcast-tower"></i> Live
                     </a>
                 </li>
@@ -48,18 +47,21 @@
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </nav>
+
+        <!-- Toggle Button -->
         <button id="toggleBtn" class="sidebar-toggle-btn">
-            <i class="fas fa-angle-double-right"></i>
+            <i class="fas fa-angle-double-left"></i>
         </button>
 
-
         <!-- Main Content Area -->
-        <div class="main-content collapsed">
+        <div class="main-content">
             <div id="page-container" class="page-content">
-
+                <!-- Content loaded here -->
             </div>
         </div>
     </div>
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/slidebar.js"></script>
     <script>
@@ -70,7 +72,8 @@
                     console.error("Error loading content:", xhr.status, xhr.statusText);
                 }
             });
-            // Handle sidebar navigation
+
+            // Sidebar navigation click handler
             $(".sidebar-item").on("click", function (e) {
                 e.preventDefault();
                 $(".sidebar-item").removeClass("active");
@@ -80,10 +83,6 @@
                 $("#page-container").load(`/Profile/${target}`);
             });
         });
-        
-
     </script>
-   
-
 </body>
 </html>

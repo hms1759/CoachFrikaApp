@@ -453,6 +453,48 @@ namespace CoachFrika.APIs.Domin.Services
 
         }
 
+        public BaseResponse<List<SchedulesViewModel>> GetMyScheduleAtLogin(CoachFrikaUsers req)
+        {
+            var res = new BaseResponse<List<SchedulesViewModel>>();
+            res.Status = true;
+           
+            if (req.CoachId == null)
+            {
+                res.Message = "No Coach Found: Kindly Select A Coach";
+                res.Status = false;
+                return res;
+
+            }
+            try
+            {
+                var day = DateTime.Now.AddDays(-1).Date;
+                // Apply filters based on the query parameters
+                var cos = from schedule in _context.Schedule
+                          where  schedule.StartDate.Value.Date > day
+                          select new SchedulesViewModel
+                          {
+                              Id = schedule.Id,
+                              Title = schedule.Title,
+                              Focus = schedule.Focus.ToString(),
+                              MeetingUrl = schedule.MeetingLink,
+                              StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
+                              EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
+                          };
+
+                 res.Data = cos.OrderBy(x => x.StartDate).Take(3).ToList();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+
         public BaseResponse<List<SchedulesViewModel>> GetMySchedule(GetSchedules query)
         {
             var user = _webHelpers.CurrentUser();
