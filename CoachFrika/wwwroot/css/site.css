@@ -479,7 +479,13 @@ html, body {
     text-align: left;
     margin: 5px 0;
 }
-
+.profile-name{
+    font-family: Inter;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 30px;
+    letter-spacing: 0px;
+}
 .school-info {
     font-family: Manrope;
     font-weight: 700;
@@ -937,8 +943,8 @@ sidebar.collapsed {
     line-height: 100%;
     vertical-align: middle;
 }
-.proceed_Payment{
 
+.proceed_Payment {
 }
 /*dashboard*/
 .dashboard-container {
@@ -947,80 +953,163 @@ sidebar.collapsed {
     padding: 20px;
 }
 
+/**8888888888888888888888888888888888*/
+.profile-card {
+    font-family: 'Segoe UI', sans-serif;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
 .profile-banner {
-    background-color: #6cc24a;
-    border-radius: 8px;
-    padding: 30px;
+    background: #7ed321;
+    padding: 40px 20px;
     color: white;
     position: relative;
-    margin-bottom: 30px;
 }
 
-    .profile-banner .banner-content {
-        display: flex;
-        align-items: flex-start;
-        gap: 30px;
-        flex-wrap: wrap;
-    }
-
-.profile-photo img {
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    object-fit: cover;
-    border: 4px solid white;
+.profile-banner-text {
+    max-width: 50%;
+    margin: auto;
+    text-align: center;
 }
 
-.profile-text h3 {
-    margin: 0;
-    font-size: 24px;
+.banner-camera {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 30px;
 }
 
-.role {
-    margin: 4px 0;
-    font-style: italic;
-}
-
-.bio {
-    margin: 10px 0;
-    font-size: 15px;
-    line-height: 1.5;
-    color: #e0f7df;
-}
-
-.details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5px;
-    margin-top: 10px;
-    font-size: 16px;
-}
-
-    .details i {
-        margin-right: 5px;
-    }
-
-.follow-section {
-    margin-top: 10px;
+.profile-info {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 30px;
     flex-wrap: wrap;
 }
 
-    .follow-section a {
-        color: white;
+.profile-image {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0;
+    top: -8rem;
+}
+
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 6px solid #fff;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+    }
+
+.camera-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: #7ed321;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .camera-badge img {
+        width: 16px;
+    }
+
+.profile-details {
+    flex: 1;
+}
+
+    .profile-details h3 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .profile-details .title {
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+.social-links {
+    text-align: center;
+    margin: 10px 0;
+    color: gray;
+}
+
+    .social-links span {
+        margin: 10px 0;
+        font-family: Inter;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 22px;
+        letter-spacing: 0px;
+    }
+
+    .social-links a {
+        color: gray;
+        margin: 10px 5px;
+        text-decoration: none;
         font-size: 16px;
     }
 
 .experience {
-    background: white;
-    color: green;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-weight: bold;
+    color: #3cb371;
+    margin: 10px 0;
+    font-size: 16px;
 }
 
+    .experience strong {
+        font-size: 20px;
+    }
+
+.meta-info {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.8;
+    display: flex;
+    justify-content: space-between
+}
+
+    .meta-info i {
+        margin-right: 8px;
+        color: #3cb371;
+    }
+
+.profile_description {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 22px;
+    letter-spacing: 0px;
+    text-align: justify;
+}
+.profile_social-links {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    letter-spacing: 0px;
+    text-align: center;
+    color: #333;
+}
+.profile_name {
+    font-family: Inter;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 30px;
+    letter-spacing: 0px;
+}
+/*************************************/
 .activities-header {
     display: flex;
     justify-content: space-between;
@@ -1473,7 +1562,7 @@ sidebar.collapsed {
     text-align: center;
 }
 
-.services-image img {
+    .services-image img {
         border-radius: 12px;
         width: 100%;
     }
@@ -1486,8 +1575,7 @@ sidebar.collapsed {
 .services-cta-text {
     flex: 1;
     padding: 40px;
-    color :black;
-
+    color: black;
 }
 
 .services-button, .price_services-button {
@@ -1500,23 +1588,29 @@ sidebar.collapsed {
     text-decoration: none;
     border: 2px solid black
 }
+
 .price_services-button {
     color: #4caf50;
     border: 2px solid #4caf50
 }
+
 .services-button:hover {
     background-color: #619f03;
 }
+
 .ddimg {
     background-color: #f9fff8
 }
+
 .ddimg2 {
     background-color: #79c701;
 }
-.make_extra{
+
+.make_extra {
     font-size: 16px;
-    padding-right:20px;
+    padding-right: 20px;
 }
+
 .make_extra_join {
     font-size: 16px;
 }
@@ -1801,7 +1895,7 @@ sidebar.collapsed {
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding-bottom:10px;
+    padding-bottom: 10px;
 }
 
     .package-card:hover {
@@ -1901,6 +1995,7 @@ sidebar.collapsed {
     border-radius: 8px;
     padding: 30px
 }
+
 .you_Know, .priceContent {
     font-family: Roboto Flex;
     font-weight: 700;
@@ -1909,6 +2004,7 @@ sidebar.collapsed {
     vertical-align: middle;
     margin-bottom: 0px !important;
 }
+
 .priceContentText {
     margin-top: 20px !important;
     font-family: Roboto Flex;
@@ -1918,6 +2014,7 @@ sidebar.collapsed {
     text-align: justify;
     vertical-align: middle;
 }
+
 .image-container img {
     width: 80%;
     height: auto;

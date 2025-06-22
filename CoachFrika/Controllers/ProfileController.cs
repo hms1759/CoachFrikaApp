@@ -9,10 +9,10 @@ namespace CoachFrika.Controllers
         // GET: ProfileController
         public ActionResult Index(userProfileViewModel? model =null)
         {
-            if (model == null || string.IsNullOrEmpty(model?.Email))
-            {
-                return RedirectToAction("Login", "Account");
-            }
+            //if (model == null || string.IsNullOrEmpty(model?.Email))
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
             return View();
         }
         public IActionResult Dashboard(userProfileViewModel? model)
