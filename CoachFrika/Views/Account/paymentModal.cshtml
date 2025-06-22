@@ -49,7 +49,7 @@
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Access to Resource Library</li>
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate</li>
                         </ul>
-                        <a href="#" class="btn-choose">Choose Plan</a>
+                        <a href="#" class="btn-choose" data-plan="0">Choose Plan</a>
                     </div>
                 </div>
 
@@ -66,7 +66,7 @@
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Exclusive webinars</li>
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate</li>
                         </ul>
-                        <a href="#" class="btn-choose">Choose Plan</a>
+                        <a href="#" class="btn-choose" data-plan="1">Choose Plan</a>
                     </div>
                 </div>
 
@@ -85,7 +85,7 @@
                             <li><i class="fas fa-check-circle text-success mr-2"></i> 3 Months mentorship</li>
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate</li>
                         </ul>
-                        <a href="#" class="btn-choose">Choose Plan</a>
+                        <a href="#" class="btn-choose" data-plan="2">Choose Plan</a>
                     </div>
                 </div>
             </div>
@@ -93,5 +93,61 @@
     </section>
 
     <script src="~/js/modal-script.js"></script>
+    <script>
+        document.querySelectorAll('.btn-choose').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault(); // prevent default anchor behavior
+
+                const planId = this.getAttribute('data-plan');
+                const token = '@Model.token';
+
+                fetch('/api/Teachers/CreateStage6', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value,
+                        'Authorization': `Bearer ${userToken}`,
+                    },
+                    body: JSON.stringify({ Subscription: parseInt(planId) })
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Request failed');
+                        return response.json();
+                    })
+                    .then(data => {
+                        const messageDiv = document.getElementById('responseMessage');
+                        messageDiv.textContent = data.message || 'Plan selected successfully.';
+                        messageDiv.style.color = 'green';
+                        messageDiv.style.display = 'block';
+                        messageDiv.scrollIntoView({ behavior: 'smooth' });
+                        // Now fetch the next modal HTML and load it into the page
+                        fetch('/Account/PostPaymentModal', { // adjust this path as needed
+                            method: 'GET',
+                            headers: {
+                                'Authorization': `Bearer ${userToken}`
+                            }
+                        })
+                            .then(res => {
+                                if (!res.ok) throw new Error('Failed to load next modal');
+                                return res.text();
+                            })
+                            .then(html => {
+                                document.getElementById('nextModalContainer').innerHTML = html;
+                            })
+                            .catch(error => {
+                                console.error('Modal Load Error:', error);
+                            });
+                    })
+                    .catch(error => {
+                        const messageDiv = document.getElementById('responseMessage');
+                        messageDiv.textContent = error.message || 'Something went wrong.';
+                        messageDiv.style.color = 'red';
+                        messageDiv.style.display = 'block';
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    </script>
+
 </body>
 </html>

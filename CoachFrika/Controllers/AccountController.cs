@@ -114,6 +114,11 @@ namespace CoachFrika.Controllers
             {
                 return RedirectToAction("PaymentModal", partlySign);
             }
+            //uncomment this 
+            //else if (profile.Role == 0 && stage ==6 && !profile.hasPaid)
+            //{
+            //    return RedirectToAction("PostPaymentModal");
+            //}
 
             return RedirectToAction("Dashboard", "Profile", profile);
         }
@@ -128,6 +133,11 @@ namespace CoachFrika.Controllers
         public IActionResult PaymentModal(SignpStage1Resp partlySign)
         {
             return View(partlySign);
+        }
+        [HttpGet]
+        public IActionResult PostPaymentModal()
+        {
+            return View();
         }
         [HttpGet]
         public IActionResult CoachModal(SignpStage1Resp partlySign)

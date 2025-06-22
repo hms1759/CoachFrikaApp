@@ -1,0 +1,42 @@
+﻿@using CoachFrika.APIs.ViewModel
+@model SignpStage1Resp
+
+@{
+    Layout = "~/Views/Shared/_modalLayout.cshtml";
+}
+
+@Html.AntiForgeryToken()
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-Step Modal</title>
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+
+    <!-- Background Blur Layer -->
+    <div class="modal-background">
+        <img src="~/images/blurbackgd.png" alt="Background" class="modal-bg-img">
+    </div>
+
+    <div class="space"></div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-4 animate__animated animate__fadeInLeft">
+            <div class="package-card">
+
+                <div class="proceed_page">
+                    "Kindly proceed to make your payment. Payment details have been sent to your email. 
+                    Please don’t forget to share your proof of payment with the admin."
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/modal-script.js"></script>
+</body>
+</html>

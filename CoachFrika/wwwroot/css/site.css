@@ -927,7 +927,18 @@ sidebar.collapsed {
         margin-left: 50px; /* Adjust as needed for collapsed state */
     }
 
+.proceed_page {
+    padding: 20px;
+    padding-top: 40px;
+    font-family: Roboto Flex;
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 100%;
+    vertical-align: middle;
+}
+.proceed_Payment{
 
+}
 /*dashboard*/
 .dashboard-container {
     max-width: 1200px;

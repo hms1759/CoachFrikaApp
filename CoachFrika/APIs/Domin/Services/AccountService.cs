@@ -67,12 +67,7 @@ namespace CoachFrika.APIs.Domin.Services
                     res.Status = false;
                     return res;
                 }
-                if (user.Role == 0 && user.Stages == 6)
-                {
-                  var pay = await  _context.Payment.FirstOrDefaultAsync(x => x.CreatedBy == user.Email);
-                  await _paymentService.VerifyTransactionAsync(pay.Paymentrefernce, "");
-                }
-
+              
                 // Get the roles of the user
                 var roles = await _userManager.GetRolesAsync(user);
                 var details = new LoginDetails();

@@ -15,6 +15,15 @@ public class PaymentController : Controller
         _paystackService = paystackService;
     }
 
+    [HttpPost("PaymentRequest")]
+    public async Task<IActionResult> PaymentRequest(decimal amount, string email)
+    {
+        var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, email);
+
+        // Redirect the user to Paystack for payment
+        return Ok(transactionUrl);
+    }
+
     [HttpPost("pay")]
     public async Task<IActionResult> Pay(decimal amount, string email)
     {

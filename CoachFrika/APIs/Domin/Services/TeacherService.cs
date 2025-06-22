@@ -41,7 +41,7 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly IBackgroundTaskQueue _backgroundTaskQueue;
         public TeacherService(IUnitOfWork unitOfWork,
             AppDbContext context,
-            IWebHelpers webHelpers,
+            IWebHelpers webHelpers, IEmailService emailService,
             UserManager<CoachFrikaUsers> userManager, IOptions<SubscriptionsConfigSettings> subscrib,
             IPaystackService paystackService, IBackgroundTaskQueue backgroundTaskQueue)
         {
@@ -51,6 +51,7 @@ namespace CoachFrika.APIs.Domin.Services
             _subscrib = subscrib.Value;
             _paystackService = paystackService;
             _backgroundTaskQueue = backgroundTaskQueue;
+            _emailService = emailService;
         }
         public async Task<BaseResponse<string>> CreateStage1(TitleDto model)
         {
@@ -301,7 +302,7 @@ namespace CoachFrika.APIs.Domin.Services
                     return res;
                 }
                 var existingPayment = await _context.Payment.FirstOrDefaultAsync(x => x.CreatedBy == loginUser && x.PaymentStatus == PaymentStatus.Pending);
-                if (existingPayment != null)
+                if (existingPayment == null)
                 {
                     res.Status = false;
                     res.Message = "You have an existing payment process:Kindly reachout to Admin";
@@ -326,51 +327,14 @@ namespace CoachFrika.APIs.Domin.Services
                     Subscription = sub,
                     Paymentrefernce = Guid.NewGuid().ToString("N").Substring(10),
                     CreatedBy = loginUser,
-                    CreatedDate = DateTime.UtcNow
+                    CreatedDate = DateTime.UtcNow,
+                    UserId = user.Id
 
                 };
+                user.Stages = 6;
                 _context.Payment.Add(payment);
+                _context.CoachFrikaUsers.Update(user);
                 await _context.SaveChangesAsync();
-
-                /*  var transactionUrl = await _paystackService.InitializeTransactionAsync(amount, detail.Email);
-
-                   if (transactionUrl != null)
-                   {
-                       var obj = transactionUrl.Data;
-                       if (transactionUrl.Status)
-                       {
-                           detail.Subscriptions = model.Subscription;
-
-                           var payment = new Payment()
-                           {
-                               Amount = amount,
-                               Subscription = sub,
-                               Paymentrefernce = obj.reference,
-                               CreatedBy = user,
-                               CreatedDate = DateTime.UtcNow
-
-                           };
-                           _context.Payment.Add(payment);
-                           await _context.SaveChangesAsync();
-                           res.Data = obj.authorization_url;
-
-                           // Queue the background task to process payment after 15 minutes
-                           await _backgroundTaskQueue.QueueBackgroundWorkItemAsync(async token =>
-                           {
-                               SentrySdk.CaptureMessage($"QueueBackgroundWorkItem reference : {obj.reference}, logo {model.Logo} url.", level: SentryLevel.Info);
-                               await Task.Delay(TimeSpan.FromMinutes(5), token); // Delay for 5 minutes
-                               await processPaymentChecker(obj.reference, model.Logo);
-                           });
-                           return res;
-                       }
-
-
-                       SentrySdk.CaptureMessage($"transactionUrl Error : {transactionUrl.Message}", level: SentryLevel.Info);
-                       res.Message = transactionUrl.Message;
-                       res.Status = false;
-                       return res;
-                   }
-                   */
 
                 res.Message = "Payment directive has been sent to your email";
                 res.Status = false;
@@ -395,7 +359,7 @@ namespace CoachFrika.APIs.Domin.Services
 
                                  Thank you for choosing us!";
 
-                var bodyTemplate = await _emailService.ReadTemplate("forgetPassword");
+                var bodyTemplate = await _emailService.ReadTemplate("paymentRequest");
                 //inserting variable
                 //inserting variable
                 var UsermessageToParse = new Dictionary<string, string>
@@ -423,12 +387,12 @@ namespace CoachFrika.APIs.Domin.Services
 
                                     Kindly reach out to follow up and verify the payment once it is completed.";
 
-                var adminbodyTemplate = await _emailService.ReadTemplate("forgetPassword");
+                var adminbodyTemplate = await _emailService.ReadTemplate("paymentRequest");
                 //inserting variable
                 var messageToParse = new Dictionary<string, string>
                     {
                         { "{Fullname}", user.FullName},
-                        { "{Message}", userbody},
+                        { "{Message}", Adminbody},
                         { "{logo}", model.Logo},
                     };
 
