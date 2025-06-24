@@ -102,15 +102,19 @@ namespace CoachFrika.Controllers
                 Stage = stage,
                 token = token,
             };
-            if (profile.Role == 1 && stage < 5)
+            if (profile.Role == 1 && stage < 4)
             {
                 return RedirectToAction("CoachModal", partlySign);
             }
-           else if (profile.Role == 0 && stage < 5)
+            else if (profile.Role == 1 && stage == 4 && !profile.hasPaid)
+            {
+                return RedirectToAction("PostCoachRegistrationModal");
+            }
+            else if (profile.Role == 0 && stage < 6)
             {
                 return RedirectToAction("Modal", partlySign);
             }
-            else if (profile.Role == 0 && stage == 6 && !profile.hasPaid)
+            else if (profile.Role == 0 && stage ==6 && !profile.hasPaid)
             {
                 return RedirectToAction("PostPaymentModal");
             }
@@ -138,6 +142,12 @@ namespace CoachFrika.Controllers
         public IActionResult CoachModal(SignpStage1Resp partlySign)
         {
             return View(partlySign);
+        }
+
+        [HttpGet]
+        public IActionResult PostCoachRegistrationModal()
+        {
+            return View();
         }
         //[HttpPost]
         //public IActionResult Modal(SignpStage1Resp partlySign)

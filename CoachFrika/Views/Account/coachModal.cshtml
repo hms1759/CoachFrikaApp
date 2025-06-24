@@ -167,6 +167,20 @@
                 <button class="modal-next-btn" data-step="4" onclick="ModalApp.submitStep(this)">Save and Continue</button>
             </div>
         </div>
+        <div id="modalStep5" class="modal-box @(stepId == "modalStep5" ? "modal-visible" : "")">
+            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
+            <div class="row justify-content-center">
+                <div class="col-md-4 mb-4 animate__animated animate__fadeInLeft">
+                    <div class="package-card">
+
+                        <div class="proceed_page">
+                            "Your Profile is under construction, kindly reachout to Admin if this take more than 24Hours"
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -246,16 +260,6 @@
             }
         };
 
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            $('#subjectsSelect').select2({
-                placeholder: "Select or type subjects",
-                tags: true,
-                tokenSeparators: [',', ' ']
-            });
-        });
     </script>
 
     <script src="~/js/modal-script.js"></script>
