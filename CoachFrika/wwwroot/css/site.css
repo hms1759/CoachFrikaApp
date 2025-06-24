@@ -1357,10 +1357,6 @@ sidebar.collapsed {
 
 /* Modal Box */
 .modal-box {
-    max-height: 90vh;
-    overflow-y: auto;
-    background: #fff;
-    border-radius: 8px;
     display: none;
     width: 500px;
     background: rgba(255, 255, 255, 0.9);
