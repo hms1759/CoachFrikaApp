@@ -26,7 +26,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _coachesService.CreateStage1(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -36,7 +36,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _coachesService.CreateStage2(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -46,7 +46,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _coachesService.CreateStage3(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -56,7 +56,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _coachesService.CreateStage4(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -66,7 +66,7 @@ namespace CoachFrika.APIs.Controllerss
         //    var result = await _coachesService.CreateStage5(model);
         //    if (result.Status)
         //    {
-        //        return Ok(result);
+        //        if(result.Status)return Ok(result);return BadRequest(result);
         //    }
         //    return BadRequest(result);
         //}
@@ -78,7 +78,7 @@ namespace CoachFrika.APIs.Controllerss
             var result =  _coachesService.MyTeachers(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -89,7 +89,7 @@ namespace CoachFrika.APIs.Controllerss
             var result =  _coachesService.GetAllCoaches(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -100,7 +100,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _coachesService.GetCoachById(Id);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -111,7 +111,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _coachesService.AddRecomendations(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -122,7 +122,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _coachesService.EditRecommendation(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -134,7 +134,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = _coachesService.Recommendations(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -146,7 +146,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _coachesService.GetRecommendationById(Id);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }

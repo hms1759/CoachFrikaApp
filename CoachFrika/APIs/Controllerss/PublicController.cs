@@ -22,7 +22,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _publicService.GetPublicCount();
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -33,7 +33,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _publicService.NewSubscription(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -46,7 +46,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _publicService.ContactUs(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -58,7 +58,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _publicService.SchoolEnrollment(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -71,7 +71,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _publicService.SchoolEnrollment(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -84,7 +84,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _publicService.SponsorAchild(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }

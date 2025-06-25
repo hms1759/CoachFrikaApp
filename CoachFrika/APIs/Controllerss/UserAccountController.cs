@@ -25,7 +25,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.Login(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -37,7 +37,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.SignUp(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -49,7 +49,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.ForgetPassword(model.Email, logoUrl);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -61,7 +61,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.ChangePassword(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -72,7 +72,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.UploadFile(file);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
 
@@ -85,7 +85,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.GetProfileImageUrl();
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
@@ -96,7 +96,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.ResetPassword(model);
             if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }

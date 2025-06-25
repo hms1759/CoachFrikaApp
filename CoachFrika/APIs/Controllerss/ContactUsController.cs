@@ -24,7 +24,7 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _contactUsService.CreateContactUs(model, logoUrl);
            if (result.Status)
             {
-                return Ok(result);
+                if(result.Status)return Ok(result);return BadRequest(result);
             }
             return BadRequest(result);
         }
