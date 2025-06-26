@@ -315,6 +315,58 @@ namespace CoachFrika.APIs.Domin.Services
             }
 
         }
+        public BaseResponse<List<ProfileDto>> GetAllCoaches(GetTeachersSearch query)
+        {
+            var res = new BaseResponse<List<ProfileDto>>();
+            res.Status = true;
+            try
+            {
+                var cos = from user in _context.CoachFrikaUsers
+                          where (user.Role == Roles.Coach)
+                          && (
+                    (query.OnboardingStatus == null) ||
+                    (query.OnboardingStatus == OnboardingStatus.PendindApproval && user.Stages == 4 &&!user.hasPaid) ||
+                    (query.OnboardingStatus == OnboardingStatus.Approved && user.Stages == 4 && user.hasPaid) ||
+                     (query.OnboardingStatus == OnboardingStatus.Ongoing && user.Stages < 4 && !user.hasPaid)
+                )
+                          select new ProfileDto
+                          {
+                              Id = user.Id,
+                              Title = user.Title,
+                              FullName = user.FullName,
+                              ProfessionalTitle = user.ProfessionalTitle,
+                              NumbersOfStudents = user.NumbersOfStudents,
+                              Description = user.Description,
+                              Email = user.Email,
+                              PhoneNumber = user.PhoneNumber,
+                              Role = user.Role,
+                              Stages = user.Stages,
+                              hasPaid = user.hasPaid
+
+
+                          };
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                res.TotalCount = cos.Count();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
 
         public async Task<BaseResponse<ProfileDto>> GetCoachById(string Id)
         {

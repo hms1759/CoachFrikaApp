@@ -103,12 +103,6 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _teacherService.backStage(email);
             if(result.Status)return Ok(result);return BadRequest(result);
         }
-        [HttpGet("GetAllTeachers")]
-        public async Task<IActionResult> GetAllTeachers([FromQuery] GetTeachersSearch model)
-        {
-            var result = _teacherService.GetTeachers(model);
-            if (result.Status) return Ok(result); return BadRequest(result);
-        }
 
         //[HttpGet("GetSubject")]
         //public IActionResult GetSubject()

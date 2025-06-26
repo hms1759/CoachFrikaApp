@@ -37,7 +37,7 @@ namespace CoachFrika.APIs.ViewModel
 
     public class SubscriptionsDto
     {
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public string? Logo { get; set; }
         public Subscriptions Subscription { get; set; }
     }
@@ -88,7 +88,7 @@ namespace CoachFrika.APIs.ViewModel
     public class GetAllCoaches : Pagination
     {
         public string? Name { get; set; }
-        [JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public string? CoachId { get; set; }
         public bool IsPaginated { get; set; }
 
@@ -140,7 +140,7 @@ namespace CoachFrika.APIs.ViewModel
     public class GetTeachersSearch : Pagination
     {
         public bool IsCoach { get; set; }
-        public OnboardingStatus OnboardingStatus { get; set; }
+        public OnboardingStatus? OnboardingStatus { get; set; }
 
     }
     public class GetTeacherRecommendationResponse

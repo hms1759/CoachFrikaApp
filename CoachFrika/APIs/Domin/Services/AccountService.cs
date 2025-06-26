@@ -19,6 +19,7 @@ using SharpRaven.Data.Context;
 using System.Text;
 using System.Text.RegularExpressions;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CoachFrika.APIs.Domin.Services
 {
@@ -68,7 +69,7 @@ namespace CoachFrika.APIs.Domin.Services
                     res.Status = false;
                     return res;
                 }
-              
+
                 // Get the roles of the user
                 var roles = await _userManager.GetRolesAsync(user);
                 var details = new LoginDetails();
@@ -457,7 +458,7 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-        public async  Task<BaseResponse<string>> GetProfileImageUrl()
+        public async Task<BaseResponse<string>> GetProfileImageUrl()
         {
             var res = new BaseResponse<string>();
             res.Status = false;
@@ -481,7 +482,82 @@ namespace CoachFrika.APIs.Domin.Services
                 res.Status = false;
                 return res;
             }
+        }
+
+        public async Task<BaseResponse<ProfileDto>> GetApplicant(string Id)
+        {
+            var res = new BaseResponse<ProfileDto>();
+            res.Status = true;
+            try
+            {
+                var cos = from user in _context.CoachFrikaUsers
+                          where (user.Id == Id)
+                          select new ProfileDto
+                          {
+                              Id = user.Id,
+                              Title = user.Title,
+                              FullName = user.FullName,
+                              ProfessionalTitle = user.ProfessionalTitle,
+                              NumbersOfStudents = user.NumbersOfStudents,
+                              Description = user.Description,
+                              Email = user.Email,
+                              PhoneNumber = user.PhoneNumber,
+                              Role = user.Role,
+                              Stages = user.Stages,
+                              hasPaid = user.hasPaid,
+                              FacebookUrl = user.FacebookUrl,
+                              TeacherId = user.TeacherId,
+                              TweeterUrl = user.TweeterUrl,
+                              LinkedInUrl = user.LinkedInUrl,
+                              InstagramUrl = user.InstagramUrl,
+                              ProfileImageUrl = user.ProfileImageUrl,
+                              SchoolName = user.SchoolName,
+                              Address = user.Address,
+                              Nationality = user.Nationality,
+                              StateOfOrigin = user.StateOfOrigin,
+                              LocalGov = user.LocalGov,
+                              Subscriptions = user.Subscriptions,
+                              Subject = user.Subject
+
+                          };
+                res.Data = await cos.FirstOrDefaultAsync();
+                return res;
             }
-        
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public async Task<BaseResponse<string>> ApproveApplicantion(string Id)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            try
+            {
+                var applicant = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Id == Id);
+                if (applicant == null)
+                {
+                    res.Message = "Application not found";
+                    res.Status = false;
+                    return res;
+                }
+                applicant.hasPaid = true;
+                _context.CoachFrikaUsers.Update(applicant);
+                _context.SaveChanges();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+            }
+        }
     }
 }

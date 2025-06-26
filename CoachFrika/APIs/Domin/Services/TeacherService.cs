@@ -371,7 +371,7 @@ namespace CoachFrika.APIs.Domin.Services
 
                 //  email notification
                 var UsermessageBody = bodyTemplate.ParseTemplate(UsermessageToParse);
-                var message = new Message(new List<string> {loginUser}, subject, UsermessageBody);
+                var message = new Message(new List<string> { loginUser }, subject, UsermessageBody);
 
                 await _emailService.SendEmail(message);
 
@@ -398,7 +398,7 @@ namespace CoachFrika.APIs.Domin.Services
 
                 //  email notification
                 var messageBody = bodyTemplate.ParseTemplate(messageToParse);
-                var adminmessage = new Message(new List<string> {admin}, Adminsubject, messageBody);
+                var adminmessage = new Message(new List<string> { admin }, Adminsubject, messageBody);
 
                 await _emailService.SendEmail(adminmessage);
                 return res;
@@ -457,7 +457,7 @@ namespace CoachFrika.APIs.Domin.Services
         {
             var res = new BaseResponse<List<SchedulesViewModel>>();
             res.Status = true;
-           
+
             if (req.CoachId == null)
             {
                 res.Message = "No Coach Found: Kindly Select A Coach";
@@ -470,7 +470,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.AddDays(-1).Date;
                 // Apply filters based on the query parameters
                 var cos = from schedule in _context.Schedule
-                          where  schedule.StartDate.Value.Date > day
+                          where schedule.StartDate.Value.Date > day
                           select new SchedulesViewModel
                           {
                               Id = schedule.Id,
@@ -481,7 +481,7 @@ namespace CoachFrika.APIs.Domin.Services
                               EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
                           };
 
-                 res.Data = cos.OrderBy(x => x.StartDate).Take(3).ToList();
+                res.Data = cos.OrderBy(x => x.StartDate).Take(3).ToList();
                 return res;
             }
             catch (Exception ex)
@@ -707,33 +707,35 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var status = query.IsCoach == true ? Roles.Coach : Roles.Teacher;
-                var stage = query.OnboardingStatus;
                 var cos = from user in _context.CoachFrikaUsers
-                          where (user.Role == status) &&
-                         query.OnboardingStatus == OnboardingStatus.PendindApproval && status.te
-                          let numberOfStudent = _context.CoachFrikaUsers.Where(x => x.CoachId == coach.Id).Count()
+                          where (user.Role == Roles.Coach)
+                          && (
+                    (query.OnboardingStatus == null) ||
+                    (query.OnboardingStatus == OnboardingStatus.PendindApproval && user.Stages == 4 && !user.hasPaid) ||
+                    (query.OnboardingStatus == OnboardingStatus.Approved && user.Stages == 4 && user.hasPaid) ||
+                     (query.OnboardingStatus == OnboardingStatus.Ongoing && user.Stages < 4 && !user.hasPaid)
+                )
                           select new ProfileDto
                           {
-                              Id = coach.Id,
-                              Title = coach.Title,
-                              FullName = coach.FullName,
-                              ProfessionalTitle = coach.ProfessionalTitle,
-                              NumbersOfStudents = numberOfStudent,
-                              Description = coach.Description,
-                              LinkedInUrl = coach.LinkedInUrl,
-                              FacebookUrl = coach.FacebookUrl,
-                              TweeterUrl = coach.TweeterUrl,
-                              Email = coach.Email,
-                              PhoneNumber = coach.PhoneNumber,
-                              ProfileImageUrl = coach.ProfileImageUrl ?? _uiSite.ProfileUrl,
-                              // Using DateTime.MinValue if EndDate is null
+                              Id = user.Id,
+                              Title = user.Title,
+                              FullName = user.FullName,
+                              ProfessionalTitle = user.ProfessionalTitle,
+                              NumbersOfStudents = user.NumbersOfStudents,
+                              Description = user.Description,
+                              Email = user.Email,
+                              PhoneNumber = user.PhoneNumber,
+                              Role = user.Role,
+                              Stages = user.Stages,
+                              hasPaid = user.hasPaid
+
+
                           };
 
                 // Apply pagination using Skip and Take
-                var pagedData = query.IsPaginated ? cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
                                    .Take(query.Pagesize)
-                                   .ToList() : cos.ToList();
+                                   .ToList();
 
                 // Set the response data
                 res.Data = pagedData;

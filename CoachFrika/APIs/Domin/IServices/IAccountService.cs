@@ -12,5 +12,7 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<string>> UploadFile(ProfileImgUpload model);
         Task<BaseResponse<string>> ResetPassword(ResetPasswordDto model);
         Task<BaseResponse<string>> GetProfileImageUrl();
+        Task<BaseResponse<ProfileDto>> GetApplicant(string Id);
+        Task<BaseResponse<string>> ApproveApplicantion(string Id);
     }
 }
