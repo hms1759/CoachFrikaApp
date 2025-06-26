@@ -3,6 +3,7 @@ using CoachFrika.APIs.Entity;
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
+using CoachFrika.Common.Enum;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
@@ -165,12 +166,12 @@ namespace CoachFrika.APIs.Domin.Services
             try
             {
                 var schcount = await _context.SchoolEnrollmentRequest.Where(x=> x.isSubscribed).ToListAsync();
-                var usercount = await _context.CoachFrikaUsers.Where(x => x.Role == 1 || x.Role == 0).ToListAsync();
+                var usercount = await _context.CoachFrikaUsers.Where(x => x.Role == Roles.Coach || x.Role == Roles.Teacher).ToListAsync();
                 //if (usercount.Count() >1)
                 //    res.Message = "User not found");
                 var dto = new PublicCountDto();
                 // Get count of users with Coach role
-                dto.CoachesCount = usercount.Where(x => x.Role == 1).Count();
+                dto.CoachesCount = usercount.Where(x => x.Role == Roles.Coach).Count();
                 // Get count of users with Teacher role
                 var Teachers = usercount.Where(x => x.Role == 0).ToList();
                 dto.TeachersCount = Teachers.Count;

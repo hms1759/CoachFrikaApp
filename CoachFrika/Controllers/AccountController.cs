@@ -102,6 +102,11 @@ namespace CoachFrika.Controllers
                 Stage = stage,
                 token = token,
             };
+            if (profile.Role == 2)
+            {
+                return RedirectToAction( "Index", "BackOffice");
+
+            }
             if (profile.Role == 1 && stage < 4)
             {
                 return RedirectToAction("CoachModal", partlySign);

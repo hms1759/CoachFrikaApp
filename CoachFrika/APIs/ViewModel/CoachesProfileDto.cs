@@ -1,5 +1,6 @@
 ﻿using CoachFrika.Common.Enum;
 using coachfrikaaaa.APIs.Entity;
+using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
 namespace CoachFrika.APIs.ViewModel
@@ -57,7 +58,7 @@ namespace CoachFrika.APIs.ViewModel
         public string? PhoneNumber { get; set; }
         public string? ProfileImageUrl { get; set; }
         public string? Email { get; set; }
-        public int Role { get; set; }
+        public Roles Role { get; set; }
         public string? StateOfOrigin { get; set; }
         public string? ProfessionalTitle { get; set; }
         public string? Nationality { get; set; }
@@ -133,6 +134,13 @@ namespace CoachFrika.APIs.ViewModel
     public class GetTeacherRecommendations : Pagination
     {
         public string? ScheduleTitle { get; set; }
+
+    }
+
+    public class GetTeachersSearch : Pagination
+    {
+        public bool IsCoach { get; set; }
+        public OnboardingStatus OnboardingStatus { get; set; }
 
     }
     public class GetTeacherRecommendationResponse

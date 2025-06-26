@@ -1,8 +1,10 @@
-﻿using CoachFrika.APIs.Domin.IServices;
+﻿using CloudinaryDotNet.Actions;
+using CoachFrika.APIs.Domin.IServices;
 using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
 using CoachFrika.Common.AutoMapper;
+using CoachFrika.Common.Enum;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
@@ -271,7 +273,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from coach in _context.CoachFrikaUsers
-                          where coach.Role == 1 && coach.Stages == 4 &&
+                          where coach.Role == Roles.Coach && coach.Stages == 4 &&
                           (string.IsNullOrEmpty(query.Name) || coach.FullName.Contains(query.Name)) &&
                           (string.IsNullOrEmpty(query.CoachId) || coach.Id.ToLower() == query.CoachId.ToLower())
                           let numberOfStudent = _context.CoachFrikaUsers.Where(x => x.CoachId == coach.Id).Count()

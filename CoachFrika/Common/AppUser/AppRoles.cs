@@ -33,16 +33,17 @@ namespace CoachFrika.Common.AppUser
     {
         public static async Task Initialize(UserManager<CoachFrikaUsers> userManager)
         {
-            var defaultUser = await userManager.FindByEmailAsync("admin@admin.com");
+            var defaultUser = await userManager.FindByEmailAsync("admin@coachfrika.com");
 
             if (defaultUser == null)
             {
                 var user = new CoachFrikaUsers
                 {
-                    UserName = "admin@admin.com",
-                    Email = "admin@admin.com",
+                    //admin@admin.com
+                    UserName = "admin@coachfrika.com",
+                    Email = "admin@coachfrika.com",
                     FullName = "Admin User",
-                    Role = 1
+                    Role = Enum.Roles.Admin
                 };
 
                 var result = await userManager.CreateAsync(user, "AdminP@ssw0rd");

@@ -701,5 +701,55 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
+        public BaseResponse<List<ProfileDto>> GetTeachers(GetTeachersSearch query)
+        {
+            var res = new BaseResponse<List<ProfileDto>>();
+            res.Status = true;
+            try
+            {
+                var status = query.IsCoach == true ? Roles.Coach : Roles.Teacher;
+                var stage = query.OnboardingStatus;
+                var cos = from user in _context.CoachFrikaUsers
+                          where (user.Role == status) &&
+                         query.OnboardingStatus == OnboardingStatus.PendindApproval && status.te
+                          let numberOfStudent = _context.CoachFrikaUsers.Where(x => x.CoachId == coach.Id).Count()
+                          select new ProfileDto
+                          {
+                              Id = coach.Id,
+                              Title = coach.Title,
+                              FullName = coach.FullName,
+                              ProfessionalTitle = coach.ProfessionalTitle,
+                              NumbersOfStudents = numberOfStudent,
+                              Description = coach.Description,
+                              LinkedInUrl = coach.LinkedInUrl,
+                              FacebookUrl = coach.FacebookUrl,
+                              TweeterUrl = coach.TweeterUrl,
+                              Email = coach.Email,
+                              PhoneNumber = coach.PhoneNumber,
+                              ProfileImageUrl = coach.ProfileImageUrl ?? _uiSite.ProfileUrl,
+                              // Using DateTime.MinValue if EndDate is null
+                          };
+
+                // Apply pagination using Skip and Take
+                var pagedData = query.IsPaginated ? cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList() : cos.ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                res.TotalCount = cos.Count();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
     }
 }

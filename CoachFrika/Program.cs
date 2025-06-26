@@ -226,6 +226,7 @@ async Task SeedDataAsync(WebApplication app)
     }
 }
 
+
 // --- Configure HTTP Request Pipeline ---
 void ConfigureApp(WebApplication app)
 {

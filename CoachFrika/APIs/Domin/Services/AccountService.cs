@@ -4,6 +4,7 @@ using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
 using CoachFrika.Common.AppUser;
 using CoachFrika.Common.AutoMapper;
+using CoachFrika.Common.Enum;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
 using CoachFrika.Models;
@@ -147,7 +148,7 @@ namespace CoachFrika.APIs.Domin.Services
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
                     FullName = model.FullName,
-                    Role = model.isCoach ? 1 : 0,
+                    Role = model.isCoach ? Roles.Coach : Roles.Teacher,
                     Stages = 0
                 };
 

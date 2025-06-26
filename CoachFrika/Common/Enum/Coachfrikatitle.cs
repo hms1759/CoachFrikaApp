@@ -35,4 +35,17 @@
         Cancelled
     }
 
+    public enum Roles
+    {
+        Teacher,
+        Coach,
+        Admin
+    }
+
+    public enum OnboardingStatus
+    {
+        Ongoing,
+        PendindApproval,
+        Approved 
+    }
 }

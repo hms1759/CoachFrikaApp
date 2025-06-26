@@ -20,6 +20,7 @@ namespace CoachFrika.APIs.Domin.IServices
         BaseResponse<List<GetTeacherRecommendationResponse>> Recommendations(GetTeacherRecommendations query);
         Task<BaseResponse<string>> backStage(string email);
         BaseResponse<List<SchedulesViewModel>> GetMyScheduleAtLogin(CoachFrikaUsers req);
+        BaseResponse<List<ProfileDto>> GetTeachers(GetTeachersSearch query);
     }
 }
 
