@@ -32,7 +32,7 @@ namespace CoachFrika.APIs.Controllerss
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpGet("GetApplicantDetails/{Id:string}")]
+        [HttpGet("GetApplicantDetails/{Id}")]
         public async Task<IActionResult> GetApplicantDetails(string Id)
         {
             var result = await _accountService.GetApplicant(Id);
@@ -43,7 +43,7 @@ namespace CoachFrika.APIs.Controllerss
         /// </summary>
         /// <param name="applicantId"></param>
         /// <returns></returns>
-        [HttpPost("ApproveApplicantion/{applicantId:string}")]
+        [HttpPost("ApproveApplicantion/{applicantId}")]
         public async Task<IActionResult> ApproveApplicantion(string applicantId)
         {
             var result = await _accountService.ApproveApplicantion(applicantId);
