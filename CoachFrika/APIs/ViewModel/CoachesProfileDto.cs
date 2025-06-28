@@ -139,6 +139,7 @@ namespace CoachFrika.APIs.ViewModel
 
     public class GetTeachersSearch : Pagination
     {
+        public string Name { get; set; }
         public bool IsCoach { get; set; }
         public OnboardingStatus? OnboardingStatus { get; set; }
 

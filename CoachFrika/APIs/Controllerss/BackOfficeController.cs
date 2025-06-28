@@ -22,7 +22,7 @@ namespace CoachFrika.APIs.Controllerss
         }
 
         [HttpGet("GetAllApplicant")]
-        public async Task<IActionResult> GetAllTeachers([FromQuery] GetTeachersSearch model)
+        public async Task<IActionResult> GetAllApplicant([FromQuery] GetTeachersSearch model)
         {
             var result = model.IsCoach ? _coachesService.GetAllCoaches(model) : _teacherService.GetTeachers(model);
             if (result.Status) return Ok(result); return BadRequest(result);

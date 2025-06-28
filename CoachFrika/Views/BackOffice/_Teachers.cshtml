@@ -1,0 +1,87 @@
+﻿@model userProfileViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "Dashboard";
+}
+<div class="bkteachers-container">
+    <h2>Teachers</h2>
+
+    <table class="bkteachers-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>School</th>
+                <th>Students</th>
+                <th>Subject</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Mary Johnson</td>
+                <td>08023456789</td>
+                <td>mary@school.com</td>
+                <td>Queens College</td>
+                <td>30</td>
+                <td>Mathematics</td>
+                <td>Lagos, Nigeria</td>
+                <td><span class="bkteachers-status active">Active</span></td>
+                <td class="bkteachers-action">
+                    <button class="bkteachers-menu-btn" onclick="toggleTeacherMenu(this)">⋮</button>
+                    <div class="bkteachers-dropdown">
+                        <button onclick="viewTeacher()">View</button>
+                        <button onclick="editTeacher()">Edit</button>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Mary Johnson</td>
+                <td>08023456789</td>
+                <td>mary@school.com</td>
+                <td>Queens College</td>
+                <td>30</td>
+                <td>Mathematics</td>
+                <td>Lagos, Nigeria</td>
+                <td><span class="bkteachers-status active">Active</span></td>
+                <td class="bkteachers-action">
+                    <button class="bkteachers-menu-btn" onclick="toggleTeacherMenu(this)">⋮</button>
+                    <div class="bkteachers-dropdown">
+                        <button onclick="viewTeacher()">View</button>
+                        <button onclick="editTeacher()">Edit</button>
+                    </div>
+                </td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function toggleTeacherMenu(button) {
+        // Close all open dropdowns
+        document.querySelectorAll('.bkteachers-dropdown').forEach(d => d.classList.remove('show'));
+
+        // Toggle this one
+        const dropdown = button.nextElementSibling;
+        dropdown.classList.toggle('show');
+    }
+
+    window.addEventListener('click', function (e) {
+        if (!e.target.matches('.bkteachers-menu-btn')) {
+            document.querySelectorAll('.bkteachers-dropdown').forEach(d => d.classList.remove('show'));
+        }
+    });
+
+    function viewTeacher() {
+        alert('View Teacher clicked');
+    }
+
+    function editTeacher() {
+        alert('Edit Teacher clicked');
+    }
+</script>

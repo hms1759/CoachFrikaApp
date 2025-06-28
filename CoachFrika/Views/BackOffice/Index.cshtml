@@ -13,6 +13,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     @*   <link rel="stylesheet" href="~/css/styles.css"> *@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/backOffice.css" asp-append-version="true" />
 </head>
 <body>
     <div class="wrapper">
@@ -23,17 +24,17 @@
             </div>
             <ul class="sidebar-menu">
                 <li>
-                    <a href="#dashboard" class="sidebar-item">
+                    <a href="#Index" class="sidebar-item">
                         <i class="fas fa-house"></i> Dashboard
                     </a>
                 </li>
                 <li>
-                    <a href="#myCoach" class="sidebar-item">
+                    <a href="#Coaches" class="sidebar-item">
                         <i class="fas fa-user-friends"></i> Coaches
                     </a>
                 </li>
                 <li>
-                    <a href="#live" class="sidebar-item">
+                    <a href="#Teachers" class="sidebar-item">
                         <i class="fas fa-broadcast-tower"></i> Teachers
                     </a>
                 </li>
@@ -48,10 +49,6 @@
             </button>
         </nav>
 
-        <!-- Toggle Button -->
-        <button id="toggleBtn" class="sidebar-toggle-btn">
-            <i class="fas fa-angle-double-left"></i>
-        </button>
 
         <!-- Main Content Area -->
         <div class="main-content">
@@ -62,6 +59,8 @@
     </div>
 
     <!-- Scripts -->
+    <!-- ✅ Chart.js must be loaded BEFORE your script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/slidebar.js"></script>
     <script>

@@ -1,20 +1,46 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CoachFrika.APIs.Domin.IServices;
+using CoachFrika.APIs.ViewModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoachFrika.Controllers
 {
     public class BackOfficeController : Controller
     {
+        private readonly ITeacherService _teacherService;
+        private readonly ICoachesService _coachesService;
+        private readonly IAccountService _accountService;
+        public BackOfficeController(ITeacherService teacherService, ICoachesService coachesService, IAccountService accountService)
+        {
+            _teacherService = teacherService;
+            _coachesService = coachesService;
+            _accountService = accountService;
+        }
         // GET: BackOfficeController1cs
         public ActionResult Index()
         {
             return View();
         }
 
-        // GET: BackOfficeController1cs/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Dashboard()
         {
-            return View();
+            return PartialView("_Dashboard");
+        }
+
+        public ActionResult Coaches([FromQuery] GetTeachersSearch model)
+        {
+            var result = _coachesService.GetAllCoaches(model);
+            
+            return PartialView("_Coaches", result);
+        }
+        public ActionResult Teachers([FromQuery] GetTeachersSearch model)
+        {
+            var result = _teacherService.GetTeachers(model);
+            return PartialView("_Teachers", result);
+        }
+        public ActionResult Schedule()
+        {
+            return PartialView("_Schedule");
         }
 
         // GET: BackOfficeController1cs/Create

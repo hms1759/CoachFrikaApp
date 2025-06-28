@@ -1,0 +1,147 @@
+﻿@using CoachFrika.APIs.ViewModel
+@using CoachFrika.Common
+@model BaseResponse<List<ProfileDto>>
+
+@{
+    Layout = null;
+    ViewBag.Title = "Coaches";
+
+    int? selectedStatus = ViewBag.Query?.Status as int?;
+    string selectedName = ViewBag.Query?.Name ?? "";
+
+    int pageSize = ViewBag.PageSize ?? 10;
+    int pageNumber = ViewBag.PageNumber ?? 1;
+    int totalCount = ViewBag.TotalCount ?? 0;
+    int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+    var statusOptions = new Dictionary<string, string>
+    {
+        { "", "All Status" },
+        { "1", "Ongoing" },
+        { "2", "Pending" },
+        { "3", "Approved" }
+    };
+}
+
+<div class="bkcoaches-container">
+    <div class="bkcoaches-header">
+        <h2>Coaches</h2>
+        <div class="bkcoaches-searchbar">
+            <input type="text" id="searchName" placeholder="Search by name..." value="@selectedName" />
+
+            <select id="statusFilter">
+                @foreach (var option in statusOptions)
+                {
+                   var selectedAttr = selectedStatus?.ToString() == option.Key ? "selected" : "";
+                    @Html.Raw($"<option value=\"{option.Key}\" {selectedAttr}>{option.Value}</option>")
+
+                }
+            </select>
+
+            <button id="searchBtn">Search</button>
+        </div>
+    </div>
+
+    <table class="bkcoaches-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Status && Model.Data != null && Model.Data.Any())
+            {
+                foreach (var coach in Model.Data)
+                {
+                    var statusLabel = coach.Stages < 4
+                        ? "Ongoing"
+                        : (coach.Stages == 4 && coach.hasPaid ? "Approved" : "Pending");
+
+                    var statusClass = statusLabel.ToLower();
+
+                    <tr>
+                        <td>@coach.FullName</td>
+                        <td>@coach.PhoneNumber</td>
+                        <td>@coach.Email</td>
+                        <td>@coach.Address</td>
+                        <td><span class="bkcoaches-status @statusClass">@statusLabel</span></td>
+                        <td class="bkcoaches-action">
+                            <button class="bkcoaches-menu-btn" onclick="toggleMenu(this)">⋮</button>
+                            <div class="bkcoaches-dropdown">
+                                <button onclick="viewCoach('@coach.Id')">View</button>
+                                @if (coach.Stages == 4 && !coach.hasPaid)
+                                {
+                                    <button onclick="editCoach('@coach.Id')">Edit</button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="6">No coaches found.</td></tr>
+            }
+        </tbody>
+    </table>
+
+    @if (totalPages > 1)
+    {
+        <div class="bkcoaches-pagination">
+            @if (pageNumber > 1)
+            {
+                <button class="page-btn" onclick="loadPage(@(pageNumber - 1))">Prev</button>
+            }
+
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <button class="page-btn @(i == pageNumber ? "active" : "")" onclick="loadPage(@i)">@i</button>
+            }
+
+            @if (pageNumber < totalPages)
+            {
+                <button class="page-btn" onclick="loadPage(@(pageNumber + 1))">Next</button>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    function toggleMenu(button) {
+        document.querySelectorAll('.bkcoaches-dropdown').forEach(d => d.classList.remove('show'));
+        const dropdown = button.nextElementSibling;
+        dropdown.classList.toggle('show');
+    }
+
+    window.addEventListener('click', function (e) {
+        if (!e.target.matches('.bkcoaches-menu-btn')) {
+            document.querySelectorAll('.bkcoaches-dropdown').forEach(d => d.classList.remove('show'));
+        }
+    });
+
+    function viewCoach(id) {
+        alert('View Coach with ID: ' + id);
+    }
+
+    function editCoach(id) {
+        alert('Edit Coach with ID: ' + id);
+    }
+
+    $('#searchBtn').on('click', function () {
+        loadPage(1); // Always reset to page 1
+    });
+
+    function loadPage(pageNumber) {
+        const name = $('#searchName').val();
+        const status = $('#statusFilter').val();
+
+        $('#page-container').load('/BackOffice/Coaches?Name=' + encodeURIComponent(name) +
+            '&Status=' + encodeURIComponent(status) +
+            '&PageNumber=' + pageNumber);
+    }
+</script>
