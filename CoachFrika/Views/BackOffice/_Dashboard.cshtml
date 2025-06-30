@@ -29,11 +29,26 @@
         <h2>Weekly Teachers & Coaches Trend</h2>
         <canvas id="bkdashboardChart"></canvas>
     </div>
+    <!-- Load Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Your chart script -->
+    <!-- Chart Canvas -->
+    <canvas id="bkdashboardChart" style="width: 100%; height: 400px;"></canvas>
+
+    <!-- Enhanced Chart.js Config -->
     <script>
         const ctx = document.getElementById('bkdashboardChart').getContext('2d');
-        new Chart(ctx, {
+
+        // Gradient fill (optional enhancement)
+        const teacherGradient = ctx.createLinearGradient(0, 0, 0, 400);
+        teacherGradient.addColorStop(0, 'rgba(54, 162, 235, 0.6)');
+        teacherGradient.addColorStop(1, 'rgba(54, 162, 235, 0.1)');
+
+        const coachGradient = ctx.createLinearGradient(0, 0, 0, 400);
+        coachGradient.addColorStop(0, 'rgba(255, 99, 132, 0.6)');
+        coachGradient.addColorStop(1, 'rgba(255, 99, 132, 0.1)');
+
+        const chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -41,22 +56,75 @@
                     {
                         label: 'Teachers',
                         data: [12, 19, 3, 5, 2, 3, 9],
+                        fill: true,
+                        backgroundColor: teacherGradient,
                         borderColor: 'rgba(54, 162, 235, 1)',
-                        fill: false,
-                        tension: 0.4
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                        pointBorderColor: '#fff',
+                        pointRadius: 5
                     },
                     {
                         label: 'Coaches',
                         data: [5, 15, 8, 2, 7, 11, 6],
+                        fill: true,
+                        backgroundColor: coachGradient,
                         borderColor: 'rgba(255, 99, 132, 1)',
-                        fill: false,
-                        tension: 0.4
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        pointBorderColor: '#fff',
+                        pointRadius: 5
                     }
                 ]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#333',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: '#000',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#ccc',
+                        borderWidth: 1
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        ticks: {
+                            color: '#666'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        ticks: {
+                            color: '#666'
+                        },
+                        beginAtZero: true
+                    }
+                }
             }
         });
     </script>

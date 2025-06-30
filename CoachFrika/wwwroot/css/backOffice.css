@@ -259,4 +259,63 @@
         color: white;
         font-weight: bold;
     }
+.backofficedetails-container {
+    max-width: 900px;
+    margin: auto;
+    font-family: sans-serif;
+    padding: 20px;
+}
+
+.backofficedetails-header {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 20px;
+}
+
+    .backofficedetails-header img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+.backofficedetails-info h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.backofficedetails-social a {
+    margin-right: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.backofficedetails-section {
+    margin: 30px 0 10px;
+    font-weight: bold;
+    font-size: 18px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.backofficedetails-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.backofficedetails-box {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+    .backofficedetails-box label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
 

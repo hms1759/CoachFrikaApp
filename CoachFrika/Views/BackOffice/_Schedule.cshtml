@@ -10,8 +10,8 @@
     {
         { "", "All Status" },
         { "1", "Ongoing" },
-        { "2", "Pending" },
-        { "3", "Approved" }
+        { "2", "Past" },
+        { "3", "Coming Sonn" }
     };
 }
 
@@ -40,15 +40,15 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Phone Number</th>
-                <th>Email</th>
-                <th>Address</th>
+                <th>Coach</th>
+                <th>Duration</th>
+                <th>StartTime</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            <tr><td colspan="6">Loading coaches...</td></tr>
+            <tr><td colspan="6">Loading Schedules...</td></tr>
         </tbody>
     </table>
 
@@ -82,7 +82,7 @@
         const onboardingStatus = convertStatusToOnboarding(uiStatus);
 
         $.ajax({
-            url: '/api/BackOfficeAPI/GetAllApplicant',
+            url: '/api/BackOfficeAPI/GetAllSchedules',
             method: 'GET',
             data: {
                 Name: name,
@@ -106,11 +106,11 @@
         tbody.empty();
 
         if (!data || data.length === 0) {
-            tbody.append('<tr><td colspan="6">No coaches found.</td></tr>');
+            tbody.append('<tr><td colspan="6">No Schedule found.</td></tr>');
             return;
         }
 
-        data.forEach(coach => {
+        data.forEach(schedule => {
             let statusLabel = coach.stages < 4
                 ? 'Ongoing'
                 : (coach.stages === 4 && coach.hasPaid ? 'Approved' : 'Pending');

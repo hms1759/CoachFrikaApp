@@ -27,83 +27,25 @@ namespace CoachFrika.Controllers
             return PartialView("_Dashboard");
         }
 
-        public ActionResult Coaches([FromQuery] GetTeachersSearch model)
+        public ActionResult Coaches()
         {
-            var result = _coachesService.GetAllCoaches(model);
-            
-            return PartialView("_Coaches", result);
+            return PartialView("_Coaches");
         }
-        public ActionResult Teachers([FromQuery] GetTeachersSearch model)
+        public ActionResult Teachers()
         {
-            var result = _teacherService.GetTeachers(model);
-            return PartialView("_Teachers", result);
+            return PartialView("_Teachers");
         }
         public ActionResult Schedule()
         {
             return PartialView("_Schedule");
         }
 
-        // GET: BackOfficeController1cs/Create
-        public ActionResult Create()
+        [HttpGet("/BackOffice/GetApplicantDetails/{id}")]
+        public async Task<ActionResult> GetApplicantDetails(string id)
         {
-            return View();
+            var result = await _accountService.GetApplicant(id);
+            return PartialView("_ApplicantDetails", result);
         }
 
-        // POST: BackOfficeController1cs/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: BackOfficeController1cs/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: BackOfficeController1cs/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: BackOfficeController1cs/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: BackOfficeController1cs/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

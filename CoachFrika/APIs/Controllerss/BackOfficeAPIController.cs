@@ -9,12 +9,12 @@ namespace CoachFrika.APIs.Controllerss
     [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
-    public class BackOfficeController : ControllerBase
+    public class BackOfficeAPIController : ControllerBase
     {
         private readonly ITeacherService _teacherService;
         private readonly ICoachesService _coachesService;
         private readonly IAccountService _accountService;
-        public BackOfficeController(ITeacherService teacherService, ICoachesService coachesService, IAccountService accountService)
+        public BackOfficeAPIController(ITeacherService teacherService, ICoachesService coachesService, IAccountService accountService)
         {
             _teacherService = teacherService;
             _coachesService = coachesService;
@@ -41,12 +41,12 @@ namespace CoachFrika.APIs.Controllerss
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="applicantId"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpPost("ApproveApplicantion/{applicantId}")]
-        public async Task<IActionResult> ApproveApplicantion(string applicantId)
+        [HttpPut("ApproveApplication/{Id}")]
+        public async Task<IActionResult> ApproveApplicantion(string Id)
         {
-            var result = await _accountService.ApproveApplicantion(applicantId);
+            var result = await _accountService.ApproveApplicantion(Id);
             if (result.Status) return Ok(result); return BadRequest(result);
         }
     }

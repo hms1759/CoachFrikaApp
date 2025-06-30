@@ -517,7 +517,8 @@ namespace CoachFrika.APIs.Domin.Services
                               StateOfOrigin = user.StateOfOrigin,
                               LocalGov = user.LocalGov,
                               Subscriptions = user.Subscriptions,
-                              Subject = user.Subject
+                              Subject = user.Subject,
+                              
 
                           };
                 res.Data = await cos.FirstOrDefaultAsync();

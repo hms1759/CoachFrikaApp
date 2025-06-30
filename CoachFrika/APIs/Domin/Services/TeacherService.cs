@@ -708,7 +708,7 @@ namespace CoachFrika.APIs.Domin.Services
             try
             {
                 var cos = from user in _context.CoachFrikaUsers
-                          where (user.Role == Roles.Coach)
+                          where (user.Role == Roles.Teacher)
                           && (
                     (query.OnboardingStatus == null) ||
                     (query.OnboardingStatus == OnboardingStatus.PendindApproval && user.Stages == 4 && !user.hasPaid) ||
@@ -727,7 +727,9 @@ namespace CoachFrika.APIs.Domin.Services
                               PhoneNumber = user.PhoneNumber,
                               Role = user.Role,
                               Stages = user.Stages,
-                              hasPaid = user.hasPaid
+                              hasPaid = user.hasPaid,
+                              SchoolName = user.SchoolName,
+
 
 
                           };

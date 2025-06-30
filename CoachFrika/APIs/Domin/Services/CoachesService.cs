@@ -341,7 +341,8 @@ namespace CoachFrika.APIs.Domin.Services
                               PhoneNumber = user.PhoneNumber,
                               Role = user.Role,
                               Stages = user.Stages,
-                              hasPaid = user.hasPaid
+                              hasPaid = user.hasPaid,
+                              Address = user.Address
 
 
                           };

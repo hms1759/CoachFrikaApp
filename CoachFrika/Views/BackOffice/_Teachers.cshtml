@@ -1,87 +1,211 @@
-﻿@model userProfileViewModel
+﻿@using CoachFrika.APIs.ViewModel
+@using CoachFrika.Common
+@model BaseResponse<List<ProfileDto>>
+
 @{
     Layout = null;
-    ViewBag.Title = "Dashboard";
-}
-<div class="bkteachers-container">
-    <h2>Teachers</h2>
+    ViewBag.Title = "Teachers";
 
-    <table class="bkteachers-table">
+    var statusOptions = new Dictionary<string, string>
+    {
+        { "", "All Status" },
+        { "1", "Ongoing" },
+        { "2", "Pending" },
+        { "3", "Approved" }
+    };
+}
+
+<div class="bkcoaches-container">
+    <div class="bkcoaches-header">
+        <h2>Teachers</h2>
+        <div class="bkcoaches-searchbar">
+            <input type="text" id="searchName" placeholder="Search by name..." />
+            <select id="statusFilter">
+                @foreach (var option in statusOptions)
+                {
+                    <option value="@option.Key">@option.Value</option>
+                }
+            </select>
+            <select id="pageSize">
+                <option value="10">10 per page</option>
+                <option value="20">20 per page</option>
+                <option value="50">50 per page</option>
+                <option value="100">100 per page</option>
+            </select>
+            <button id="searchBtn">Search</button>
+        </div>
+    </div>
+
+    <table class="bkcoaches-table">
         <thead>
             <tr>
+                <th>Title</th>
                 <th>Name</th>
                 <th>Phone Number</th>
                 <th>Email</th>
                 <th>School</th>
-                <th>Students</th>
-                <th>Subject</th>
+                <th>Professional Title</th>
                 <th>Address</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Mary Johnson</td>
-                <td>08023456789</td>
-                <td>mary@school.com</td>
-                <td>Queens College</td>
-                <td>30</td>
-                <td>Mathematics</td>
-                <td>Lagos, Nigeria</td>
-                <td><span class="bkteachers-status active">Active</span></td>
-                <td class="bkteachers-action">
-                    <button class="bkteachers-menu-btn" onclick="toggleTeacherMenu(this)">⋮</button>
-                    <div class="bkteachers-dropdown">
-                        <button onclick="viewTeacher()">View</button>
-                        <button onclick="editTeacher()">Edit</button>
-                    </div>
-                </td>
-            </tr>
 
-            <tr>
-                <td>Mary Johnson</td>
-                <td>08023456789</td>
-                <td>mary@school.com</td>
-                <td>Queens College</td>
-                <td>30</td>
-                <td>Mathematics</td>
-                <td>Lagos, Nigeria</td>
-                <td><span class="bkteachers-status active">Active</span></td>
-                <td class="bkteachers-action">
-                    <button class="bkteachers-menu-btn" onclick="toggleTeacherMenu(this)">⋮</button>
-                    <div class="bkteachers-dropdown">
-                        <button onclick="viewTeacher()">View</button>
-                        <button onclick="editTeacher()">Edit</button>
-                    </div>
-                </td>
-            </tr>
-            <!-- Add more rows as needed -->
+            <tr><td colspan="9">Loading Teachers...</td></tr>
         </tbody>
     </table>
+
+    <div class="bkcoaches-pagination"></div>
 </div>
 
-<script>
-    function toggleTeacherMenu(button) {
-        // Close all open dropdowns
-        document.querySelectorAll('.bkteachers-dropdown').forEach(d => d.classList.remove('show'));
 
-        // Toggle this one
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    var currentPage = 1;
+
+    $('#searchBtn').on('click', function () {
+        currentPage = 1;
+        loadTeachers(currentPage);
+    });
+
+    $('#pageSize').on('change', function () {
+        currentPage = 1;
+        loadTeachers(currentPage);
+    });
+
+    function convertStatusToOnboarding(uiStatus) {
+        if (uiStatus === "1") return 0; // Ongoing
+        if (uiStatus === "2") return 1; // Pending
+        if (uiStatus === "3") return 2; // Approved
+        return null;
+    }
+
+    function loadTeachers(pageNumber) {
+        const name = $('#searchName').val();
+        const uiStatus = $('#statusFilter').val();
+        const pageSize = $('#pageSize').val();
+        const onboardingStatus = convertStatusToOnboarding(uiStatus);
+
+        $.ajax({
+            url: '/api/BackOfficeAPI/GetAllApplicant',
+            method: 'GET',
+            data: {
+                Name: name,
+                IsCoach: false,
+                OnboardingStatus: onboardingStatus,
+                PageSize: pageSize,
+                PageNumber: pageNumber
+            },
+            success: function (response) {
+
+                console.log(response);
+                renderTeacherTable(response.data);
+                renderPagination(response.totalCount, pageNumber, pageSize);
+            },
+            error: function () {
+                alert("Failed to load data.");
+            }
+        });
+    }
+
+    function renderTeacherTable(data) {
+        console.log(data);
+        const tbody = $('.bkcoaches-table tbody');
+        tbody.empty();
+
+        if (!data || data.length === 0) {
+            tbody.append('<tr><td colspan="9">No teachers found.</td></tr>');
+            return;
+        }
+        console.log(data)
+        data.forEach(teacher => {
+            let statusLabel = teacher.stages < 6
+                ? 'Ongoing'
+                : (teacher.stages === 6 && teacher.hasPaid ? 'Approved' : 'Pending');
+
+            let statusClass = statusLabel.toLowerCase();
+            let actionButtons = `
+                    <button onclick="viewTeacher('${teacher.id}')">View</button>
+                    ${statusLabel === 'Pending' ? `<button onclick="editTeacher('${teacher.id}')">Approve</button>` : ''}
+                `;
+
+            tbody.append(`
+                    <tr>
+                        <td>${teacher.title || null}</td>
+                        <td>${teacher.fullName || null}</td>
+                        <td>${teacher.phoneNumber || null}</td>
+                        <td>${teacher.email || null}</td>
+                        <td>${teacher.schoolName || null}</td>
+                        <td>${teacher.professionalTitle || null}</td>
+                        <td>${teacher.address || null}</td>
+                        <td><span class="bkcoaches-status ${statusClass}">${statusLabel}</span></td>
+                        <td class="bkcoaches-action">
+                            <button class="bkcoaches-menu-btn" onclick="toggleMenu(this)">⋮</button>
+                            <div class="bkcoaches-dropdown">${actionButtons}</div>
+                        </td>
+                    </tr>
+                `);
+        });
+    }
+
+    function renderPagination(totalCount, pageNumber, pageSize) {
+        const pagination = $('.bkcoaches-pagination');
+        pagination.empty();
+
+        const totalPages = Math.ceil(totalCount / pageSize);
+        if (totalPages <= 1) return;
+
+        if (pageNumber > 1) {
+            pagination.append(`<button class="page-btn" onclick="loadTeachers(${pageNumber - 1})">Prev</button>`);
+        }
+
+        for (let i = 1; i <= totalPages; i++) {
+            const active = i === pageNumber ? 'active' : '';
+            pagination.append(`<button class="page-btn ${active}" onclick="loadTeachers(${i})">${i}</button>`);
+        }
+
+        if (pageNumber < totalPages) {
+            pagination.append(`<button class="page-btn" onclick="loadTeachers(${pageNumber + 1})">Next</button>`);
+        }
+
+        currentPage = pageNumber;
+    }
+
+    function toggleMenu(button) {
+        document.querySelectorAll('.bkcoaches-dropdown').forEach(d => d.classList.remove('show'));
         const dropdown = button.nextElementSibling;
         dropdown.classList.toggle('show');
     }
 
     window.addEventListener('click', function (e) {
-        if (!e.target.matches('.bkteachers-menu-btn')) {
-            document.querySelectorAll('.bkteachers-dropdown').forEach(d => d.classList.remove('show'));
+        if (!e.target.matches('.bkcoaches-menu-btn')) {
+            document.querySelectorAll('.bkcoaches-dropdown').forEach(d => d.classList.remove('show'));
         }
     });
 
-    function viewTeacher() {
-        alert('View Teacher clicked');
+
+    function viewTeacher(id) {
+        window.location.href = '/BackOffice/GetApplicantDetails/' + id;
     }
 
-    function editTeacher() {
-        alert('Edit Teacher clicked');
+    function editTeacher(id) {
+        $.ajax({
+            url: '/api/BackOfficeAPI/ApproveApplication/' + id,
+            method: 'PUT',
+            success: function () {
+                alert("Application approved.");
+                loadTeachers(currentPage); // optional reload
+            },
+            error: function () {
+                alert("Approval failed.");
+            }
+        });
     }
+
+
+    $(document).ready(function () {
+        loadTeachers(currentPage);
+    });
 </script>
