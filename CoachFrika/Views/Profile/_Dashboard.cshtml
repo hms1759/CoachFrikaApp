@@ -3,7 +3,12 @@
     Layout = null;
     ViewBag.Title = "Dashboard";
 }
-
+<script>
+    const token = '@TempData["Token"]';
+    if (token) {
+        localStorage.setItem("authToken", token);
+    }
+</script>
 <div class="dashboard-container">
     <section>
         <div class="profile-card">

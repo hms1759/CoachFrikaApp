@@ -1,64 +1,167 @@
-﻿
-<div class="schedule-container">
+﻿<div class="schedule-container">
     <!-- Top Bar -->
     <div class="schedule-top-bar">
         <div class="schedule-title">Schedule</div>
         <div class="schedule-right-section">
-            <input type="text" placeholder="Search..." class="schedule-search-bar" />
-            <i class="schedule-icon schedule-profile-icon">👤</i>
-            <i class="schedule-icon schedule-notification-icon">🔔</i>
+            <input type="text" id="searchTitle" placeholder="Title..." class="schedule-search-bar" />
+            <input type="datetime-local" id="searchDate" />
+            <button class="schedule-create-btn" onclick="searchSchedules()">Search</button>
+            <button class="schedule-create-btn" onclick="openScheduleModal()">+ Create Schedule</button>
         </div>
     </div>
 
     <!-- Tabs -->
     <ul class="schedule-tabs">
-        <li class="schedule-tab active" data-tab="not-started">Not Started</li>
-        <li class="schedule-tab" data-tab="ongoing">Ongoing Classes</li>
-        <li class="schedule-tab" data-tab="completed">Completed Classes</li>
-        <li class="schedule-tab" data-tab="missed">Missed Classes</li>
+        <li class="schedule-tab active" data-status="comingsoon">Not Started</li>
+        <li class="schedule-tab" data-status="ongoing">Ongoing Classes</li>
+        <li class="schedule-tab" data-status="past">Completed Classes</li>
+        <li class="schedule-tab" data-status="missed">Missed Classes</li>
     </ul>
 
     <!-- Tab Content -->
-    <div class="schedule-tab-content" id="not-started">
-        <div class="schedule-card-grid">
-            @{
-                var classTitles = new List<string>
-            {
-            "Personal Development Reading with Cohort 1",
-            "Workshop Planning and Material Preparation",
-            "Curriculum Review and Enhancements",
-            "Individual Coaching Sessions"
-            };
-            }
-            @foreach (var title in classTitles)
-            {
-                <div class="schedule-card">
-                    <div class="schedule-card-title">@title</div>
-                    <a href="#" class="schedule-view-details">View Details</a>
-                </div>
-            }
-        </div>
-    </div>
-
-    <div class="schedule-tab-content schedule-hidden" id="ongoing">No ongoing classes.</div>
-    <div class="schedule-tab-content schedule-hidden" id="completed">No completed classes.</div>
-    <div class="schedule-tab-content schedule-hidden" id="missed">No missed classes.</div>
+    <div class="schedule-tab-content" id="tab-content"></div>
 </div>
+
+<!-- Modal -->
+<div class="schedule-dd-modal-overlay" id="scheduleModal">
+    <div class="schedule-modal">
+       <div class="d-flex"> <h3>Create New Schedule</h3>
+            <button class="modal-close-btn" type="button" onclick="closeScheduleModal()">x</button>
+        </div>
+        <form id="scheduleForm">
+            <input type="text" name="Title" placeholder="Title" required />
+            <select name="Focus" required>
+                <option value="">Select Focus</option>
+                <option value="0">Intentional</option>
+                <option value="1">Phenomenal</option>
+                <option value="2">Transformational</option>
+            </select>
+            <input type="datetime-local" name="Scheduled" required />
+            <select name="DurationType" required>
+            <input type="number" name="Duration" placeholder="Duration (mins)" required />
+            <input type="url" name="MeetingUrl" placeholder="Meeting URL" />
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    const usertoken = localStorage.getItem("authToken");
+
     document.querySelectorAll(".schedule-tab").forEach(tab => {
         tab.addEventListener("click", () => {
-            // Remove active class
             document.querySelectorAll(".schedule-tab").forEach(t => t.classList.remove("active"));
             tab.classList.add("active");
-
-            // Hide all tab content
-            document.querySelectorAll(".schedule-tab-content").forEach(content => {
-                content.classList.add("schedule-hidden");
-            });
-
-            // Show selected tab content
-            const selected = tab.getAttribute("data-tab");
-            document.getElementById(selected).classList.remove("schedule-hidden");
+            const status = tab.getAttribute("data-status");
+            loadSchedules(status);
         });
     });
+
+    function openScheduleModal() {
+        document.getElementById("scheduleModal").style.display = "flex";
+    }
+
+    function closeScheduleModal() {
+        document.getElementById("scheduleModal").style.display = "none";
+    }
+
+    document.getElementById("scheduleForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = Object.fromEntries(new FormData(this).entries());
+
+        formData.Focus = parseInt(formData.Focus);
+        formData.DurationType = parseInt(formData.DurationType);
+        formData.Duration = parseInt(formData.Duration);
+
+        $.ajax({
+            url: "/api/Scheduled/CreateSchedule",
+            method: "POST",
+            contentType: "application/json",
+            headers: {
+                "Authorization": `Bearer ${usertoken}`
+            },
+            data: JSON.stringify(formData),
+            success: function () {
+                alert("Schedule created successfully.");
+                closeScheduleModal();
+                location.reload();
+            },
+            error: function () {
+                alert("Error creating schedule.");
+            }
+        });
+    });
+
+    function loadSchedules(status) {
+       console.log('loadSchedules')
+       console.log(status)
+        $.ajax({
+            url: `/api/Scheduled/GetCoachSchedule?status=${status}&PageSize=20&PageNumber=1`,
+            headers: {
+                "Authorization": `Bearer ${usertoken}`
+            },
+            success: function (res) {
+                const container = document.getElementById("tab-content");
+                container.innerHTML = "";
+                if (!res.data || res.data.length === 0) {
+                    container.innerHTML = "<p>No schedules found.</p>";
+                    return;
+                }
+
+                res.data.forEach(item => {
+                    container.innerHTML += `
+                            <div class="schedule-card">
+                                <div class="schedule-card-title">${item.title}</div>
+                                <p>${new Date(item.scheduled).toLocaleString()}</p>
+                                <a href="${item.meetingUrl}" class="schedule-view-details" target="_blank">Join</a>
+                            </div>
+                        `;
+                });
+            },
+            error: function () {
+                alert("Error loading schedules.");
+            }
+        });
+    }
+
+    function searchSchedules() {
+        const title = $('#searchTitle').val();
+        const scheduled = $('#searchDate').val();
+        const status = $('#searchStatus').val();
+
+        $.ajax({
+            url: `/api/Scheduled/GetCoachSchedule?Title=${title}&Scheduled=${scheduled}&status=${status}&PageSize=20&PageNumber=1`,
+            headers: {
+                "Authorization": `Bearer ${usertoken}`
+            },
+            success: function (res) {
+                const container = document.getElementById("tab-content");
+                container.innerHTML = "";
+                if (!res.data || res.data.length === 0) {
+                    container.innerHTML = "<p>No schedules found.</p>";
+                    return;
+                }
+
+                res.data.forEach(item => {
+                    container.innerHTML += `
+                            <div class="schedule-card">
+                                <div class="schedule-card-title">${item.title}</div>
+                                <p>${new Date(item.scheduled).toLocaleString()}</p>
+                                <a href="${item.meetingUrl}" class="schedule-view-details" target="_blank">Join</a>
+                            </div>
+                        `;
+                });
+            },
+            error: function () {
+                alert("Search failed.");
+            }
+        });
+    }
+
+    window.onload = () => {
+        document.getElementById("scheduleModal").style.display = "none"; // Ensure hidden on load
+        loadSchedules("comingsoon");
+    };
 </script>

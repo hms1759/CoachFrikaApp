@@ -302,7 +302,7 @@ namespace CoachFrika.APIs.Domin.Services
                     return res;
                 }
                 var existingPayment = await _context.Payment.FirstOrDefaultAsync(x => x.CreatedBy == loginUser && x.PaymentStatus == PaymentStatus.Pending);
-                if (existingPayment == null)
+                if (existingPayment != null)
                 {
                     res.Status = false;
                     res.Message = "You have an existing payment process:Kindly reachout to Admin";
@@ -339,12 +339,12 @@ namespace CoachFrika.APIs.Domin.Services
                 res.Message = "Payment directive has been sent to your email";
                 res.Status = false;
 
-                var bankName = "GTB";
-                var accountNumber = "0126171085";
+                var bankName = "Access Bank";
+                var accountNumber = "0045072769";
                 var accountName = "Iyiola Afeez";
                 var contactEmail = "Iyiola@gmail.com";
-                var WhatsApp = "08068783985";
-                var admin = "toheeb.black@gmail.com";
+                var WhatsApp = "08164124811";
+                var admin = "Iyiola@gmail.com";
                 var subject = "Payment Invoice";
                 var userbody = $@"Your request to pay for the {sub} has been received.
                                    Kindly proceed with your payment using the bank details

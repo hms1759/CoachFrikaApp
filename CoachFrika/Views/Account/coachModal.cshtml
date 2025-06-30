@@ -10,6 +10,7 @@
 @Html.AntiForgeryToken()
 <script>
     const userToken = '@Model.token';
+    localStorage.setItem("authToken", userToken);
 </script>
 <!DOCTYPE html>
 <html lang="en">

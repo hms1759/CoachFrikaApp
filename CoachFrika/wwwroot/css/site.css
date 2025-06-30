@@ -1235,7 +1235,7 @@ sidebar.collapsed {
     visibility: visible;
     opacity: 1;
 }
-
+/*
 .schedule-container {
     font-family: Arial, sans-serif;
     padding: 20px;
@@ -1324,7 +1324,116 @@ sidebar.collapsed {
 .schedule-hidden {
     display: none;
 }
+*/
+.schedule-container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
 
+.schedule-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.schedule-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.schedule-right-section input,
+.schedule-right-section select,
+.schedule-create-btn {
+    margin: 5px;
+    padding: 8px 12px;
+}
+
+.schedule-create-btn {
+    background-color: green;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+    .schedule-create-btn:hover {
+        background-color: darkgreen;
+    }
+
+.schedule-tabs {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.schedule-tab {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+}
+
+    .schedule-tab.active {
+        border-color: green;
+        font-weight: bold;
+        color: green;
+    }
+
+.schedule-tab-content {
+    padding: 10px;
+}
+
+.schedule-card {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.schedule-card-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.schedule-view-details {
+    display: inline-block;
+    margin-top: 5px;
+    text-decoration: underline;
+    color: blue;
+}
+
+/* MODAL STYLES */
+.schedule-dd-modal-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.schedule-modal {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+}
+    .schedule-modal input,
+    .schedule-modal select,
+    .schedule-modal button {
+        width: 100%;
+        margin: 10px 0;
+        padding: 8px;
+    }
 /* Background Blur */
 .modal-background {
     position: fixed;
@@ -1787,7 +1896,77 @@ sidebar.collapsed {
         background: #2d6a4f;
         color: white;
     }
+/*.schedule-create-btn {
+    margin: 1rem 0;
+    padding: 0.6rem 1.2rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
 
+.schedule-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.schedule-modal {
+    background: white;
+    padding: 2rem;
+    width: 400px;
+    border-radius: 10px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+    .schedule-modal label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    .schedule-modal input,
+    .schedule-modal select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+.schedule-modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.schedule-hidden {
+    display: none !important;
+}
+.schedule-create-btn {
+    margin: 1rem 0;
+    padding: 0.6rem 1.2rem;
+    background-color: #28a745;*/ /* Bootstrap's success green */
+    /*color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+    .schedule-create-btn:hover {
+        background-color: #218838;
+    }*/
 
 /* --- Responsive Enhancements Only --- */
 /* Tablets and below (<= 992px) */
