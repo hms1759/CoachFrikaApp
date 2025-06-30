@@ -38,6 +38,10 @@
             </select>
             <input type="datetime-local" name="Scheduled" required />
             <select name="DurationType" required>
+                <option value="">Select DurationType</option>
+                    <option value="0">Minutes</option>
+                    <option value="1">Hours</option>
+            </select>
             <input type="number" name="Duration" placeholder="Duration (mins)" required />
             <input type="url" name="MeetingUrl" placeholder="Meeting URL" />
             <button type="submit">Submit</button>
@@ -86,7 +90,7 @@
             success: function () {
                 alert("Schedule created successfully.");
                 closeScheduleModal();
-                location.reload();
+                loadSchedules("comingsoon");
             },
             error: function () {
                 alert("Error creating schedule.");
@@ -164,4 +168,9 @@
         document.getElementById("scheduleModal").style.display = "none"; // Ensure hidden on load
         loadSchedules("comingsoon");
     };
+
+    $(document).ready(function () {
+        document.getElementById("scheduleModal").style.display = "none"; // Ensure hidden on load
+        loadSchedules("comingsoon");
+    });
 </script>
