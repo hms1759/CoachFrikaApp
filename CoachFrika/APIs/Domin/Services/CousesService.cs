@@ -43,6 +43,13 @@ namespace CoachFrika.APIs.Domin.Services
             var userId = _webHelpers.CurrentUserId();
             var res = new BaseResponse<string>();
             res.Status = true;
+            var exist = await _context.Schedule.FirstOrDefaultAsync(x => x.Title.ToLower() == model.Title.ToLower());
+            if (exist != null)
+            {
+                res.Message ="Schdule name already exist";
+                res.Status = false;
+                return res;
+            }
             try
             {
                 var dto = new Schedule();

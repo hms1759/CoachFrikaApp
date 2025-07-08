@@ -178,6 +178,7 @@ void ConfigureAuthorizationPolicies(IServiceCollection services)
 // --- Swagger Configuration ---
 void ConfigureSwagger(IServiceCollection services)
 {
+    services.AddSession();
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen(c =>
     {
@@ -237,7 +238,7 @@ void ConfigureApp(WebApplication app)
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "CoachFrika API v1");
             options.RoutePrefix = "swagger"; // Swagger UI at /swagger
         });
-   
+    app.UseSession();
     app.UseHttpsRedirection();
     app.UseRouting();
     app.UseStaticFiles();

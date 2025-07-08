@@ -470,7 +470,8 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.AddDays(-1).Date;
                 // Apply filters based on the query parameters
                 var cos = from schedule in _context.Schedule
-                          where schedule.StartDate.Value.Date > day
+                          where schedule.CreatedBy == req.Email
+                          //where schedule.StartDate.Value.Date > day
                           select new SchedulesViewModel
                           {
                               Id = schedule.Id,

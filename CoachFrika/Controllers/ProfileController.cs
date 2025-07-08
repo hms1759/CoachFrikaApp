@@ -22,9 +22,10 @@ namespace CoachFrika.Controllers
         }
         public IActionResult Dashboard()
         {
-            if (TempData["ProfileData"] is string json)
+            var profileJson = HttpContext.Session.GetString("ProfileData");
+            if (!string.IsNullOrEmpty(profileJson))
             {
-                var model = JsonConvert.DeserializeObject<userProfileViewModel>(json);
+                var model = JsonConvert.DeserializeObject<userProfileViewModel>(profileJson); ;
                 if (model != null && !string.IsNullOrEmpty(model.Email))
                 {
                     return PartialView("_Dashboard", model);

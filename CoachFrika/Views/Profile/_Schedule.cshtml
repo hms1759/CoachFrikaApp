@@ -117,8 +117,10 @@
                 res.data.forEach(item => {
                     container.innerHTML += `
                             <div class="schedule-card">
-                                <div class="schedule-card-title">${item.title}</div>
-                                <p>${new Date(item.scheduled).toLocaleString()}</p>
+                                    <div class="schedule-card-title">${item.title}</div>
+                                        <div class="schedule-card-title">${item.focus}</div>
+                                        <p>${new Date(item.startDate).toLocaleString()}</p>
+                                            <p>${new Date(item.endDate).toLocaleString()}</p>
                                 <a href="${item.meetingUrl}" class="schedule-view-details" target="_blank">Join</a>
                             </div>
                         `;

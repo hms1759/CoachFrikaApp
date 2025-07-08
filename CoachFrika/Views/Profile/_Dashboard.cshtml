@@ -81,14 +81,14 @@
         </div>
     </section>
     <section class="activities">
-        @if (Model.Schedules == null || !Model.Schedules.Any())
+      @*   @if (Model.Schedules == null || !Model.Schedules.Any())
         {
             <div class="Schedules_null">
                 No Available Classes
             </div>
         }
         else
-        {
+        { *@
             <div>
                 <div class="activities-header">
                     <h3>Activities</h3>
@@ -152,7 +152,7 @@
                     }
                 </div>
             </div>
-        }
+        @* } *@
     </section>
 
 
