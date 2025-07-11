@@ -81,136 +81,84 @@
         </div>
     </section>
     <section class="activities">
-      @*   @if (Model.Schedules == null || !Model.Schedules.Any())
+          @if (Model.Schedules == null || !Model.Schedules.Any())
         {
-            <div class="Schedules_null">
-                No Available Classes
-            </div>
+        <div class="Schedules_null">
+        No Available Classes
+        </div>
         }
         else
-        { *@
-            <div>
-                <div class="activities-header">
-                    <h3>Activities</h3>
+        {
+        <div>
+            <div class="activities-header">
+                <h3>Activities</h3>
                     <div class="search-bar">
-                        <input type="text" placeholder="Search..." />
-                        <button><i class="fas fa-external-link-alt"></i> View All</button>
-                    </div>
+                        <button onclick="window.location.href='@Url.Action("Schedule", "Profile")'">
+                            <i class="fas fa-external-link-alt"></i> View All
+                        </button>
                 </div>
 
-                <div class="activity-cards">
-                    @foreach (var activity in Model.Schedules)
-                    {
-                        var now = DateTime.Now;
-                        string statusClass = "";
-                        string statusText = "";
-
-                        if (activity.StartDate.HasValue)
-                        {
-                            var start = activity.StartDate.Value;
-
-                            if (start <= now && activity.EndDate > now)
-                            {
-                                statusClass = "ongoing";
-                                statusText = "Status : Ongoing";
-                            }
-                            else if (start > now && start <= now.AddMinutes(60))
-                            {
-                                statusClass = "starting";
-                                statusText = $"Status : Starting in {(int)(start - now).TotalMinutes} Minutes";
-                            }
-                            else if (start > now)
-                            {
-                                statusClass = "not-started";
-                                statusText = "Status : Not Started";
-                            }
-                            else
-                            {
-                                statusClass = "ended";
-                                statusText = "Status : Ended";
-                            }
-                        }
-
-                        <div class="activity-card @statusClass">
-                            <h4>@activity.Title</h4>
-                            <p>@(activity.Focus?.ToString() ?? "Batch Info")</p>
-                            <p><i class="far fa-clock"></i> @activity.StartDate?.ToString("hh:mm tt")</p>
-                            <p><i class="far fa-calendar-alt"></i> @activity.StartDate?.ToString("dd MMM yyyy")</p>
-                            <span class="status @statusClass">@statusText</span>
-
-                            @if (!string.IsNullOrEmpty(activity.MeetingLink))
-                            {
-                                <a href="@activity.MeetingLink" target="_blank">
-                                    <button>Join Now</button>
-                                </a>
-                            }
-                            else
-                            {
-                                <button disabled>Link Not Available</button>
-                            }
-                        </div>
-                    }
-                </div>
             </div>
-        @* } *@
+
+            <div class="activity-cards">
+                @foreach (var activity in Model.Schedules)
+                {
+                    var now = DateTime.Now;
+                    string statusClass = "";
+                    string statusText = "";
+
+                    if (activity.StartDate.HasValue)
+                    {
+                        var start = activity.StartDate.Value;
+
+                        if (start <= now && activity.EndDate > now)
+                        {
+                            statusClass = "ongoing";
+                            statusText = "Status : Ongoing";
+                        }
+                        else if (start > now && start <= now.AddMinutes(60))
+                        {
+                            statusClass = "starting";
+                            statusText = $"Status : Starting in {(int)(start - now).TotalMinutes} Minutes";
+                        }
+                        else if (start > now)
+                        {
+                            statusClass = "not-started";
+                            statusText = "Status : Not Started";
+                        }
+                        else
+                        {
+                            statusClass = "ended";
+                            statusText = "Status : Ended";
+                        }
+                    }
+
+                    <div class="activity-card @statusClass">
+                        <h4>@activity.Title</h4>
+                        <p>@(activity.Focus?.ToString() ?? "Batch Info")</p>
+                        <p><i class="far fa-clock"></i> @activity.StartDate?.ToString("hh:mm tt")</p>
+                        <p><i class="far fa-calendar-alt"></i> @activity.StartDate?.ToString("dd MMM yyyy")</p>
+                        <span class="status @statusClass">@statusText</span>
+
+                        @if (!string.IsNullOrEmpty(activity.MeetingUrl))
+                        {
+                            <a href="@activity.MeetingUrl" target="_blank">
+                                <button>Join Now</button>
+                            </a>
+                        }
+                        else
+                        {
+                            <button disabled>Link Not Available</button>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+        }
     </section>
 
 
-    @*
-    <section class="activities">
-    <div class="activities-header">
-    <h3>Activities</h3>
-    <div class="search-bar">
-    <input type="text" placeholder="Search..." />
-    <button><i class="fas fa-external-link-alt"></i> View All</button>
-    </div>
-    </div>
-    <div class="activity-cards">
-    <div class="activity-card ongoing">
-    <h4>Teachers As Leaders</h4>
-    <p>Batch 1st Cohort</p>
-    <p><i class="far fa-clock"></i> 12:40 P:M</p>
-    <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
-    <span class="status ongoing">Status : Ongoing</span>
-    <button>Join Now</button>
-    </div>
-
-    <div class="activity-card starting">
-    <h4>Mindset Coaching</h4>
-    <p>Batch 1st Cohort</p>
-    <p><i class="far fa-clock"></i> 01:40 P:M</p>
-    <p><i class="far fa-calendar-alt"></i> 09 Dec 2023</p>
-    <span class="status starting">Status : Starting in 60 Minutes</span>
-    <button>Join Now</button>
-    </div>
-
-    <div class="activity-card not-started">
-    <h4>Pedagogical Coaching</h4>
-    <p>Batch 1st Cohort</p>
-    <p><i class="far fa-clock"></i> 01:40 P:M</p>
-    <p><i class="far fa-calendar-alt"></i> 12 Jan 2024</p>
-    <span class="status not-started">Status : Not Started</span>
-    <button>Join Now</button>
-    </div>
-    </div>
-    </section> *@
-
 </div>
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.querySelector('.search-bar input');
-        const cards = document.querySelectorAll('.activity-card');
-
-        searchInput.addEventListener('input', function () {
-            const query = this.value.toLowerCase();
-            cards.forEach(card => {
-                const text = card.textContent.toLowerCase();
-                card.style.display = text.includes(query) ? 'block' : 'none';
-            });
-        });
-    });
-</script>
 
 

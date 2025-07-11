@@ -21,31 +21,30 @@ namespace CoachFrika.Common.LogingHandler
             private readonly string _secretKey;
             private readonly string _issuer;
             private readonly string _audience;
-            private readonly ITeacherService _teacherService;
+            private readonly ICousesService _service;
 
-            public JwtService(IConfiguration configuration, ITeacherService teacherService)
+            public JwtService(IConfiguration configuration, ICousesService service)
             {
                 _secretKey = configuration["Jwt:SecretKey"];
                 _issuer = configuration["Jwt:Issuer"];
                 _audience = configuration["Jwt:Audience"];
-                _teacherService = teacherService;
+                _service = service;
             }
 
             public async Task<string> GenerateToken(CoachFrikaUsers user, IList<string> roles)
             {
 
                 var profile = ProfileMapper.MapToProfileDto(user);
+                var schd = _service.GetMyScheduleAtLogin(user);
+                profile.Schedules = schd.Data;
                 // Serialize the object to a JSON string
                 var myObjectJson = JsonSerializer.Serialize(profile);
-                var schd = _teacherService.GetMyScheduleAtLogin(user);
-                var RescheduleObjectJson = JsonSerializer.Serialize(schd);
                 // Create claims for the user
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim("Profile", myObjectJson),
-                    new Claim("Schedule", RescheduleObjectJson)
+                    new Claim("Profile", myObjectJson)
                 };
 
                 // Add each role as a claim

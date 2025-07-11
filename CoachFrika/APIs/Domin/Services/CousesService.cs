@@ -36,6 +36,41 @@ namespace CoachFrika.APIs.Domin.Services
             _webHelpers = webHelpers;
         }
 
+        public BaseResponse<List<SchedulesViewModel>> GetMyScheduleAtLogin(CoachFrikaUsers req)
+        {
+            var res = new BaseResponse<List<SchedulesViewModel>>();
+            res.Status = true;
+            try
+            {
+                var day = DateTime.Now.AddDays(-1).Date;
+                var mail = req.Role == Roles.Coach ? req.Email : _context.CoachFrikaUsers.FirstOrDefault(x => x.Id == req.CoachId)?.Email;
+               var cos = from schedule in _context.Schedule
+                         where schedule.CreatedBy == mail
+                        && schedule.StartDate.Value.Date > day
+                         select new SchedulesViewModel
+                         {
+                             Id = schedule.Id,
+                             Title = schedule.Title,
+                             Focus = schedule.Focus.ToString(),
+                             MeetingUrl = schedule.MeetingLink,
+                             StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
+                             EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
+                         };
+
+                res.Data = cos.OrderBy(x => x.StartDate).Take(3).ToList();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+
         public async Task<BaseResponse<string>> CreateSchedule(CreateScheduleDto model)
         {
 
@@ -46,7 +81,7 @@ namespace CoachFrika.APIs.Domin.Services
             var exist = await _context.Schedule.FirstOrDefaultAsync(x => x.Title.ToLower() == model.Title.ToLower());
             if (exist != null)
             {
-                res.Message ="Schdule name already exist";
+                res.Message = "Schdule name already exist";
                 res.Status = false;
                 return res;
             }
@@ -116,13 +151,13 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 var schedule = _context.Schedule.Where(x => x.Id.ToString() == ScheduleId).FirstOrDefault();
                 // Apply filters based on the query parameters
-                if (schedule== null)
+                if (schedule == null)
                 {
                     res.Status = false;
                     return res;
                 }
                 var cos = from teacher in _context.CoachFrikaUsers
-                where teacher.CoachId == schedule.CoachId && teacher.Subscriptions == schedule.Focus
+                          where teacher.CoachId == schedule.CoachId && teacher.Subscriptions == schedule.Focus
                           select new ProfileDto
                           {
                               Id = teacher.Id,
@@ -212,14 +247,14 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var dto =  _context.Schedule.FirstOrDefault(x => x.Id == model.Id);
+                var dto = _context.Schedule.FirstOrDefault(x => x.Id == model.Id);
                 dto.Title = model.Title;
                 dto.Focus = model.Focus;
                 dto.StartDate = model.Scheduled;
                 dto.MeetingLink = model.MeetingUrl;
                 dto.EndDate = model.DurationType == Common.Enum.DurationType.Hour ? model.Scheduled.AddHours(model.Duration) : model.Scheduled.AddMinutes(model.Duration);
-               
-                 _context.SaveChanges();
+
+                _context.SaveChanges();
                 return res;
             }
             catch (Exception ex)
@@ -305,8 +340,8 @@ namespace CoachFrika.APIs.Domin.Services
             }
         }
 
-       //public async Task<BaseResponse<string>> CreateSchedule(SchedulesDto model)
-         ////{
+        //public async Task<BaseResponse<string>> CreateSchedule(SchedulesDto model)
+        ////{
         //    var res = new BaseResponse<string>();
         //    res.Status = true;
         //    try
@@ -374,7 +409,7 @@ namespace CoachFrika.APIs.Domin.Services
             var userRole = _webHelpers.CurrentUserRole();
             var res = new BaseResponse<string>();
             res.Status = true;
-            var schedule =  _context.Schedule.FirstOrDefault(x => x.Id == Id);
+            var schedule = _context.Schedule.FirstOrDefault(x => x.Id == Id);
             if (schedule == null)
             {
                 res.Message = "schedule not found";
@@ -400,7 +435,7 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                var sch =  _context.Schedule.FirstOrDefault(x => x.Id == Id);
+                var sch = _context.Schedule.FirstOrDefault(x => x.Id == Id);
                 if (sch == null)
                 {
                     res.Message = "schedule not found";
@@ -417,9 +452,9 @@ namespace CoachFrika.APIs.Domin.Services
                     MeetingUrl = sch.MeetingLink,
                     CoachAttended = sch.CoachAttended,
                     TeacherAttended = sch.TeacherAttended
-                    
+
                 };
-            res.Data = respose;
+                res.Data = respose;
                 return res;
             }
             catch (Exception ex)
