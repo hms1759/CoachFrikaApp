@@ -1,4 +1,5 @@
-﻿using CoachFrika.Models;
+﻿using CoachFrika.APIs.Domin.IServices;
+using CoachFrika.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -7,6 +8,13 @@ namespace CoachFrika.Controllers
 {
     public class ProfileController : Controller
     {
+        private readonly IAccountService _accountService;
+
+        public ProfileController(IAccountService accountService)
+        {
+            _accountService = accountService;
+        }
+
         // GET: ProfileController
         public ActionResult Index(userProfileViewModel? model = null)
         {
@@ -46,6 +54,22 @@ namespace CoachFrika.Controllers
             return PartialView("_MyCoach");
         }
 
+        public IActionResult MyTeacher()
+        {
+            return PartialView("_MyTeacher");
+        }
+
+
+        public async Task<IActionResult> Details(string id)
+        {
+            var result = await _accountService.GetApplicant(id);
+            return PartialView("_ApplicantDetails", result);
+        }
+
+        public IActionResult Recomendations(Guid id)
+        {
+            return PartialView("_Recomendations");
+        }
         [HttpPost]
         public IActionResult Setup()
         {

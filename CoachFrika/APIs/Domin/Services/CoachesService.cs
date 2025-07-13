@@ -219,7 +219,9 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from teacher in _context.CoachFrikaUsers
-                          where teacher.CoachId == userId &&
+                          where
+                          //teacher.CoachId == userId 
+                          //&& teacher.Role == Role.Teacher
                           (string.IsNullOrEmpty(query.Name) || teacher.FullName.Contains(query.Name))
                           select new ProfileDto
                           {
@@ -233,6 +235,7 @@ namespace CoachFrika.APIs.Domin.Services
                               FacebookUrl = teacher.FacebookUrl,
                               TweeterUrl = teacher.TweeterUrl,
                               Email = teacher.Email,
+                              SchoolName = teacher.SchoolName,
                               PhoneNumber = teacher.PhoneNumber   // Using DateTime.MinValue if EndDate is null
                           };
 
@@ -325,7 +328,7 @@ namespace CoachFrika.APIs.Domin.Services
                           where (user.Role == Roles.Coach)
                           && (
                     (query.OnboardingStatus == null) ||
-                    (query.OnboardingStatus == OnboardingStatus.PendindApproval && user.Stages == 4 &&!user.hasPaid) ||
+                    (query.OnboardingStatus == OnboardingStatus.PendindApproval && user.Stages == 4 && !user.hasPaid) ||
                     (query.OnboardingStatus == OnboardingStatus.Approved && user.Stages == 4 && user.hasPaid) ||
                      (query.OnboardingStatus == OnboardingStatus.Ongoing && user.Stages < 4 && !user.hasPaid)
                 )
@@ -418,74 +421,38 @@ namespace CoachFrika.APIs.Domin.Services
                     res.Message = "schedule not found";
                     return res;
                 }
-                if (model.isAll)
+                var listrecm = new List<Recommendations>();
+                var teachs = _context.CoachFrikaUsers
+                .Where(x => model.TeacherIds.Contains(x.Id) && x.Subscriptions == schedule.Focus)
+                .ToList();
+                if (teachs != null || teachs.Count() > 0)
                 {
-                    var listrecm = new List<Recommendations>();
-                    var teachs = _context.CoachFrikaUsers.Where(x => x.CoachId == schedule.CoachId && x.Subscriptions == schedule.Focus);
-                    if(teachs != null || teachs.Count() > 0 )
-                        {
 
-                        foreach (var tch in teachs)
-                        {
-
-                            var recm = new Recommendations()
-                            {
-                                CoachId = userId,
-                                TeacherId = tch.Id,
-                                ScheduleId = schedule.Id.ToString(),
-                                Recommendation = model.Recommendation
-
-                            };
-                            listrecm.Add(recm);
-                        }
-
-                        _context.Recommendations.AddRange(listrecm);
-                        await _context.SaveChangesAsync();
-                        return res;
-                    }
-                    else
+                    foreach (var tch in teachs)
                     {
-                        res.Message = "No teacher attached to this schedule ";
-                        res.Status = false;
-                        return res;
 
-                    }
-                }
-                else
-                {
-                    var listrecm = new List<Recommendations>();
-                    foreach (var tch in model.TeacherIds)
-                    {
-                        var teach = _context.CoachFrikaUsers.Where(x => x.Id == tch).FirstOrDefault();
-
-                        if (teach != null)
+                        var recm = new Recommendations()
                         {
-                            var recm = new Recommendations()
-                            {
-                                CoachId = userId,
-                                TeacherId = teach.Id,
-                                ScheduleId = schedule.Id.ToString(),
-                                Recommendation = model.Recommendation
+                            CoachId = userId,
+                            TeacherId = tch.Id,
+                            ScheduleId = schedule.Id.ToString(),
+                            Recommendation = model.Recommendation
 
-                            };
-                            listrecm.Add(recm);
-                        }
-                        else
-                        {
-
-                            res.Message = $"No teacher with {tch} does not exist";
-                            res.Status = false;
-                            return res;
-
-                        }
+                        };
+                        listrecm.Add(recm);
                     }
 
                     _context.Recommendations.AddRange(listrecm);
                     await _context.SaveChangesAsync();
                     return res;
+                }
+                else
+                {
+                    res.Message = "No teacher attached to this schedule ";
+                    res.Status = false;
+                    return res;
 
                 }
-
 
             }
             catch (Exception ex)
@@ -537,7 +504,7 @@ namespace CoachFrika.APIs.Domin.Services
                                 join teach in _context.CoachFrikaUsers on rec.TeacherId equals teach.Id
                                 join schd in _context.Schedule on rec.ScheduleId equals schd.Id.ToString()
                                 where rec.CoachId == userId
-                                && (string.IsNullOrEmpty(query.TeachersName) || teach.FullName.Contains(query.TeachersName))
+                                && (string.IsNullOrEmpty(query.TeacherId) || teach.Id.Contains(query.TeacherId))
                                 && (string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
                                 select new
                                 {
@@ -614,6 +581,11 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
 
+        }
+
+        public Task<BaseResponse<string>> AddRecomendationsComment(CoachRecommendationComment model)
+        {
+            throw new NotImplementedException();
         }
     }
 }

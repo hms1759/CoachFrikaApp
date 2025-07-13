@@ -105,7 +105,7 @@ namespace CoachFrika.APIs.Controllerss
             return BadRequest(result);
         }
 
-        [HttpPost("AddTeachersRecomendatins")]
+        [HttpPost("AddTeachersRecomendations")]
         public async Task<IActionResult> AddRecomendatins(CoachRecommendation model)
         {
             var result = await _coachesService.AddRecomendations(model);
@@ -150,5 +150,18 @@ namespace CoachFrika.APIs.Controllerss
             }
             return BadRequest(result);
         }
+
+
+        [HttpPost("AddRecomendationsComment")]
+        public async Task<IActionResult> AddRecomendationsComment(CoachRecommendationComment model)
+        {
+            var result = await _coachesService.AddRecomendationsComment(model);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
     }
 }

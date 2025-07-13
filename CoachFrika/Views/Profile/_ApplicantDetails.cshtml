@@ -1,0 +1,133 @@
+﻿@using CoachFrika.APIs.ViewModel
+@using CoachFrika.Common
+@model BaseResponse<ProfileDto>
+
+@{
+    Layout = "~/Views/Shared/_modalLayout.cshtml";
+    // Layout = null;
+    ViewBag.Title = "Applicant Details";
+    var data = Model.Data;
+}
+<style>
+    .backofficedetails-container {
+        max-width: 900px;
+        margin: auto;
+        font-family: sans-serif;
+        padding: 20px;
+    }
+
+    .backofficedetails-header {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 20px;
+    }
+
+        .backofficedetails-header img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+    .backofficedetails-info h2 {
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .backofficedetails-social a {
+        margin-right: 10px;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .backofficedetails-section {
+        margin: 30px 0 10px;
+        font-weight: bold;
+        font-size: 18px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 5px;
+    }
+
+    .backofficedetails-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    .backofficedetails-box {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+        .backofficedetails-box label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+</style>
+
+<div class="backofficedetails-container">
+    <div class="backofficedetails-header">
+        <img src="@(string.IsNullOrWhiteSpace(data?.ProfileImageUrl) ? "https://icons.veryicon.com/png/o/miscellaneous/user-avatar/user-avatar-male-5.png" : data.ProfileImageUrl)" alt="Profile Image" />
+
+        <div class="backofficedetails-info">
+            <h2>@data?.FullName</h2>
+            <p>@data?.ProfessionalTitle</p>
+            <p>@data?.Email | @data?.PhoneNumber</p>
+            <div class="backofficedetails-social">
+                @if (!string.IsNullOrEmpty(data?.TweeterUrl))
+                {
+                    <a href="@data.TweeterUrl" target="_blank">Twitter</a>
+                }
+                @if (!string.IsNullOrEmpty(data?.LinkedInUrl))
+                {
+                    <a href="@data.LinkedInUrl" target="_blank">LinkedIn</a>
+                }
+                @if (!string.IsNullOrEmpty(data?.InstagramUrl))
+                {
+                    <a href="@data.InstagramUrl" target="_blank">Instagram</a>
+                }
+                @if (!string.IsNullOrEmpty(data?.FacebookUrl))
+                {
+                    <a href="@data.FacebookUrl" target="_blank">Facebook</a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="backofficedetails-section">Personal Information</div>
+    <div class="backofficedetails-grid">
+        <div class="backofficedetails-box"><label>Title</label><div>@data?.Title</div></div>
+        <div class="backofficedetails-box"><label>Nationality</label><div>@data?.Nationality</div></div>
+        <div class="backofficedetails-box"><label>State of Origin</label><div>@data?.StateOfOrigin</div></div>
+        <div class="backofficedetails-box"><label>Address</label><div>@data?.Address</div></div>
+        <div class="backofficedetails-box"><label>Role</label><div>@data?.Role.ToString()</div></div>
+    </div>
+
+    <div class="backofficedetails-section">Professional Details</div>
+    <div class="backofficedetails-grid">
+        <div class="backofficedetails-box"><label>Years of Experience</label><div>@data?.YearStartExperience</div></div>
+        <div class="backofficedetails-box"><label>Stages</label><div>@data?.Stages</div></div>
+        <div class="backofficedetails-box"><label>Number of Students</label><div>@data?.NumbersOfStudents</div></div>
+        <div class="backofficedetails-box"><label>Subject</label><div>@data?.Subject</div></div>
+        <div class="backofficedetails-box"><label>School</label><div>@data?.SchoolName</div></div>
+    </div>
+
+    <div class="backofficedetails-section">Payment & Account</div>
+    <div class="backofficedetails-grid">
+        <div class="backofficedetails-box"><label>Amount Paid</label><div>₦@data?.Amount</div></div>
+        <div class="backofficedetails-box"><label>Has Paid</label><div>@(data?.hasPaid == true ? "Yes" : "No")</div></div>
+        <div class="backofficedetails-box"><label>Subscription</label><div>@data?.Subscriptions?.ToString()</div></div>
+    </div>
+
+    <div class="backofficedetails-section">Description</div>
+    <div class="backofficedetails-box" style="grid-column: 1 / -1;">
+        <label>About Applicant</label>
+        <div>@data?.Description</div>
+    </div>
+</div>

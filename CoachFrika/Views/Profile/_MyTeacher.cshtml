@@ -1,0 +1,202 @@
+﻿<div class="space"></div>
+
+<!-- Top Bar -->
+<div class="teacher-top-bar">
+    <span style="font-weight: bold; font-size: 18px;">Teacher and I</span>
+    <div>
+        <input type="text" id="teacherSearchInput" class="teacher-search-input" placeholder="Search by name..." />
+        <button class="teacher-view-all-btn" onclick="handleTeacherSearch()">Search</button>
+        <button onclick="openCreateRecModal()">+ Create Recommendation</button>
+    </div>
+</div>
+
+<div class="space"></div>
+
+<!-- Teacher Cards -->
+<div class="teacher-card-wrapper" id="teacherCardWrapper">Loading...</div>
+
+<!-- Pagination -->
+<div class="teacher-pagination" id="teacherPagination">
+    <button onclick="teacherGoToPreviousPage()">Previous</button>
+    <span id="teacherPageInfo">Page 1</span>
+    <button onclick="teacherGoToNextPage()">Next</button>
+</div>
+
+<!-- Create Recommendation Modal -->
+<div class="rec-modal" id="createRecModal">
+    <div class="rec-modal-content">
+        <span class="rec-modal-close" onclick="closeCreateRecModal()">×</span>
+        <h2>Create Recommendation</h2>
+        <form id="createRecForm">
+            <label for="scheduleDropdown">Schedule:</label>
+            <select id="scheduleDropdown" name="ScheduleId" required></select>
+
+            <label for="teacherDropdown">Select Teachers:</label>
+            <select id="teacherDropdown" name="TeacherIds" multiple required></select>
+
+            <label for="recommendationText">Recommendation:</label>
+            <textarea id="recommendationText" name="Recommendation" required></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    const teacherToken = localStorage.getItem('authToken');
+    let teacherPageNumber = 1;
+    const teacherPageSize = 10;
+    let teacherSearchTerm = '';
+
+    function handleTeacherSearch() {
+        teacherSearchTerm = document.getElementById("teacherSearchInput").value.trim();
+        teacherPageNumber = 1;
+        loadTeachers();
+    }
+
+    function loadTeachers() {
+        const url = `/api/Coaches/MyTeachers?IsPaginated=true&Name=${encodeURIComponent(teacherSearchTerm)}&PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}`;
+
+        fetch(url, {
+            headers: { "Authorization": `Bearer ${teacherToken}` }
+        })
+            .then(res => res.json())
+            .then(data => {
+                const wrapper = document.getElementById("teacherCardWrapper");
+                wrapper.innerHTML = "";
+
+                if (!data?.data?.length) {
+                    wrapper.innerHTML = "<p>No teachers found.</p>";
+                    return;
+                }
+
+                data.data.forEach(teacher => {
+                    const card = document.createElement("div");
+                    card.className = "teacher-card";
+                    card.innerHTML = `
+                            <div class="teacher-card">
+                                <img
+                                    src="${teacher.imageUrl || 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740'}"
+                                    alt="${teacher.fullName || 'Teacher'}"
+                                    class="teacher-card-img"
+                                />
+                                <div class="teacher-card-content">
+                                    <p class="teacher-name">${teacher.fullName || 'No Name'}</p>
+                                    <p class="teacher-school">${teacher.schoolName || 'Unknown School'}</p>
+                                    <div class="teacher-btn">
+                                        <a href="/Profile/Details?id=${teacher.id}">
+                                            <button class="teacher-view-btn">View Details</button>
+                                        </a>
+                                        <a href="/Profile/Recomendations?id=${teacher.id}">
+                                            <button class="teacher-recomendation-btn">Recommendation</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    wrapper.appendChild(card);
+                });
+
+                document.getElementById("teacherPageInfo").textContent = `Page ${teacherPageNumber}`;
+            })
+            .catch(err => {
+                console.error("Error fetching teachers:", err);
+                document.getElementById("teacherCardWrapper").innerHTML = "<p>Error loading teachers.</p>";
+            });
+    }
+
+    function teacherGoToNextPage() {
+        teacherPageNumber++;
+        loadTeachers();
+    }
+
+    function teacherGoToPreviousPage() {
+        if (teacherPageNumber > 1) {
+            teacherPageNumber--;
+            loadTeachers();
+        }
+    }
+
+    function openCreateRecModal() {
+        document.getElementById("createRecModal").style.display = "flex";
+        loadScheduleOptions();
+        loadTeacherOptions();
+    }
+
+    function closeCreateRecModal() {
+        document.getElementById("createRecModal").style.display = "none";
+        document.getElementById("createRecForm").reset();
+    }
+
+    function loadScheduleOptions() {
+        fetch('/api/Scheduled/GetScheduleList', {
+            headers: { "Authorization": `Bearer ${teacherToken}` }
+        })
+
+            .then(res => res.json())
+            .then(res => {
+                const dropdown = document.getElementById("scheduleDropdown");
+                dropdown.innerHTML = `<option value="">-- Select Schedule --</option>`;
+                res.data.forEach(s =>
+                    dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`
+                );
+            })
+            .catch(() => {
+                alert("Failed to load schedules.");
+            });
+    }
+
+    function loadTeacherOptions() {
+        fetch('/api/Coaches/MyTeachers?IsPaginated=false', {
+            headers: { "Authorization": `Bearer ${teacherToken}` }
+        })
+            .then(res => res.json())
+            .then(res => {
+                const dropdown = document.getElementById("teacherDropdown");
+                dropdown.innerHTML = "";
+                res.data.forEach(t =>
+                    dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`
+                );
+            })
+            .catch(() => {
+                alert("Failed to load teachers.");
+            });
+    }
+
+    document.getElementById("createRecForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const scheduleId = document.getElementById("scheduleDropdown").value;
+        const teacherIds = Array.from(document.getElementById("teacherDropdown").selectedOptions).map(opt => opt.value);
+        const recommendation = document.getElementById("recommendationText").value;
+
+        const payload = {
+            ScheduleId: scheduleId,
+            TeacherIds: teacherIds,
+            Recommendation: recommendation
+        };
+
+        fetch('/api/Coaches/AddTeachersRecomendations', {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${teacherToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(res => res.json())
+            .then(() => {
+                alert("Recommendation created successfully!");
+                closeCreateRecModal();
+                loadTeachers(); // Reload after creation if needed
+            })
+            .catch(() => {
+                alert("Error creating recommendation.");
+            });
+    });
+
+    // Load teachers on page load
+    loadTeachers();
+</script>
+
