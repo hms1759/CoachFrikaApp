@@ -225,6 +225,7 @@ namespace CoachFrika.APIs.Domin.Services
                           (string.IsNullOrEmpty(query.Name) || teacher.FullName.Contains(query.Name))
                           select new ProfileDto
                           {
+                              CoachId = teacher.CoachId,
                               Id = teacher.Id,
                               Title = teacher.Title,
                               FullName = teacher.FullName,
@@ -494,7 +495,7 @@ namespace CoachFrika.APIs.Domin.Services
 
         public BaseResponse<List<GetCoachesRecommendationResponse>> Recommendations(GetCoachesRecommendations query)
         {
-            var userId = _webHelpers.CurrentUserId();
+            var userId =query.userId ?? _webHelpers.CurrentUserId();
             var res = new BaseResponse<List<GetCoachesRecommendationResponse>>();
             res.Status = true;
             try
@@ -504,7 +505,7 @@ namespace CoachFrika.APIs.Domin.Services
                                 join teach in _context.CoachFrikaUsers on rec.TeacherId equals teach.Id
                                 join schd in _context.Schedule on rec.ScheduleId equals schd.Id.ToString()
                                 where rec.CoachId == userId
-                                && (string.IsNullOrEmpty(query.TeacherId) || teach.Id.Contains(query.TeacherId))
+                                //&& (string.IsNullOrEmpty(query.TeacherId) || teach.Id.Contains(query.TeacherId))
                                 && (string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
                                 select new
                                 {

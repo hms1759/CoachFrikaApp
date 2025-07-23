@@ -1,4 +1,6 @@
 ﻿using CoachFrika.APIs.Domin.IServices;
+using CoachFrika.APIs.ViewModel;
+using CoachFrika.Common.Extension;
 using CoachFrika.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +11,14 @@ namespace CoachFrika.Controllers
     public class ProfileController : Controller
     {
         private readonly IAccountService _accountService;
+        private readonly ICoachesService _coachesService;
+        public readonly IWebHelpers _webHelpers;
 
-        public ProfileController(IAccountService accountService)
+        public ProfileController(IAccountService accountService, ICoachesService coachesService, IWebHelpers webHelpers)
         {
             _accountService = accountService;
+            _coachesService = coachesService;
+            _webHelpers = webHelpers;
         }
 
         // GET: ProfileController
@@ -66,9 +72,17 @@ namespace CoachFrika.Controllers
             return PartialView("_ApplicantDetails", result);
         }
 
-        public IActionResult Recomendations(Guid id)
+        public IActionResult Recomendations(Guid id,Guid userId)
         {
-            return PartialView("_Recomendations");
+            var request = new GetCoachesRecommendations
+            {
+                userId = userId.ToString(),
+                TeacherId = id.ToString(),
+                PageNumber = 1,
+                Pagesize = 10
+            };
+            var recomendation = _coachesService.Recommendations(request);
+            return PartialView("_Recomendations", recomendation);
         }
         [HttpPost]
         public IActionResult Setup()

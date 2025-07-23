@@ -4,25 +4,31 @@
 
 @{
     ViewBag.Title = "Recommendations";
-    var data = Model.Data;
 }
 
 <div class="rec-top-bar">
     <input type="text" id="searchTitle" placeholder="Search by title..." />
+    <input type="text" id="searchTeacher" placeholder="Search by teacher ID..." />
     <button onclick="searchRecommendations()">Search</button>
     <button onclick="openCreateRecModal()">+ Create Recommendation</button>
 </div>
 
 <div class="recommendation-grid" id="recGrid">
-    @foreach (var recSection in data)
+    @if (Model?.Data == null || !Model.Data.Any())
     {
-        <div class="recommendation-card" style="border-top: 4px solid black">
-            <span class="rec-page">@Model.PageNumber</span>
-            <h3>@recSection.ScheduleTitle</h3>
-            <h4>@recSection.Recommendation</h4>
-            
-            <button class="rec-more-btn" onclick="loadRecommendationDetails('@recSection.Id')">More</button>
-        </div>
+        <h3>No Recommendations Found</h3>
+    }
+    else
+    {
+        foreach (var rec in Model.Data)
+        {
+            <div class="recommendation-card" style="border-top: 4px solid black;">
+                <span class="rec-page">@Model.PageNumber</span>
+                <h3>@rec.ScheduleTitle</h3>
+                <h4>@rec.Recommendation</h4>
+                <button class="rec-more-btn" onclick="loadRecommendationDetails('@rec.Id')">More</button>
+            </div>
+        }
     }
 </div>
 
@@ -31,7 +37,8 @@
     <span id="pageNumberDisplay">Page 1</span>
     <button onclick="nextPage()">Next</button>
 </div>
-<!-- Recommendation Creation Modal -->
+
+<!-- Create Recommendation Modal -->
 <div class="rec-modal" id="createRecModal">
     <div class="rec-modal-content">
         <span class="rec-modal-close" onclick="closeCreateRecModal()">×</span>
@@ -50,7 +57,8 @@
         </form>
     </div>
 </div>
-<!-- Modal -->
+
+<!-- Details Modal -->
 <div class="rec-modal" id="recModal">
     <div class="rec-modal-content">
         <span class="rec-modal-close" onclick="closeRecModal()">×</span>
@@ -64,196 +72,190 @@
         </form>
     </div>
 </div>
-<script>
-    const token = localStorage.getItem("authToken");
-    let currentPage = 1;
-    const pageSize = 6;
 
-    // Initialize on page load
-    document.addEventListener("DOMContentLoaded", () => {
-        loadRecommendations();
-        updatePageNumberDisplay();
-    });
+@section Scripts {
+    <script>
+        const token = localStorage.getItem("authToken");
+        let currentPage = 1;
+        const pageSize = 6;
 
-    // Update page number display
-    function updatePageNumberDisplay() {
-        document.getElementById("pageNumberDisplay").textContent = `Page ${currentPage}`;
-    }
-
-    // Load Recommendations with Search and Pagination
-    function loadRecommendations() {
-        const title = document.getElementById("searchTitle").value.trim();
-        const teacherId = document.getElementById("searchTeacher").value.trim(); // Add this input field in HTML
-
-        const queryParams = new URLSearchParams({
-            Title: title,
-            TeacherId: teacherId,
-            PageSize: pageSize,
-            PageNumber: currentPage
+        document.addEventListener("DOMContentLoaded", () => {
+            loadRecommendations();
+            updatePageNumberDisplay();
         });
 
-        fetch(`/api/Recommendation/GetRecommendationDetails?${queryParams.toString()}`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        })
-            .then(res => res.json())
-            .then(res => {
-                const container = document.getElementById("recGrid");
-                container.innerHTML = "";
+        function updatePageNumberDisplay() {
+            document.getElementById("pageNumberDisplay").textContent = `Page ${currentPage}`;
+        }
 
-                if (res.data?.length) {
-                    res.data.forEach(section => {
-                        container.innerHTML += `
+        function searchRecommendations() {
+            currentPage = 1;
+            loadRecommendations();
+        }
+
+        function loadRecommendations() {
+            const title = document.getElementById("searchTitle").value.trim();
+            const teacherId = document.getElementById("searchTeacher").value.trim();
+
+            const query = new URLSearchParams({
+                Title: title,
+                TeacherId: teacherId,
+                PageSize: pageSize,
+                PageNumber: currentPage
+            });
+
+            fetch(`/api/Coaches/GetAllRecommendations?${query}`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+                .then(res => res.json())
+                .then(res => {
+                    const container = document.getElementById("recGrid");
+                    container.innerHTML = "";
+
+                    if (res.data?.length) {
+                        res.data.forEach(section => {
+                            container.innerHTML += `
                                 <div class="recommendation-card" style="border-top: 4px solid black;">
                                     <span class="rec-page">${currentPage}</span>
                                     <h3>${section.scheduleTitle}</h3>
                                     <ul>${section.teacherRemark.map(item => `<li>${item}</li>`).join("")}</ul>
                                     <button class="rec-more-btn" onclick="loadRecommendationDetails('${section.id}')">More</button>
                                 </div>`;
-                    });
-                } else {
-                    container.innerHTML = "<p>No recommendations found.</p>";
-                }
-            })
-            .catch(() => alert("Failed to fetch recommendations."));
-    }
+                        });
+                    } else {
+                        container.innerHTML = "<h4>No recommendations found.</h4>";
+                    }
+                })
+                .catch(() => alert("Error loading recommendations"));
+        }
 
-    // Pagination
-    function nextPage() {
-        currentPage++;
-        loadRecommendations();
-        updatePageNumberDisplay();
-    }
-
-    function previousPage() {
-        if (currentPage > 1) {
-            currentPage--;
+        function nextPage() {
+            currentPage++;
             loadRecommendations();
             updatePageNumberDisplay();
         }
-    }
 
-    // Modal: View Details
-    function loadRecommendationDetails(sectionId) {
-        document.getElementById("recCommentId").value = sectionId;
-
-        fetch(`/api/Recommendation/GetRecommendationDetails?sectionId=${sectionId}`, {
-            headers: { "Authorization": `Bearer ${token}` }
-        })
-            .then(res => res.json())
-            .then(res => {
-                const container = document.getElementById("recDetailsContainer");
-                container.innerHTML = "";
-
-                if (res.data?.length) {
-                    res.data.forEach(detail => {
-                        const alignment = detail.status === "left" ? "rec-detail-left" : "rec-detail-right";
-                        container.innerHTML += `<div class="${alignment}"><strong>${detail.title}</strong><p>${detail.description}</p></div>`;
-                    });
-                    document.getElementById("recModal").style.display = "flex";
-                } else {
-                    alert("No details found.");
-                }
-            })
-            .catch(() => alert("Failed to load recommendation details."));
-    }
-
-    function closeRecModal() {
-        document.getElementById("recModal").style.display = "none";
-    }
-
-    // Submit Recommendation Comment
-    document.getElementById("recForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const comment = document.getElementById("recCommentInput").value;
-        const id = document.getElementById("recCommentId").value;
-
-        const payload = { id: id ? parseInt(id) : null, comment };
-
-        fetch(`/api/Recommendation/AddRecomendationsComment`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        })
-            .then(res => res.ok ? res.json() : Promise.reject())
-            .then(() => {
-                alert("Comment submitted successfully");
-                closeRecModal();
-                document.getElementById("recForm").reset();
-            })
-            .catch(() => alert("Error submitting comment."));
-    });
-
-    // Modal: Create Recommendation
-    function openCreateRecModal() {
-        document.getElementById("createRecModal").style.display = "flex";
-        loadScheduleOptions();
-        loadTeacherOptions();
-    }
-
-    function closeCreateRecModal() {
-        document.getElementById("createRecModal").style.display = "none";
-    }
-
-    // Load schedule options
-    function loadScheduleOptions() {
-        fetch('/api/Schedule/GetScheduleList', {
-            headers: { "Authorization": `Bearer ${token}` }
-        })
-            .then(res => res.json())
-            .then(res => {
-                const dropdown = document.getElementById("scheduleDropdown");
-                dropdown.innerHTML = `<option value="">-- Select Schedule --</option>`;
-                res.data.forEach(s =>
-                    dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`
-                );
-            });
-    }
-
-    // Load teacher options
-    function loadTeacherOptions() {
-        fetch('/api/Coaches/MyTeachers?IsPaginated=false', {
-            headers: { "Authorization": `Bearer ${token}` }
-        })
-            .then(res => res.json())
-            .then(res => {
-                const dropdown = document.getElementById("teacherDropdown");
-                dropdown.innerHTML = "";
-                res.data.forEach(t =>
-                    dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`
-                );
-            });
-    }
-
-    // Submit Create Recommendation
-    document.getElementById("createRecForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const scheduleId = document.getElementById("scheduleDropdown").value;
-        const teacherIds = Array.from(document.getElementById("teacherDropdown").selectedOptions).map(o => o.value);
-        const recommendation = document.getElementById("recommendationText").value;
-
-        const payload = { ScheduleId: scheduleId, TeacherIds: teacherIds, Recommendation: recommendation };
-
-        fetch('/api/Recommendation/AddRecomendations', {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        })
-            .then(res => res.json())
-            .then(() => {
-                alert("Recommendation created successfully!");
-                closeCreateRecModal();
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
                 loadRecommendations();
+                updatePageNumberDisplay();
+            }
+        }
+
+        function loadRecommendationDetails(sectionId) {
+            document.getElementById("recCommentId").value = sectionId;
+
+            fetch(`/api/Recommendation/GetRecommendationDetails?sectionId=${sectionId}`, {
+                headers: { "Authorization": `Bearer ${token}` }
             })
-            .catch(() => alert("Error submitting recommendation."));
-    });
-</script>
+                .then(res => res.json())
+                .then(res => {
+                    const container = document.getElementById("recDetailsContainer");
+                    container.innerHTML = "";
+
+                    if (res.data?.length) {
+                        res.data.forEach(detail => {
+                            const alignment = detail.status === "left" ? "rec-detail-left" : "rec-detail-right";
+                            container.innerHTML += `<div class="${alignment}"><strong>${detail.title}</strong><p>${detail.description}</p></div>`;
+                        });
+                        document.getElementById("recModal").style.display = "flex";
+                    } else {
+                        alert("No details found.");
+                    }
+                })
+                .catch(() => alert("Error loading details."));
+        }
+
+        function closeRecModal() {
+            document.getElementById("recModal").style.display = "none";
+        }
+
+        document.getElementById("recForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const comment = document.getElementById("recCommentInput").value;
+            const id = document.getElementById("recCommentId").value;
+
+            fetch("/api/Recommendation/AddRecomendationsComment", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id: id ? parseInt(id) : null, comment })
+            })
+                .then(res => res.ok ? res.json() : Promise.reject())
+                .then(() => {
+                    alert("Comment submitted successfully");
+                    closeRecModal();
+                    document.getElementById("recForm").reset();
+                })
+                .catch(() => alert("Failed to submit comment"));
+        });
+
+        function openCreateRecModal() {
+            document.getElementById("createRecModal").style.display = "flex";
+            loadScheduleOptions();
+            loadTeacherOptions();
+        }
+
+        function closeCreateRecModal() {
+            document.getElementById("createRecModal").style.display = "none";
+        }
+
+        function loadScheduleOptions() {
+            fetch('/api/Schedule/GetScheduleList', {
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+                .then(res => res.json())
+                .then(res => {
+                    const dropdown = document.getElementById("scheduleDropdown");
+                    dropdown.innerHTML = `<option value="">-- Select Schedule --</option>`;
+                    res.data.forEach(s =>
+                        dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`
+                    );
+                });
+        }
+
+        function loadTeacherOptions() {
+            fetch('/api/Coaches/MyTeachers?IsPaginated=false', {
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+                .then(res => res.json())
+                .then(res => {
+                    const dropdown = document.getElementById("teacherDropdown");
+                    dropdown.innerHTML = "";
+                    res.data.forEach(t =>
+                        dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`
+                    );
+                });
+        }
+
+        document.getElementById("createRecForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const scheduleId = document.getElementById("scheduleDropdown").value;
+            const teacherIds = Array.from(document.getElementById("teacherDropdown").selectedOptions).map(o => o.value);
+            const recommendation = document.getElementById("recommendationText").value;
+
+            fetch('/api/Recommendation/AddRecomendations', {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ ScheduleId: scheduleId, TeacherIds: teacherIds, Recommendation: recommendation })
+            })
+                .then(res => res.json())
+                .then(() => {
+                    alert("Recommendation created successfully");
+                    closeCreateRecModal();
+                    loadRecommendations();
+                })
+                .catch(() => alert("Error creating recommendation"));
+        });
+    </script>
+}
