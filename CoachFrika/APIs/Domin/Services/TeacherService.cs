@@ -481,13 +481,12 @@ namespace CoachFrika.APIs.Domin.Services
                                 && (query.status == Common.Enum.ScheduleStatus.ongoing
                                         ? (schedule.StartDate.Value.Date == day)
                                         : query.status == Common.Enum.ScheduleStatus.past
-                                            ? (schedule.StartDate.Value.Date > day)
-                                            : query.status == Common.Enum.ScheduleStatus.comingsoon
                                             ? (schedule.StartDate.Value.Date < day)
-                                            : (schedule.StartDate.Value.Date > day && !schedule.TeacherAttended))
-                                  && schedule.CoachId == teach.CoachId
+                                            : query.status == Common.Enum.ScheduleStatus.comingsoon
+                                            ? (schedule.StartDate.Value.Date > day)
+                                            : (schedule.StartDate.Value.Date < day && !schedule.TeacherAttended))
+                               && schedule.CoachId == teach.CoachId
                                && schedule.Focus == teach.Subscriptions
-                                //&& (query.Scheduled == null || schedule.StartDate.Value.Date == query.Scheduled.Value.Date)
                           select new SchedulesViewModel
                           {
                               Id = schedule.Id,
