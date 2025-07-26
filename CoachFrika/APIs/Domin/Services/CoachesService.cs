@@ -220,9 +220,9 @@ namespace CoachFrika.APIs.Domin.Services
                 // Apply filters based on the query parameters
                 var cos = from teacher in _context.CoachFrikaUsers
                           where
-                          //teacher.CoachId == userId 
-                          //&& teacher.Role == Role.Teacher
-                          (string.IsNullOrEmpty(query.Name) || teacher.FullName.Contains(query.Name))
+                          teacher.CoachId == userId
+                          && teacher.Role == Roles.Teacher
+                         && (string.IsNullOrEmpty(query.Name) || teacher.FullName.Contains(query.Name))
                           select new ProfileDto
                           {
                               CoachId = teacher.CoachId,

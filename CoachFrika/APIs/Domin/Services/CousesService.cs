@@ -157,7 +157,9 @@ namespace CoachFrika.APIs.Domin.Services
                     return res;
                 }
                 var cos = from teacher in _context.CoachFrikaUsers
-                          where teacher.CoachId == schedule.CoachId && teacher.Subscriptions == schedule.Focus
+                          where
+                          teacher.CoachId == schedule.CoachId && 
+                          teacher.Subscriptions == schedule.Focus
                           select new ProfileDto
                           {
                               Id = teacher.Id,

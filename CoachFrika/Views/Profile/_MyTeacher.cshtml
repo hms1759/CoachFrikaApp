@@ -1,4 +1,8 @@
-﻿<div class="space"></div>
+﻿<!-- Include Select2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<div class="space"></div>
 
 <!-- Top Bar -->
 <div class="teacher-top-bar">
@@ -6,7 +10,7 @@
     <div>
         <input type="text" id="teacherSearchInput" class="teacher-search-input" placeholder="Search by name..." />
         <button class="teacher-view-all-btn" onclick="handleTeacherSearch()">Search</button>
-        <button onclick="openCreateRecModal()">+ Create Recommendation</button>
+        <button class="teacher-view-all-btn" onclick="openCreateRecModal()">+ Create Recommendation</button>
     </div>
 </div>
 
@@ -23,28 +27,29 @@
 </div>
 
 <!-- Create Recommendation Modal -->
-<div class="rec-modal" id="createRecModal">
-    <div class="rec-modal-content">
-        <span class="rec-modal-close" onclick="closeCreateRecModal()">×</span>
-        <h2>Create Recommendation</h2>
+<div id="createRecModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+    <div style="background-color: white; padding: 20px; border-radius: 10px; width: 500px; max-width: 90%; position: relative;">
+        <span onclick="closeCreateRecModal()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">×</span>
+        <h2 style="margin-top: 0;">Create Recommendation</h2>
         <form id="createRecForm">
-            <label for="scheduleDropdown">Schedule:</label>
-            <select id="scheduleDropdown" name="ScheduleId" required></select>
+            <label for="scheduleDropdown" style="display: block; margin-top: 10px;">Schedule:</label>
+            <select id="scheduleDropdown" name="ScheduleId" required style="width: 100%; padding: 8px; margin-top: 5px;"></select>
+            </select>
 
-            <label for="teacherDropdown">Select Teachers:</label>
-            <select id="teacherDropdown" name="TeacherIds" multiple required></select>
+            <label for="teacherDropdown" style="display: block; margin-top: 15px;">Select Teachers:</label>
+            <select id="teacherDropdown" name="TeacherIds" multiple required style="width: 100%; padding: 8px; margin-top: 5px; height: 100px;"></select>
+            </select>
 
-            <label for="recommendationText">Recommendation:</label>
-            <textarea id="recommendationText" name="Recommendation" required></textarea>
+            <label for="recommendationText" style="display: block; margin-top: 15px;">Recommendation:</label>
+            <textarea id="recommendationText" name="Recommendation" required style="width: 100%; padding: 10px; height: 100px; margin-top: 5px;"></textarea>
 
-            <button type="submit">Submit</button>
+            <button type="submit" style="margin-top: 20px; padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Submit</button>
         </form>
     </div>
 </div>
 
-
 <script>
-    const teacherToken = localStorage.getItem('authToken');
+    var teacherToken = localStorage.getItem('authToken');
     let teacherPageNumber = 1;
     const teacherPageSize = 10;
     let teacherSearchTerm = '';
@@ -75,26 +80,26 @@
                     const card = document.createElement("div");
                     card.className = "teacher-card";
                     card.innerHTML = `
-                            <div class="teacher-card">
-                                <img
-                                    src="${teacher.imageUrl || 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740'}"
-                                    alt="${teacher.fullName || 'Teacher'}"
-                                    class="teacher-card-img"
-                                />
-                                <div class="teacher-card-content">
-                                    <p class="teacher-name">${teacher.fullName || 'No Name'}</p>
-                                    <p class="teacher-school">${teacher.schoolName || 'Unknown School'}</p>
-                                    <div class="teacher-btn">
-                                        <a href="/Profile/Details?id=${teacher.id}">
-                                            <button class="teacher-view-btn">View Details</button>
-                                        </a>
-                                            <a href="/Profile/Recomendations?id=${teacher.id}&userId=${teacher.coachId}">
-                                            <button class="teacher-recomendation-btn">Recommendation</button>
-                                        </a>
-                                    </div>
+                        <div class="teacher-card">
+                            <img
+                                src="${teacher.imageUrl || 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740'}"
+                                alt="${teacher.fullName || 'Teacher'}"
+                                class="teacher-card-img"
+                            />
+                            <div class="teacher-card-content">
+                                <p class="teacher-name">${teacher.fullName || 'No Name'}</p>
+                                <p class="teacher-school">${teacher.schoolName || 'Unknown School'}</p>
+                                <div class="teacher-btn">
+                                    <a href="/Profile/Details?id=${teacher.id}">
+                                        <button class="teacher-view-btn">View Details</button>
+                                    </a>
+                                    <a href="/Profile/Recomendations?id=${teacher.id}&userId=${teacher.coachId}">
+                                        <button class="teacher-recomendation-btn">Recommendation</button>
+                                    </a>
                                 </div>
                             </div>
-                        `;
+                        </div>
+                    `;
                     wrapper.appendChild(card);
                 });
 
@@ -121,54 +126,69 @@
     function openCreateRecModal() {
         document.getElementById("createRecModal").style.display = "flex";
         loadScheduleOptions();
-        loadTeacherOptions();
+        // loadTeacherOptions();
     }
 
     function closeCreateRecModal() {
         document.getElementById("createRecModal").style.display = "none";
         document.getElementById("createRecForm").reset();
+        $('#teacherDropdown').val(null).trigger('change'); // clear Select2
     }
-
-    function loadScheduleOptions() {
+     function loadScheduleOptions() {
         fetch('/api/Scheduled/GetScheduleList', {
             headers: { "Authorization": `Bearer ${teacherToken}` }
         })
-
             .then(res => res.json())
             .then(res => {
                 const dropdown = document.getElementById("scheduleDropdown");
                 dropdown.innerHTML = `<option value="">-- Select Schedule --</option>`;
-                res.data.forEach(s =>
-                    dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`
-                );
+                res.data.forEach(s => {
+                    dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`;
+                });
+
+                // Add change event listener once options are loaded
+                dropdown.onchange = function () {
+                    const selectedScheduleId = this.value;
+                    if (selectedScheduleId) {
+                        loadTeacherOptions(selectedScheduleId);
+                    }
+                };
             })
             .catch(() => {
                 alert("Failed to load schedules.");
             });
     }
 
-    function loadTeacherOptions() {
-        fetch('/api/Coaches/MyTeachers?IsPaginated=false', {
+    function loadTeacherOptions(scheduleId) {
+        fetch(`/api/Scheduled/GetTeacherList?ScheduleId=${scheduleId}`, {
             headers: { "Authorization": `Bearer ${teacherToken}` }
         })
             .then(res => res.json())
             .then(res => {
                 const dropdown = document.getElementById("teacherDropdown");
                 dropdown.innerHTML = "";
-                res.data.forEach(t =>
-                    dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`
-                );
+                res.data.forEach(t => {
+                    dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`;
+                });
+
+                // Initialize Select2
+                $('#teacherDropdown').select2({
+                    width: '100%',
+                    placeholder: 'Select teachers',
+                    allowClear: true
+                });
             })
             .catch(() => {
                 alert("Failed to load teachers.");
             });
     }
 
+
     document.getElementById("createRecForm").addEventListener("submit", function (e) {
         e.preventDefault();
 
         const scheduleId = document.getElementById("scheduleDropdown").value;
-        const teacherIds = Array.from(document.getElementById("teacherDropdown").selectedOptions).map(opt => opt.value);
+        const teacherIds = $('#teacherDropdown').val();
         const recommendation = document.getElementById("recommendationText").value;
 
         const payload = {
@@ -189,7 +209,7 @@
             .then(() => {
                 alert("Recommendation created successfully!");
                 closeCreateRecModal();
-                loadTeachers(); // Reload after creation if needed
+                loadTeachers(); // Reload after creation
             })
             .catch(() => {
                 alert("Error creating recommendation.");
@@ -199,4 +219,3 @@
     // Load teachers on page load
     loadTeachers();
 </script>
-

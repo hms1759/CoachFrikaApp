@@ -487,7 +487,7 @@ namespace CoachFrika.APIs.Domin.Services
                                             : (schedule.StartDate.Value.Date > day && !schedule.TeacherAttended))
                                   && schedule.CoachId == teach.CoachId
                                && schedule.Focus == teach.Subscriptions
-                                && (query.Scheduled == null || schedule.StartDate.Value.Date == query.Scheduled.Value.Date)
+                                //&& (query.Scheduled == null || schedule.StartDate.Value.Date == query.Scheduled.Value.Date)
                           select new SchedulesViewModel
                           {
                               Id = schedule.Id,
