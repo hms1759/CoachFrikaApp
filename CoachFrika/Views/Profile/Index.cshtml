@@ -7,19 +7,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Prevent caching -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title>Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
+    <title>Dashboard</title>
+
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  @*   <link rel="stylesheet" href="~/css/styles.css"> *@
+
+    <!-- Site Styles -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <div class="wrapper">
-        <!-- Sidebar (Opened by default) -->
+        <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
                 <img src="~/images/logo-removebg-preview.jpg" alt="Logo" />
@@ -50,6 +54,7 @@
                     </a>
                 </li>
             </ul>
+
             <button class="logout-btn" id="logoutBtn">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
@@ -60,10 +65,10 @@
             <i class="fas fa-angle-double-left"></i>
         </button>
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <div class="main-content">
             <div id="page-container" class="page-content">
-                <!-- Content loaded here -->
+                <!-- AJAX content loads here -->
             </div>
         </div>
     </div>
@@ -72,24 +77,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/slidebar.js"></script>
     <script>
-        $(document).ready(function () {
-            // Load default content
-            $("#page-container").load("/Profile/Dashboard", function (response, status, xhr) {
-                if (status === "error") {
-                    console.error("Error loading content:", xhr.status, xhr.statusText);
-                }
-            });
-
-            // Sidebar navigation click handler
-            $(".sidebar-item").on("click", function (e) {
-                e.preventDefault();
-                $(".sidebar-item").removeClass("active");
-                $(this).addClass("active");
-
-                const target = $(this).attr("href").substring(1);
-                $("#page-container").load(`/Profile/${target}`);
-            });
-        });
         const usertoken = localStorage.getItem("authToken");
 
         function getUserRoleFromToken() {
@@ -112,9 +99,28 @@
                 document.getElementById("sidebarTeacherItem").style.display = "block";
             }
         }
-        document.addEventListener("DOMContentLoaded", showSidebarItemsByRole);
 
+        document.addEventListener("DOMContentLoaded", () => {
+            showSidebarItemsByRole();
+
+            // Load dashboard with cache-busting timestamp
+            $("#page-container").load(`/Profile/Dashboard?_=${new Date().getTime()}`, function (response, status, xhr) {
+                if (status === "error") {
+                    console.error("Error loading content:", xhr.status, xhr.statusText);
+                }
+            });
+
+            // Sidebar link click - load page with timestamp
+            $(".sidebar-item").on("click", function (e) {
+                e.preventDefault();
+
+                $(".sidebar-item").removeClass("active");
+                $(this).addClass("active");
+
+                const target = $(this).attr("href").substring(1); // remove '#'
+                $("#page-container").load(`/Profile/${target}?_=${new Date().getTime()}`);
+            });
+        });
     </script>
-
 </body>
 </html>

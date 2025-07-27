@@ -1,7 +1,7 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
     const toggleBtn = document.getElementById('toggleBtn');
     const sidebar = document.querySelector('.sidebar');
-    const logoutBtn = document.getElementById('logoutBtn');
+    //const logoutBtn = document.getElementById('logoutBtn');
     const mainContent = document.querySelector('.main-content');
 
     if (toggleBtn && sidebar && mainContent) {
@@ -47,9 +47,12 @@
         });
     });
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function () {
-            alert('Logging out...');
-        });
-    }
+    //if (logoutBtn) {
+    //    logoutBtn.addEventListener('click', function () {
+    //        localStorage.removeItem("authToken");
+    //        sessionStorage.clear();
+    //        window.location.href = "/Account/Login"; 
+    //        alert('Logging out...');
+    //    });
+    //}
 });

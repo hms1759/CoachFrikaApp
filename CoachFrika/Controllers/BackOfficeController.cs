@@ -40,6 +40,11 @@ namespace CoachFrika.Controllers
             return PartialView("_Schedule");
         }
 
+        public ActionResult School()
+        {
+            return PartialView("_Schools");
+        }
+
         [HttpGet("/BackOffice/GetApplicantDetails/{id}")]
         public async Task<ActionResult> GetApplicantDetails(string id)
         {

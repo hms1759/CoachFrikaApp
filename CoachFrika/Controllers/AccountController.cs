@@ -125,10 +125,21 @@ namespace CoachFrika.Controllers
             }
             TempData["Token"] = token;
             HttpContext.Session.SetString("ProfileData", JsonConvert.SerializeObject(profile));
-            //TempData["ProfileData"] = JsonConvert.SerializeObject(profile);
             return RedirectToAction("Index", "Profile", profile);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Logout()
+        {
+            // Clear all session and temp data
+            HttpContext.Session.Clear();
+            TempData.Clear();
 
+            // Optionally clear cookies if you're using any
+            Response.Cookies.Delete(".AspNetCore.Session");
+
+            return RedirectToAction("Login", "Account");
+        }
         [HttpGet]
         public IActionResult Modal(SignpStage1Resp partlySign)
         {

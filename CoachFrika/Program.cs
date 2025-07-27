@@ -45,6 +45,7 @@ app.Run();
 // --- Service Configuration ---
 void ConfigureServices(IServiceCollection services, IConfiguration configuration)
 {
+    builder.Services.AddSession(); // Add in ConfigureServices
 
     // Database Context & Identity
     services.AddDbContext<AppDbContext>(options =>

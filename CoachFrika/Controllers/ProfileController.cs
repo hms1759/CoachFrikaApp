@@ -20,33 +20,37 @@ namespace CoachFrika.Controllers
             _coachesService = coachesService;
             _webHelpers = webHelpers;
         }
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+   
 
-        // GET: ProfileController
-        public ActionResult Index(userProfileViewModel? model = null)
+        public ActionResult Index()
         {
-            if (model == null || string.IsNullOrEmpty(model?.Email))
+            var profile = HttpContext.Session.GetString("ProfileData");
+            if (!string.IsNullOrEmpty(profile))
             {
-                return RedirectToAction("Login", "Account");
+                var model = JsonConvert.DeserializeObject<userProfileViewModel>(profile);
+                if (model != null || !string.IsNullOrEmpty(model?.Email))
+                {
+                    return View(model);
+
+                }
             }
-            if (model != null)
-            {
-                return View(model);
-            }
-            return View();
+            return RedirectToAction("Login", "Account");
         }
+        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public IActionResult Dashboard()
         {
             var profileJson = HttpContext.Session.GetString("ProfileData");
             if (!string.IsNullOrEmpty(profileJson))
             {
-                var model = JsonConvert.DeserializeObject<userProfileViewModel>(profileJson); ;
+                var model = JsonConvert.DeserializeObject<userProfileViewModel>(profileJson);
                 if (model != null && !string.IsNullOrEmpty(model.Email))
                 {
                     return PartialView("_Dashboard", model);
                 }
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Login", "Account");
         }
 
 
@@ -72,7 +76,7 @@ namespace CoachFrika.Controllers
             return PartialView("_ApplicantDetails", result);
         }
 
-        public IActionResult Recomendations(Guid id,Guid userId)
+        public IActionResult Recomendations(Guid id, Guid userId)
         {
             var request = new GetCoachesRecommendations
             {
