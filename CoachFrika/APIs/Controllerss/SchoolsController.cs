@@ -46,9 +46,11 @@ namespace CoachFrika.APIs.Controllerss
             var result = _service.GetSchoolTeachers(query);
             if (result.Status) return Ok(result); return BadRequest(result);
         }
-        [HttpGet("InviteSchoolTeacher")]
+        [HttpPost("InviteSchoolTeacher")]
         public async Task<IActionResult> InviteSchoolTeacher(CreateSchoolTeacherDto model)
         {
+            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
+            model.LogoUrl = logoUrl;
             var result =await  _service.InviteSchoolTeacher(model);
             if(result.Status)return Ok(result);return BadRequest(result);
         }

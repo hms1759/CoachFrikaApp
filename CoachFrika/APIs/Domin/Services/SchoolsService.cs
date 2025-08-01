@@ -29,17 +29,20 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly AppDbContext _context;
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
+        public readonly IAccountService _accountService;
         private readonly UserManager<CoachFrikaUsers> _userManager;
         private readonly UiSiteConfigSettings _uiSite;
         public SchoolsService(IUnitOfWork unitOfWork,
             AppDbContext context,
             IWebHelpers webHelpers, IOptions<UiSiteConfigSettings> uiSite,
-            UserManager<CoachFrikaUsers> userManager)
+            UserManager<CoachFrikaUsers> userManager, IAccountService accountService, IEmailService emailService)
         {
             _context = context;
             _webHelpers = webHelpers;
             _userManager = userManager;
             _uiSite = uiSite.Value;
+            _accountService = accountService;
+            _emailService = emailService;
         }
 
         public async Task<BaseResponse<string>> CreateSchools(CreateSchoolDto model)
@@ -47,7 +50,7 @@ namespace CoachFrika.APIs.Domin.Services
             var res = new BaseResponse<string>();
             res.Status = true;
             var sch = await _context.SchoolEnrollmentRequest.FirstOrDefaultAsync(x => x.ContactPersonEmail == model.ContactPersonEmail
-            || x.ContactPersonPhoneNumber == model.ContactPersonPhoneNumber);
+            || x.ContactPersonPhoneNumber == model.ContactPersonPhoneNumber || x.SchoolName.ToLower().Contains(model.SchoolName.ToLower()));
 
             if (sch != null)
             {
@@ -60,6 +63,8 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 SchoolName = model.SchoolName,
                 SchoolAddress = model.SchoolAddress,
+                SchoolPhoneNumber = model.ContactPersonPhoneNumber,
+                SchoolEmail = model.ContactPersonEmail,
                 NumbersOfTeachers = model.NumbersOfTeachers,
                 Goals = model.Goals,
                 ContactPersonEmail = model.ContactPersonEmail,
@@ -84,6 +89,7 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 // Apply filters based on the query parameters
                 var cos = from rec in _context.SchoolEnrollmentRequest
+                          where query.Name == null || rec.SchoolName.Contains(query.Name)
                           select rec;
 
                 // Apply pagination using Skip and Take
@@ -145,7 +151,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from teachers in _context.CoachFrikaUsers
-                          where teachers.SchoolId == query.SchoolId
+                              ///  where teachers.SchoolId == query.SchoolId
                           select teachers;
 
                 // Apply pagination using Skip and Take
@@ -167,11 +173,37 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
+        private async Task SendEmail(CreateSchoolTeacherDto user, string newPassword)
+        {
+            var subject = "Your Login Credentials ";
+            var body = $"Your default password is: {newPassword} <br> click here <a href={_uiSite.SiteUrl}/login>here</a> to complete your registration ";
 
+            var bodyTemplate = await _emailService.ReadTemplate("newPassword");
+            //inserting variable
+            var messageToParse = new Dictionary<string, string>
+                    {
+                        { "{Fullname}", user.Name},
+                        { "{Message}", body},
+                        { "{logo}", user.LogoUrl},
+                    };
+
+            //  email notification
+            var messageBody = bodyTemplate.ParseTemplate(messageToParse);
+            var message = new Message(new List<string> { user.Email }, subject, messageBody);
+
+            await _emailService.SendEmail(message);
+        }
         public async Task<BaseResponse<string>> InviteSchoolTeacher(CreateSchoolTeacherDto model)
         {
             var res = new BaseResponse<string>();
             res.Status = true;
+            var sch = await _context.SchoolEnrollmentRequest.FirstOrDefaultAsync(x => x.Id == model.SchoolId);
+            if (sch == null)
+            {
+                res.Message = "School not exist";
+                res.Status = false;
+                return res;
+            }
             var teach = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == model.Email);
             if (teach != null)
             {
@@ -186,7 +218,7 @@ namespace CoachFrika.APIs.Domin.Services
                 res.Status = false;
                 return res;
             }
-            var ne = new CoachFrikaUsers()
+            var schTeacher = new CoachFrikaUsers()
             {
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
@@ -203,11 +235,68 @@ namespace CoachFrika.APIs.Domin.Services
                 Title = model.Title,
                 Name = model.Name
             };
-            _context.SchoolTeacherRequest.Add(dd);
-            _context.SaveChanges();
-            res.Status = true;
-            res.Message = "Sucessfully requsted";
-            return res;
+
+            var newp = new SignpUpDto()
+            {
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                FullName = model.Name,
+                isCoach = false
+            };
+            try
+            {
+                newp.Password = GeneratePassword();
+                var newUser = await _accountService.SignUp(newp);
+                if (newUser == null || newUser.Status ==false)
+                {
+                    res.Status = false;
+                    res.Message = "Ooops an error Occor";
+                    return res;
+                }
+
+                _context.SchoolTeacherRequest.Add(dd);
+                _context.SaveChanges();
+                SendEmail(model, newp.Password);
+                res.Status = true;
+                res.Message = "Sucessfully requsted";
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Status = false;
+                res.Message = ex.Message;
+                return res;
+
+            }
         }
+        public string GeneratePassword()
+        {
+            int length = 8;
+            const string uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string lowercase = "abcdefghijklmnopqrstuvwxyz";
+            const string digits = "0123456789";
+            const string special = "@$%^&*_-+=!";
+
+            var random = new Random();
+            var password = new List<char>
+    {
+        uppercase[random.Next(uppercase.Length)],
+        digits[random.Next(digits.Length)],
+        special[random.Next(special.Length)],
+        lowercase[random.Next(lowercase.Length)]
+    };
+
+            string allChars = uppercase + lowercase + digits + special;
+
+            // Fill the rest of the password
+            for (int i = password.Count; i < length; i++)
+            {
+                password.Add(allChars[random.Next(allChars.Length)]);
+            }
+
+            // Shuffle the password so required characters aren't predictable
+            return new string(password.OrderBy(x => random.Next()).ToArray());
+        }
+
     }
 }

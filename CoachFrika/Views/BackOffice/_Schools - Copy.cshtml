@@ -206,7 +206,7 @@
             let statusClass = statusLabel.toLowerCase();
             let actionButtons = `
                 <button onclick="viewTeacher('${teacher.id}')">View</button>
-               <button onclick="SchoolTeacherBySchId('${teacher.id}')">SchoolTeacher</button>
+                ${statusLabel === 'Pending' ? `<button onclick="editTeacher('${teacher.id}')">SchoolTeacher</button>` : ''}
             `;
 
             tbody.append(`
@@ -306,7 +306,7 @@
         window.location.href = '/BackOffice/GetApplicantSchoolDetails/' + id;
     }
 
-    function SchoolTeacherBySchId(id) {
+    function editTeacher(id) {
         $.ajax({
             url: '/api/BackOfficeAPI/ApproveSchoolApplication/' + id,
             method: 'PUT',
