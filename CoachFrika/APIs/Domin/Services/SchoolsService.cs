@@ -151,7 +151,7 @@ namespace CoachFrika.APIs.Domin.Services
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from teachers in _context.CoachFrikaUsers
-                              ///  where teachers.SchoolId == query.SchoolId
+                          //where teachers.SchoolId == query.SchoolId
                           select teachers;
 
                 // Apply pagination using Skip and Take

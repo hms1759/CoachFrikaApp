@@ -307,17 +307,7 @@
     }
 
     function SchoolTeacherBySchId(id) {
-        $.ajax({
-            url: '/api/BackOfficeAPI/ApproveSchoolApplication/' + id,
-            method: 'PUT',
-            success: function () {
-                alert("Application approved.");
-                loadTeachers(currentPage);
-            },
-            error: function () {
-                alert("Approval failed.");
-            }
-        });
+        window.location.href = '/BackOffice/SchoolTeacher/' + id;
     }
 
     $(document).ready(() => loadTeachers(currentPage));

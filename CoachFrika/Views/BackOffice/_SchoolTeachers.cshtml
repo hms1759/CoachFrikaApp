@@ -1,10 +1,11 @@
 ﻿@using CoachFrika.APIs.ViewModel
 @using CoachFrika.Common
-@model BaseResponse<List<ProfileDto>>
+@using coachfrikaaaa.APIs.Entity
+@model BaseResponse<List<CoachFrikaUsers>>
 
 @{
     Layout = null;
-    ViewBag.Title = "Teachers";
+    ViewBag.Title = "School Teachers";
 
     var statusOptions = new Dictionary<string, string>
     {
@@ -89,7 +90,7 @@
         const onboardingStatus = convertStatusToOnboarding(uiStatus);
 
         $.ajax({
-            url: '/api/BackOfficeAPI/GetAllApplicant',
+            url: '/api/Schools/GetSchoolTeachers',
             method: 'GET',
             data: {
                 Name: name,

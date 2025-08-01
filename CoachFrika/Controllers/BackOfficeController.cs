@@ -7,14 +7,12 @@ namespace CoachFrika.Controllers
 {
     public class BackOfficeController : Controller
     {
-        private readonly ITeacherService _teacherService;
-        private readonly ICoachesService _coachesService;
         private readonly IAccountService _accountService;
-        public BackOfficeController(ITeacherService teacherService, ICoachesService coachesService, IAccountService accountService)
+        private readonly ISchoolsService _schoolService;
+        public BackOfficeController(IAccountService accountService, ISchoolsService schoolService)
         {
-            _teacherService = teacherService;
-            _coachesService = coachesService;
             _accountService = accountService;
+            _schoolService = schoolService;
         }
         // GET: BackOfficeController1cs
         public ActionResult Index()
@@ -52,5 +50,16 @@ namespace CoachFrika.Controllers
             return PartialView("_ApplicantDetails", result);
         }
 
+        //[HttpPut("/BackOffice/SchoolTeacher/{Id}")]
+        public async Task<IActionResult> SchoolTeacher(Guid Id)
+        {
+            var ss = new GetSchoolTeachersSearch
+            {
+                SchoolId = Id
+            };
+
+            var result =  _schoolService.GetSchoolTeachers(ss);
+            return PartialView("_SchoolTeachers", result);
+        }
     }
 }

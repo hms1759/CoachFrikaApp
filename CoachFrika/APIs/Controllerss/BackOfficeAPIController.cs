@@ -58,6 +58,7 @@ namespace CoachFrika.APIs.Controllerss
             var result =  _schoolService.GetAllSchools(model);
             if (result.Status) return Ok(result); return BadRequest(result);
         }
+
     }
     
 }
