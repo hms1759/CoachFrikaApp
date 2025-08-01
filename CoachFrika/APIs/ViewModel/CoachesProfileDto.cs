@@ -138,10 +138,20 @@ namespace CoachFrika.APIs.ViewModel
         public string? ScheduleTitle { get; set; }
 
     }
-
-    public class GetTeachersSearch : Pagination
+    public class GetSchoolSearch : Pagination
     {
         public string? Name { get; set; }
+
+    }
+    public class GetSchoolTeachersSearch : GetSchoolSearch
+    {
+        public Guid SchoolId { get; set; }
+        public OnboardingStatus? OnboardingStatus { get; set; }
+
+    }
+
+    public class GetTeachersSearch : GetSchoolSearch
+    {
         public bool IsCoach { get; set; }
         public OnboardingStatus? OnboardingStatus { get; set; }
 

@@ -1,0 +1,213 @@
+﻿using CloudinaryDotNet.Actions;
+using CoachFrika.APIs.Domin.IServices;
+using CoachFrika.APIs.Entity;
+using CoachFrika.APIs.ViewModel;
+using CoachFrika.Common;
+using CoachFrika.Common.AppUser;
+using CoachFrika.Common.AutoMapper;
+using CoachFrika.Common.Enum;
+using CoachFrika.Common.Extension;
+using CoachFrika.Extensions;
+using CoachFrika.Models;
+using CoachFrika.Services;
+using coachfrikaaaa.APIs.Entity;
+using coachfrikaaaa.Common;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Crypto.Macs;
+using System.Text;
+using System.Text.RegularExpressions;
+using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
+namespace CoachFrika.APIs.Domin.Services
+{
+
+    public class SchoolsService : ISchoolsService
+    {
+        private readonly AppDbContext _context;
+        public readonly IEmailService _emailService;
+        public readonly IWebHelpers _webHelpers;
+        private readonly UserManager<CoachFrikaUsers> _userManager;
+        private readonly UiSiteConfigSettings _uiSite;
+        public SchoolsService(IUnitOfWork unitOfWork,
+            AppDbContext context,
+            IWebHelpers webHelpers, IOptions<UiSiteConfigSettings> uiSite,
+            UserManager<CoachFrikaUsers> userManager)
+        {
+            _context = context;
+            _webHelpers = webHelpers;
+            _userManager = userManager;
+            _uiSite = uiSite.Value;
+        }
+
+        public async Task<BaseResponse<string>> CreateSchools(CreateSchoolDto model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            var sch = await _context.SchoolEnrollmentRequest.FirstOrDefaultAsync(x => x.ContactPersonEmail == model.ContactPersonEmail
+            || x.ContactPersonPhoneNumber == model.ContactPersonPhoneNumber);
+
+            if (sch != null)
+            {
+                res.Message = "Schools already Onboarded";
+                res.Status = false;
+                return res;
+            }
+
+            var newEnt = new SchoolEnrollmentRequest()
+            {
+                SchoolName = model.SchoolName,
+                SchoolAddress = model.SchoolAddress,
+                NumbersOfTeachers = model.NumbersOfTeachers,
+                Goals = model.Goals,
+                ContactPersonEmail = model.ContactPersonEmail,
+                ContactPersonName = model.ContactPersonName,
+                ContactPersonPhoneNumber = model.ContactPersonPhoneNumber,
+                isSubscribed = false
+            };
+
+            await _context.SchoolEnrollmentRequest.AddAsync(newEnt);
+            _context.SaveChanges();
+            res.Message = "Schools Successfully Onboarded";
+            res.Status = true;
+            return res;
+        }
+
+        public BaseResponse<List<SchoolEnrollmentRequest>> GetAllSchools(GetSchoolSearch query)
+        {
+            var userId = _webHelpers.CurrentUserId();
+            var res = new BaseResponse<List<SchoolEnrollmentRequest>>();
+            res.Status = true;
+            try
+            {
+                // Apply filters based on the query parameters
+                var cos = from rec in _context.SchoolEnrollmentRequest
+                          select rec;
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                res.TotalCount = cos.Count();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        public async Task<BaseResponse<SchoolEnrollmentRequest>> GetSchoolById(Guid Id)
+        {
+            var res = new BaseResponse<SchoolEnrollmentRequest>();
+            res.Status = true;
+            try
+            {
+                var sch = await _context.SchoolEnrollmentRequest.FirstOrDefaultAsync(x => x.Id == Id);
+                if (sch == null)
+                {
+                    res.Message = "School not found";
+                    res.Status = false;
+                    return res;
+                }
+
+                res.Data = sch;
+                res.Status = false;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        public BaseResponse<List<CoachFrikaUsers>> GetSchoolTeachers(GetSchoolTeachersSearch query)
+        {
+            var res = new BaseResponse<List<CoachFrikaUsers>>();
+            res.Status = true;
+            try
+            {
+                var day = DateTime.Now.Day;
+                // Apply filters based on the query parameters
+                var cos = from teachers in _context.CoachFrikaUsers
+                          where teachers.SchoolId == query.SchoolId
+                          select teachers;
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+        }
+
+        public async Task<BaseResponse<string>> InviteSchoolTeacher(CreateSchoolTeacherDto model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            var teach = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == model.Email);
+            if (teach != null)
+            {
+                res.Message = "Teacher already exist";
+                res.Status = false;
+                return res;
+            }
+            var req = await _context.SchoolTeacherRequest.FirstOrDefaultAsync(x => x.Email == model.Email || x.PhoneNumber == model.PhoneNumber);
+            if (req != null)
+            {
+                res.Message = "Teacher Request already exist";
+                res.Status = false;
+                return res;
+            }
+            var ne = new CoachFrikaUsers()
+            {
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                FullName = model.Name,
+                Title = model.Title,
+                hasPaid = true,
+                SchoolId = model.SchoolId
+            };
+
+            var dd = new SchoolTeacherRequest
+            {
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                Title = model.Title,
+                Name = model.Name
+            };
+            _context.SchoolTeacherRequest.Add(dd);
+            _context.SaveChanges();
+            res.Status = true;
+            res.Message = "Sucessfully requsted";
+            return res;
+        }
+    }
+}

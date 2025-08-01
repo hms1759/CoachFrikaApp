@@ -13,6 +13,7 @@ namespace CoachFrika.APIs.Controllerss
     {
         private readonly ITeacherService _teacherService;
         private readonly ICoachesService _coachesService;
+        private readonly ISchoolsService _schoolService;
         private readonly IAccountService _accountService;
         public BackOfficeAPIController(ITeacherService teacherService, ICoachesService coachesService, IAccountService accountService)
         {
@@ -49,5 +50,13 @@ namespace CoachFrika.APIs.Controllerss
             var result = await _accountService.ApproveApplicantion(Id);
             if (result.Status) return Ok(result); return BadRequest(result);
         }
+
+        [HttpGet("GetAllSchoolApplicant")]
+        public async Task<IActionResult> GetAllSchoolApplicant([FromQuery] GetSchoolSearch model)
+        {
+            var result =  _schoolService.GetAllSchools(model);
+            if (result.Status) return Ok(result); return BadRequest(result);
+        }
     }
+    
 }

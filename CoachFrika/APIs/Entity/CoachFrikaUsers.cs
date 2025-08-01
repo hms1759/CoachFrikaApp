@@ -34,6 +34,8 @@ namespace coachfrikaaaa.APIs.Entity
         public CoachFrikaUsers? Coach { get; set; }
         public Guid? TeacherId { get; set; }
         public Teachers? Teacher { get; set; }
+        public Guid? SchoolId { get; set; }
+        public SchoolEnrollmentRequest? School { get; set; }
         public bool IsPasswordDefault { get; set; }
     }
 }

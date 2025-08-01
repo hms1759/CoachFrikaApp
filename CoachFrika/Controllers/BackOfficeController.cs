@@ -40,7 +40,7 @@ namespace CoachFrika.Controllers
             return PartialView("_Schedule");
         }
 
-        public ActionResult School()
+        public ActionResult Schools()
         {
             return PartialView("_Schools");
         }
