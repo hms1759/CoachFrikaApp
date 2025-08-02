@@ -150,9 +150,11 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
-                var cos = from teachers in _context.CoachFrikaUsers
-                          //where teachers.SchoolId == query.SchoolId
-                          select teachers;
+                var cos = _context.CoachFrikaUsers
+                            .Where(t => t.Role == Roles.Teacher
+                                && t.SchoolId.ToString() == query.SchoolId
+                                && (string.IsNullOrEmpty(query.Name) || t.FullName.ToLower().Contains(query.Name.ToLower())))
+                            .ToList();
 
                 // Apply pagination using Skip and Take
                 var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
@@ -247,7 +249,7 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 newp.Password = GeneratePassword();
                 var newUser = await _accountService.SignUp(newp);
-                if (newUser == null || newUser.Status ==false)
+                if (newUser == null || newUser.Status == false)
                 {
                     res.Status = false;
                     res.Message = "Ooops an error Occor";

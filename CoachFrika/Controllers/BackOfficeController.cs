@@ -55,11 +55,12 @@ namespace CoachFrika.Controllers
         {
             var ss = new GetSchoolTeachersSearch
             {
-                SchoolId = Id
+                SchoolId = Id.ToString(),
             };
 
+            HttpContext.Session.SetString("schoolId",Id.ToString());
             var result =  _schoolService.GetSchoolTeachers(ss);
-            return PartialView("_SchoolTeachers", result);
+            return PartialView("_SchoolTeachers", Id);
         }
     }
 }

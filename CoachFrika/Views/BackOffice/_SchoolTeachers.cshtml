@@ -1,7 +1,4 @@
-﻿@using CoachFrika.APIs.ViewModel
-@using CoachFrika.Common
-@using coachfrikaaaa.APIs.Entity
-@model BaseResponse<List<CoachFrikaUsers>>
+﻿@model Guid
 
 @{
     Layout = null;
@@ -16,55 +13,145 @@
     };
 }
 
-<div class="bkcoaches-container">
-    <div class="bkcoaches-header">
-        <h2>Teachers</h2>
-        <div class="bkcoaches-searchbar">
-            <input type="text" id="searchName" placeholder="Search by name..." />
-            <select id="statusFilter">
-                @foreach (var option in statusOptions)
-                {
-                    <option value="@option.Key">@option.Value</option>
-                }
-            </select>
-            <select id="pageSize">
-                <option value="10">10 per page</option>
-                <option value="20">20 per page</option>
-                <option value="50">50 per page</option>
-                <option value="100">100 per page</option>
-            </select>
-            <button id="searchBtn">Search</button>
+<script>
+    var schoolId = '@Model'; // ✅ Pass SchoolId from controller
+</script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/backOffice.css" asp-append-version="true" />
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.4);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: #fff;
+        padding: 20px;
+        width: 400px;
+        border-radius: 8px;
+        position: relative;
+    }
+
+        .modal-content input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+</style>
+
+<!-- ✅ Main Content -->
+<div class="main-content">
+    <div class="bkcoaches-container">
+        <div class="bkcoaches-header">
+            <h2>Teachers</h2>
+            <div class="bkcoaches-searchbar">
+                <input type="text" id="searchName" placeholder="Search by name..." />
+                <select id="statusFilter">
+                    @foreach (var option in statusOptions)
+                    {
+                        <option value="@option.Key">@option.Value</option>
+                    }
+                </select>
+                <select id="pageSize">
+                    <option value="10">10 per page</option>
+                    <option value="20">20 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                </select>
+                <button id="searchBtn">Search</button>
+                <button id="addTeacherBtn">Add Teacher</button>
+            </div>
         </div>
+
+        <table class="bkcoaches-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Email</th>
+                    <th>School</th>
+                    <th>Professional Title</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="9">Loading teachers...</td></tr>
+            </tbody>
+        </table>
+
+        <div class="bkcoaches-pagination"></div>
     </div>
-
-    <table class="bkcoaches-table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Name</th>
-                <th>Phone Number</th>
-                <th>Email</th>
-                <th>School</th>
-                <th>Professional Title</th>
-                <th>Address</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-
-            <tr><td colspan="9">Loading Teachers...</td></tr>
-        </tbody>
-    </table>
-
-    <div class="bkcoaches-pagination"></div>
 </div>
 
+<!-- ✅ Modal for Add Teacher -->
+<div id="addTeacherModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Add Teacher</h2>
+        <form id="addTeacherForm">
+            <input type="text" name="Name" placeholder="Name" required />
+            <input type="text" name="Title" placeholder="Title" required />
+            <input type="text" name="PhoneNumber" placeholder="Phone Number" required />
+            <input type="email" name="Email" placeholder="Email" required />
+            <button type="submit">Invite Teacher</button>
+        </form>
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script>
     var currentPage = 1;
+
+    const modal = document.getElementById('addTeacherModal');
+    const form = document.getElementById('addTeacherForm');
+
+    // ✅ Open modal
+    $('#addTeacherBtn').on('click', function () {
+        modal.style.display = 'flex';
+    });
+
+    // ✅ Close modal
+    function closeModal() {
+        modal.style.display = 'none';
+        form.reset();
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    };
 
     $('#searchBtn').on('click', function () {
         currentPage = 1;
@@ -83,6 +170,7 @@
         return null;
     }
 
+    // ✅ Load teachers from API
     function loadTeachers(pageNumber) {
         const name = $('#searchName').val();
         const uiStatus = $('#statusFilter').val();
@@ -93,26 +181,25 @@
             url: '/api/Schools/GetSchoolTeachers',
             method: 'GET',
             data: {
+                SchoolId: schoolId,
                 Name: name,
-                IsCoach: false,
                 OnboardingStatus: onboardingStatus,
                 PageSize: pageSize,
                 PageNumber: pageNumber
             },
             success: function (response) {
-
-                console.log(response);
                 renderTeacherTable(response.data);
                 renderPagination(response.totalCount, pageNumber, pageSize);
             },
-            error: function () {
-                alert("Failed to load data.");
+            error: function (xhr) {
+                const errorMsg = xhr.responseJSON?.message || "Failed to load teachers.";
+                alert(errorMsg);
             }
         });
     }
 
+    // ✅ Render teachers in table
     function renderTeacherTable(data) {
-        console.log(data);
         const tbody = $('.bkcoaches-table tbody');
         tbody.empty();
 
@@ -120,7 +207,7 @@
             tbody.append('<tr><td colspan="9">No teachers found.</td></tr>');
             return;
         }
-        console.log(data)
+
         data.forEach(teacher => {
             let statusLabel = teacher.stages < 6
                 ? 'Ongoing'
@@ -128,29 +215,27 @@
 
             let statusClass = statusLabel.toLowerCase();
             let actionButtons = `
-                    <button onclick="viewTeacher('${teacher.id}')">View</button>
-                    ${statusLabel === 'Pending' ? `<button onclick="editTeacher('${teacher.id}')">Approve</button>` : ''}
-                `;
+                <button onclick="viewTeacher('${teacher.id}')">View</button>
+                ${statusLabel === 'Pending' ? `<button onclick="approveTeacher('${teacher.id}')">Approve</button>` : ''}
+            `;
 
             tbody.append(`
-                    <tr>
-                        <td>${teacher.title || null}</td>
-                        <td>${teacher.fullName || null}</td>
-                        <td>${teacher.phoneNumber || null}</td>
-                        <td>${teacher.email || null}</td>
-                        <td>${teacher.schoolName || null}</td>
-                        <td>${teacher.professionalTitle || null}</td>
-                        <td>${teacher.address || null}</td>
-                        <td><span class="bkcoaches-status ${statusClass}">${statusLabel}</span></td>
-                        <td class="bkcoaches-action">
-                            <button class="bkcoaches-menu-btn" onclick="toggleMenu(this)">⋮</button>
-                            <div class="bkcoaches-dropdown">${actionButtons}</div>
-                        </td>
-                    </tr>
-                `);
+                <tr>
+                    <td>${teacher.title || ''}</td>
+                    <td>${teacher.fullName || ''}</td>
+                    <td>${teacher.phoneNumber || ''}</td>
+                    <td>${teacher.email || ''}</td>
+                    <td>${teacher.schoolName || ''}</td>
+                    <td>${teacher.professionalTitle || ''}</td>
+                    <td>${teacher.address || ''}</td>
+                    <td><span class="bkcoaches-status ${statusClass}">${statusLabel}</span></td>
+                    <td>${actionButtons}</td>
+                </tr>
+            `);
         });
     }
 
+    // ✅ Render pagination
     function renderPagination(totalCount, pageNumber, pageSize) {
         const pagination = $('.bkcoaches-pagination');
         pagination.empty();
@@ -159,53 +244,72 @@
         if (totalPages <= 1) return;
 
         if (pageNumber > 1) {
-            pagination.append(`<button class="page-btn" onclick="loadTeachers(${pageNumber - 1})">Prev</button>`);
+            pagination.append(`<button onclick="loadTeachers(${pageNumber - 1})">Prev</button>`);
         }
 
         for (let i = 1; i <= totalPages; i++) {
             const active = i === pageNumber ? 'active' : '';
-            pagination.append(`<button class="page-btn ${active}" onclick="loadTeachers(${i})">${i}</button>`);
+            pagination.append(`<button class="${active}" onclick="loadTeachers(${i})">${i}</button>`);
         }
 
         if (pageNumber < totalPages) {
-            pagination.append(`<button class="page-btn" onclick="loadTeachers(${pageNumber + 1})">Next</button>`);
+            pagination.append(`<button onclick="loadTeachers(${pageNumber + 1})">Next</button>`);
         }
 
         currentPage = pageNumber;
     }
 
-    function toggleMenu(button) {
-        document.querySelectorAll('.bkcoaches-dropdown').forEach(d => d.classList.remove('show'));
-        const dropdown = button.nextElementSibling;
-        dropdown.classList.toggle('show');
-    }
-
-    window.addEventListener('click', function (e) {
-        if (!e.target.matches('.bkcoaches-menu-btn')) {
-            document.querySelectorAll('.bkcoaches-dropdown').forEach(d => d.classList.remove('show'));
-        }
-    });
-
-
+    // ✅ View Teacher
     function viewTeacher(id) {
         window.location.href = '/BackOffice/GetApplicantDetails/' + id;
     }
 
-    function editTeacher(id) {
+    // ✅ Approve Teacher
+    function approveTeacher(id) {
         $.ajax({
             url: '/api/BackOfficeAPI/ApproveApplication/' + id,
             method: 'PUT',
             success: function () {
-                alert("Application approved.");
-                loadTeachers(currentPage); // optional reload
+                alert("Teacher approved successfully.");
+                loadTeachers(currentPage);
             },
-            error: function () {
-                alert("Approval failed.");
+            error: function (xhr) {
+                const msg = xhr.responseJSON?.message || "Approval failed.";
+                alert(msg);
             }
         });
     }
 
+    // ✅ Handle form submit (Invite Teacher)
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
 
+        const formData = {
+            Name: form.Name.value,
+            Title: form.Title.value,
+            PhoneNumber: form.PhoneNumber.value,
+            Email: form.Email.value,
+            SchoolId: schoolId
+        };
+
+        $.ajax({
+            url: '/api/Schools/InviteSchoolTeacher',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function () {
+                alert('Teacher invited successfully.');
+                closeModal();
+                loadTeachers(currentPage);
+            },
+            error: function (xhr) {
+                const msg = xhr.responseJSON?.message || "Failed to invite teacher.";
+                alert(msg);
+            }
+        });
+    });
+
+    // ✅ Load teachers on page load
     $(document).ready(function () {
         loadTeachers(currentPage);
     });

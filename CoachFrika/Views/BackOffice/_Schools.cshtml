@@ -121,7 +121,7 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    let currentPage = 1;
+    let currentPageNo = 1;
 
     const modal = document.getElementById("createSchoolModal");
     const form = document.getElementById("createSchoolForm");
@@ -145,13 +145,13 @@
 
     // Filter search
     $('#searchBtn').on('click', () => {
-        currentPage = 1;
-        loadTeachers(currentPage);
+        currentPageNo = 1;
+        loadTeachers(currentPageNo);
     });
 
     $('#pageSize').on('change', () => {
-        currentPage = 1;
-        loadTeachers(currentPage);
+        currentPageNo = 1;
+        loadTeachers(currentPageNo);
     });
 
     // Status Mapping
@@ -247,7 +247,7 @@
             pagination.append(`<button class="page-btn" onclick="loadTeachers(${pageNumber + 1})">Next</button>`);
         }
 
-        currentPage = pageNumber;
+        currentPageNo = pageNumber;
     }
 
     function toggleMenu(button) {
@@ -278,7 +278,7 @@
             success: function () {
                 alert('School created successfully.');
                 closeModal();
-                loadTeachers(currentPage);
+                loadTeachers(currentPageNo);
             },
               error: function (xhr) {
         let errorMessage = "Failed to create school.";
@@ -310,5 +310,5 @@
         window.location.href = '/BackOffice/SchoolTeacher/' + id;
     }
 
-    $(document).ready(() => loadTeachers(currentPage));
+    $(document).ready(() => loadTeachers(currentPageNo));
 </script>

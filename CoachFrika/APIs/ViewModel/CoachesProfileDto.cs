@@ -145,7 +145,7 @@ namespace CoachFrika.APIs.ViewModel
     }
     public class GetSchoolTeachersSearch : GetSchoolSearch
     {
-        public Guid SchoolId { get; set; }
+        public string SchoolId { get; set; }
         public OnboardingStatus? OnboardingStatus { get; set; }
 
     }
