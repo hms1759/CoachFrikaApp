@@ -13,6 +13,7 @@
         { "3", "Approved" }
     };
 }
+
 <style>
     .modal {
         display: none;
@@ -57,6 +58,24 @@
         font-size: 20px;
         cursor: pointer;
     }
+
+    .bkcoaches-pagination {
+        margin-top: 15px;
+        text-align: center;
+    }
+
+        .bkcoaches-pagination .page-btn {
+            margin: 0 3px;
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            cursor: pointer;
+        }
+
+        .bkcoaches-pagination .active {
+            background-color: #007bff;
+            color: #fff;
+        }
 </style>
 
 <div class="bkcoaches-container">
@@ -119,17 +138,25 @@
         </div>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    let currentPageNo = 1;
+    // ✅ Prevent redeclaration
+    if (typeof currentPageNo === 'undefined') {
+        var currentPageNo = 1;
+    }
+    if (typeof modal === 'undefined') {
+        var modal = document.getElementById("createSchoolModal");
+    }
+    if (typeof form === 'undefined') {
+        var form = document.getElementById("createSchoolForm");
+    }
 
-    const modal = document.getElementById("createSchoolModal");
-    const form = document.getElementById("createSchoolForm");
+    // ✅ Event Binding with off().on() to prevent duplication
+    $(document).off('click', '#createBtn').on('click', '#createBtn', function () {
+        modal.style.display = "block";
+    });
 
-    // Open modal
-    $('#createBtn').on('click', () => modal.style.display = "block");
-
-    // Close modal
     function closeModal() {
         modal.style.display = "none";
         form.reset();
@@ -143,18 +170,18 @@
         if (e.target == modal) closeModal();
     });
 
-    // Filter search
-    $('#searchBtn').on('click', () => {
+    // ✅ Search and Pagination Events
+    $(document).off('click', '#searchBtn').on('click', '#searchBtn', function () {
         currentPageNo = 1;
-        loadTeachers(currentPageNo);
+        loadSchools(currentPageNo);
     });
 
-    $('#pageSize').on('change', () => {
+    $('#pageSize').off('change').on('change', function () {
         currentPageNo = 1;
-        loadTeachers(currentPageNo);
+        loadSchools(currentPageNo);
     });
 
-    // Status Mapping
+    // ✅ Convert UI Status to Backend Enum
     function convertStatusToOnboarding(uiStatus) {
         if (uiStatus === "1") return 0;
         if (uiStatus === "2") return 1;
@@ -162,8 +189,8 @@
         return null;
     }
 
-    // Load Schools
-    function loadTeachers(pageNumber) {
+    // ✅ Load Schools
+    function loadSchools(pageNumber) {
         const name = $('#searchName').val();
         const uiStatus = $('#statusFilter').val();
         const pageSize = $('#pageSize').val();
@@ -180,7 +207,7 @@
                 PageNumber: pageNumber
             },
             success: function (response) {
-                renderTeacherTable(response.data);
+                renderSchoolTable(response.data);
                 renderPagination(response.totalCount, pageNumber, pageSize);
             },
             error: function () {
@@ -189,7 +216,8 @@
         });
     }
 
-    function renderTeacherTable(data) {
+    // ✅ Render Table
+    function renderSchoolTable(data) {
         const tbody = $('.bkcoaches-table tbody');
         tbody.empty();
 
@@ -198,25 +226,25 @@
             return;
         }
 
-        data.forEach(teacher => {
-            let statusLabel = teacher.stages < 6
+        data.forEach(school => {
+            let statusLabel = school.stages < 6
                 ? 'Ongoing'
-                : (teacher.stages === 6 && teacher.hasPaid ? 'Approved' : 'Pending');
+                : (school.stages === 6 && school.hasPaid ? 'Approved' : 'Pending');
 
             let statusClass = statusLabel.toLowerCase();
             let actionButtons = `
-                <button onclick="viewTeacher('${teacher.id}')">View</button>
-               <button onclick="SchoolTeacherBySchId('${teacher.id}')">SchoolTeacher</button>
+                <button onclick="viewSchool('${school.id}')">View</button>
+                <button onclick="SchoolTeacherBySchId('${school.id}')">SchoolTeacher</button>
             `;
 
             tbody.append(`
                 <tr>
-                    <td>${teacher.schoolName || ''}</td>
-                    <td>${teacher.contactPersonName || ''}</td>
-                    <td>${teacher.schoolPhoneNumber || ''}</td>
-                    <td>${teacher.schoolEmail || ''}</td>
-                    <td>${teacher.numbersOfTeachers ?? ''}</td>
-                    <td>${teacher.schoolAddress || ''}</td>
+                    <td>${school.schoolName || ''}</td>
+                    <td>${school.contactPersonName || ''}</td>
+                    <td>${school.schoolPhoneNumber || ''}</td>
+                    <td>${school.schoolEmail || ''}</td>
+                    <td>${school.numbersOfTeachers ?? ''}</td>
+                    <td>${school.schoolAddress || ''}</td>
                     <td><span class="bkcoaches-status ${statusClass}">${statusLabel}</span></td>
                     <td class="bkcoaches-action">
                         <button class="bkcoaches-menu-btn" onclick="toggleMenu(this)">⋮</button>
@@ -227,6 +255,7 @@
         });
     }
 
+    // ✅ Render Pagination
     function renderPagination(totalCount, pageNumber, pageSize) {
         const pagination = $('.bkcoaches-pagination');
         pagination.empty();
@@ -235,28 +264,29 @@
         if (totalPages <= 1) return;
 
         if (pageNumber > 1) {
-            pagination.append(`<button class="page-btn" onclick="loadTeachers(${pageNumber - 1})">Prev</button>`);
+            pagination.append(`<button class="page-btn" onclick="loadSchools(${pageNumber - 1})">Prev</button>`);
         }
 
         for (let i = 1; i <= totalPages; i++) {
             const active = i === pageNumber ? 'active' : '';
-            pagination.append(`<button class="page-btn ${active}" onclick="loadTeachers(${i})">${i}</button>`);
+            pagination.append(`<button class="page-btn ${active}" onclick="loadSchools(${i})">${i}</button>`);
         }
 
         if (pageNumber < totalPages) {
-            pagination.append(`<button class="page-btn" onclick="loadTeachers(${pageNumber + 1})">Next</button>`);
+            pagination.append(`<button class="page-btn" onclick="loadSchools(${pageNumber + 1})">Next</button>`);
         }
 
         currentPageNo = pageNumber;
     }
 
+    // ✅ Toggle Menu
     function toggleMenu(button) {
         document.querySelectorAll('.bkcoaches-dropdown').forEach(d => d.classList.remove('show'));
         const dropdown = button.nextElementSibling;
         dropdown.classList.toggle('show');
     }
 
-    // Submit New School
+    // ✅ Submit New School
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -278,31 +308,30 @@
             success: function () {
                 alert('School created successfully.');
                 closeModal();
-                loadTeachers(currentPageNo);
+                loadSchools(currentPageNo);
             },
-              error: function (xhr) {
-        let errorMessage = "Failed to create school.";
+            error: function (xhr) {
+                let errorMessage = "Failed to create school.";
 
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-            errorMessage = xhr.responseJSON.message;
-        } else if (xhr.responseText) {
-            try {
-                const response = JSON.parse(xhr.responseText);
-                if (response.message) {
-                    errorMessage = response.message;
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                } else if (xhr.responseText) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.message) {
+                            errorMessage = response.message;
+                        }
+                    } catch (e) {
+                        errorMessage = xhr.responseText;
+                    }
                 }
-            } catch (e) {
-                // fallback if JSON parsing fails
-                errorMessage = xhr.responseText;
-            }
-        }
 
-        alert(errorMessage);
-    }
+                alert(errorMessage);
+            }
         });
     });
 
-    function viewTeacher(id) {
+    function viewSchool(id) {
         window.location.href = '/BackOffice/GetApplicantSchoolDetails/' + id;
     }
 
@@ -310,5 +339,5 @@
         window.location.href = '/BackOffice/SchoolTeacher/' + id;
     }
 
-    $(document).ready(() => loadTeachers(currentPageNo));
+    $(document).ready(() => loadSchools(currentPageNo));
 </script>

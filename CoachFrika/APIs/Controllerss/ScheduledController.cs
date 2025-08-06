@@ -65,39 +65,5 @@ namespace CoachFrika.APIs.Controllerss
             var result = _service.GetScheduleById(Id);
             if(result.Status)return Ok(result);return BadRequest(result);
         }
-
-
-
-        //[HttpGet("GetCoachesById")]
-        //public async Task<IActionResult> GetCoachesById([FromQuery] Guid userId)
-        //{
-        //    var result = await _logicService.GetUserById(userId);
-        //    if(result.Status)return Ok(result);return BadRequest(result);
-        //}
-        //[HttpGet("GetCoachesDetails")]
-        //public async Task<IActionResult> GetCoachesDetails()
-        //{
-        //    var result = await _logicService.GetUserDetails();
-        //    if(result.Status)return Ok(result);return BadRequest(result);
-        //}
-        //[HttpGet("GetBatches")]
-        //public IActionResult GetBatches()
-        //{
-        //    var result = _service.GetBatches();
-        //    if(result.Status)return Ok(result);return BadRequest(result);
-        //}
-
-        //[HttpPost("CreateSchedule")]
-        //public async Task<IActionResult> CreateSchedule(SchedulesDto model)
-        //{
-        //    var result = await _service.CreateSchedule(model);
-        //    if(result.Status)return Ok(result);return BadRequest(result);
-        //}
-        //[HttpGet("GetMySchedule")]
-        //public IActionResult GetMySchedule()
-        //{
-        //    var result = _service.GetMySchedule();
-        //    if(result.Status)return Ok(result);return BadRequest(result);
-        //}
     }
 }

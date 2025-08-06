@@ -39,6 +39,7 @@ namespace CoachFrika.APIs.ViewModel
         public string? MeetingUrl { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public string? CreatedBy { get; set; }
     }
     public class BatchesDto
     {

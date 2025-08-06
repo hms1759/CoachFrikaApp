@@ -13,6 +13,10 @@ namespace CoachFrika.APIs.ViewModel
         public string? Email { get; set; }
         public string? Password { get; set; }
         public bool isCoach { get; set; }
+        [JsonIgnore]
+        public Guid? SchoolId { get; set; }
+        [JsonIgnore]
+        public string? Title { get; set; }
     }
 
     public class SignpStage1Resp

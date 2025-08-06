@@ -149,6 +149,8 @@ namespace CoachFrika.APIs.Domin.Services
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
                     FullName = model.FullName,
+                    SchoolId = model.SchoolId,
+                    Title = model.Title,
                     Role = model.isCoach ? Roles.Coach : Roles.Teacher,
                     Stages = 0
                 };

@@ -243,16 +243,27 @@ namespace CoachFrika.APIs.Domin.Services
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 FullName = model.Name,
-                isCoach = false
+                isCoach = false,
+                SchoolId = model.SchoolId,
+                Title = model.Title
+                
+
             };
             try
             {
                 newp.Password = GeneratePassword();
                 var newUser = await _accountService.SignUp(newp);
-                if (newUser == null || newUser.Status == false)
+                if (newUser == null )
                 {
                     res.Status = false;
                     res.Message = "Ooops an error Occor";
+                    return res;
+                }
+
+                if (newUser.Status == false)
+                {
+                    res.Status = false;
+                    res.Message = newUser.Message;
                     return res;
                 }
 
@@ -277,7 +288,7 @@ namespace CoachFrika.APIs.Domin.Services
             const string uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const string lowercase = "abcdefghijklmnopqrstuvwxyz";
             const string digits = "0123456789";
-            const string special = "@$%^&*_-+=!";
+            const string special = "@";
 
             var random = new Random();
             var password = new List<char>

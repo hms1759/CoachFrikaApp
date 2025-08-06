@@ -8,10 +8,10 @@
 
     var statusOptions = new Dictionary<string, string>
     {
-        { "", "All Status" },
-        { "1", "Ongoing" },
-        { "2", "Past" },
-        { "3", "Coming Sonn" }
+        { "", "All Plans" },
+        { "1", "Intentional" },
+        { "2", "Phenomenal" },
+        { "3", "Transformational" }
     };
 }
 
@@ -39,12 +39,12 @@
     <table class="bkcoaches-table">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Coach</th>
+                <th>Title</th>
+                <th>Plan</th>
                 <th>Duration</th>
                 <th>StartTime</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th>EndTime</th>
+                <th>CreatedBy</th>
             </tr>
         </thead>
         <tbody>
@@ -79,15 +79,14 @@
         const name = $('#searchName').val();
         const uiStatus = $('#statusFilter').val();
         const pageSize = $('#pageSize').val();
-        const onboardingStatus = convertStatusToOnboarding(uiStatus);
+        const Plans = convertStatusToOnboarding(uiStatus);
 
         $.ajax({
             url: '/api/BackOfficeAPI/GetAllSchedules',
             method: 'GET',
             data: {
                 Name: name,
-                IsCoach: true,
-                OnboardingStatus: onboardingStatus,
+                Plans: Plans,
                 PageSize: pageSize,
                 PageNumber: pageNumber
             },
@@ -110,31 +109,47 @@
             return;
         }
 
-        data.forEach(schedule => {
-            let statusLabel = coach.stages < 4
-                ? 'Ongoing'
-                : (coach.stages === 4 && coach.hasPaid ? 'Approved' : 'Pending');
+        // data.forEach(schedule => {
+        //     let statusLabel = coach.stages < 4
+        //         ? 'Ongoing'
+        //         : (coach.stages === 4 && coach.hasPaid ? 'Approved' : 'Pending');
 
-            let statusClass = statusLabel.toLowerCase();
-            let actionButtons = `
-                    <button onclick="viewCoach('${coach.id}')">View</button>
-                    ${statusLabel === 'Pending' ? `<button onclick="editCoach('${coach.id}')">Approve</button>` : ''}
-                `;
+        //     let statusClass = statusLabel.toLowerCase();
+        //     let actionButtons = `
+        //             <button onclick="viewCoach('${coach.id}')">View</button>
+        //             ${statusLabel === 'Pending' ? `<button onclick="editCoach('${coach.id}')">Approve</button>` : ''}
+        //         `;
 
-            tbody.append(`
-                    <tr>
-                        <td>${coach.fullName}</td>
-                        <td>${coach.phoneNumber}</td>
-                        <td>${coach.email}</td>
-                        <td>${coach.address}</td>
-                        <td><span class="bkcoaches-status ${statusClass}">${statusLabel}</span></td>
-                        <td class="bkcoaches-action">
-                            <button class="bkcoaches-menu-btn" onclick="toggleMenu(this)">⋮</button>
-                            <div class="bkcoaches-dropdown">${actionButtons}</div>
-                        </td>
-                    </tr>
-                `);
-        });
+        //     tbody.append(`
+        //             <tr>
+        //                 <td>${coach.title}</td>
+        //                 <td>${coach.focus}</td>
+        //                 <td>${coach.duration}</td>
+        //                 <td>${coach.startDate}</td>
+        //                 <td>${coach.endDate}</td>}</td>
+        //             </tr>
+        //         `);
+        // });
+
+            data.forEach(coach => {
+        const start = new Date(coach.startDate);
+        const end = new Date(coach.endDate);
+        const diffMinutes = Math.floor((end - start) / 60000);
+        const hours = Math.floor(diffMinutes / 60);
+        const minutes = diffMinutes % 60;
+        const duration = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+
+        tbody.append(`
+            <tr>
+                <td>${coach.title}</td>
+                <td>${coach.focus}</td>
+                <td>${duration}</td>
+                <td>${start.toLocaleString()}</td>
+                <td>${end.toLocaleString()}</td>
+                <td>${coach.createdBy}</td>
+            </tr>
+        `);
+    });
     }
 
     function renderPagination(totalCount, pageNumber, pageSize) {

@@ -143,6 +143,12 @@ namespace CoachFrika.APIs.ViewModel
         public string? Name { get; set; }
 
     }
+    public class GetBackOfficeScheduleSearch : Pagination
+    {
+        public string? Name { get; set; }
+        public Subscriptions? Plans { get; set; }
+
+    }
     public class GetSchoolTeachersSearch : GetSchoolSearch
     {
         public string SchoolId { get; set; }

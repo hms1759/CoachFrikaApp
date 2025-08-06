@@ -142,6 +142,49 @@ namespace CoachFrika.APIs.Domin.Services
             }
 
         }
+        public BaseResponse<List<SchedulesViewModel>> GetBackOfficeScheduleList(GetBackOfficeScheduleSearch query)
+        {
+            var res = new BaseResponse<List<SchedulesViewModel>>();
+            res.Status = true;
+            try
+            {
+                var day = DateTime.Now.Date;
+                // Apply filters based on the query parameters
+                var cos = from schedule in _context.Schedule
+                          where (string.IsNullOrEmpty(query.Name) || schedule.Title == query.Name)
+                          && (query.Plans == null || schedule.Focus == query.Plans)
+                          select new SchedulesViewModel
+                          {
+                              Id = schedule.Id,
+                              Title = schedule.Title,
+                              Focus = schedule.Focus.ToString(),
+                              MeetingUrl = schedule.MeetingLink,
+                              StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
+                              EndDate = schedule.EndDate ?? DateTime.MinValue,
+                              CreatedBy = schedule.CreatedBy
+                          };
+
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
 
         public BaseResponse<List<ProfileDto>> GetTeacherList(string ScheduleId)
         {
