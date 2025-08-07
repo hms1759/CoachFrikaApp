@@ -90,12 +90,6 @@
                 const target = $(this).attr("href").substring(1);
                 $("#page-container").load(`/BackOffice/${target}`);
             });
-
-               logoutBtn.addEventListener('click', function () {
-               localStorage.removeItem("authToken");
-               sessionStorage.clear();
-               window.location.href = "/Account/Login";
-           });
         });
     </script>
 </body>

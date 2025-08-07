@@ -103,12 +103,12 @@
         document.addEventListener("DOMContentLoaded", () => {
             showSidebarItemsByRole();
 
-            // // Load dashboard with cache-busting timestamp
-            // $("#page-container").load(`/Profile/Dashboard?_=${new Date().getTime()}`, function (response, status, xhr) {
-            //     if (status === "error") {
-            //         console.error("Error loading content:", xhr.status, xhr.statusText);
-            //     }
-            // });
+            // Load dashboard with cache-busting timestamp
+            $("#page-container").load(`/Profile/Dashboard?_=${new Date().getTime()}`, function (response, status, xhr) {
+                if (status === "error") {
+                    console.error("Error loading content:", xhr.status, xhr.statusText);
+                }
+            });
 
             // Sidebar link click - load page with timestamp
             $(".sidebar-item").on("click", function (e) {
@@ -121,12 +121,6 @@
                 $("#page-container").load(`/Profile/${target}?_=${new Date().getTime()}`);
             });
         });
-
-           logoutBtn.addEventListener('click', function () {
-               localStorage.removeItem("authToken");
-               sessionStorage.clear();
-               window.location.href = "/Account/Login";
-           });
     </script>
 </body>
 </html>
