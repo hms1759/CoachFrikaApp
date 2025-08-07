@@ -46,13 +46,10 @@
             }
         });
     });
+});
 
-    //if (logoutBtn) {
-    //    logoutBtn.addEventListener('click', function () {
-    //        localStorage.removeItem("authToken");
-    //        sessionStorage.clear();
-    //        window.location.href = "/Account/Login"; 
-    //        alert('Logging out...');
-    //    });
-    //}
+logoutBtn.addEventListener('click', function () {
+    localStorage.removeItem("authToken");
+    sessionStorage.clear();
+    window.location.href = "/Account/Login";
 });
