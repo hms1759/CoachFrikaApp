@@ -37,7 +37,6 @@ namespace CoachFrika.Controllers
             }
             return RedirectToAction("Login", "Account");
         }
-        [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
         public IActionResult Dashboard()
         {
             var profileJson = HttpContext.Session.GetString("ProfileData");
