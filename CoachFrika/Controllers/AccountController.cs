@@ -123,7 +123,8 @@ namespace CoachFrika.Controllers
             {
                 return RedirectToAction("PostPaymentModal");
             }
-            TempData["Token"] = token;
+
+            HttpContext.Session.SetString("Token", JsonConvert.SerializeObject(token));
             HttpContext.Session.SetString("ProfileData", JsonConvert.SerializeObject(profile));
             return RedirectToAction("Index", "Profile", profile);
         }

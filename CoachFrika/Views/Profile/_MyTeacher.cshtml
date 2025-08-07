@@ -49,8 +49,8 @@
 </div>
 
 <script>
-    var teacherToken = localStorage.getItem('authToken');
-    let teacherPageNumber = 1;
+    var teacherToken = @Html.Raw(Context.Session.GetString("Token") ?? "");;
+   let teacherPageNumber = 1;
     const teacherPageSize = 10;
     let teacherSearchTerm = '';
 
@@ -135,6 +135,7 @@
         $('#teacherDropdown').val(null).trigger('change'); // clear Select2
     }
      function loadScheduleOptions() {
+
         fetch('/api/Scheduled/GetScheduleList', {
             headers: { "Authorization": `Bearer ${teacherToken}` }
         })
