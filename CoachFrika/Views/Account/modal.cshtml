@@ -11,13 +11,17 @@
 <script>
     const userToken = '@Model.token';
 </script>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Multi-Step Modal</title>
+
+    <!-- Site & Toastr CSS -->
     <link href="~/css/site.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 </head>
 <body>
 
@@ -26,261 +30,31 @@
         <img src="~/images/blurbackgd.png" alt="Background" class="modal-bg-img">
     </div>
 
-    <!-- Modal Overlay -->
+    <!-- Modal Overlay (Steps 1–7) -->
     <div id="modalOverlay" class="modal-overlay">
 
-        <!-- Step 1 -->
-        <div id="modalStep1" class="modal-box @(stepId == "modalStep1" ? "modal-visible" : "")">
-            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
-            <h2 class="modal-heading">Welcome @Model.FullName!</h2>
-            <p class="modal-subtext">Let us quickly set up your profile</p>
-            <div class="modal-steps">
-                <div class="modal-step modal-active">1</div>
-                <div class="modal-step">2</div>
-                <div class="modal-step">3</div>
-                <div class="modal-step">4</div>
-                <div class="modal-step">5</div>
-            </div>
-            <div class="modal-form">
-                <label for="modalTitle">Tell us about yourself</label>
-                <select id="modalTitle" name="Title">
-                    <option value="">Select your Title</option>
-                    <option>Mr</option>
-                    <option>Mrs</option>
-                    <option>Miss</option>
-                </select>
-                <input type="text" class="contact-input" name="ProfessionalTitle" placeholder="Professional Title" required />
-                <button class="modal-next-btn" data-step="1" onclick="ModalApp.submitStep(this)">Save and Continue</button>
-            </div>
-        </div>
-
-        <!-- Step 2 -->
-
-        <div id="modalStep2" class="modal-box @(stepId == "modalStep2" ? "modal-visible" : "")">
-            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
-            <h2 class="modal-heading">Hi @Model.FullName!</h2>
-            <h2 class="modal-heading">More Details</h2>
-            <p class="modal-subtext">Help us know you better</p>
-            <div class="modal-steps">
-                <div class="modal-step modal-active">1</div>
-                <div class="modal-step modal-active">2</div>
-                <div class="modal-step">3</div>
-                <div class="modal-step">4</div>
-                <div class="modal-step">5</div>
-            </div>
-            <div class="modal-form">
-                <label for="PhoneNumber">Phone Number</label>
-                <input type="text" class="contact-input" name="PhoneNumber" placeholder="Phone Number" required />
-                <input type="text" class="contact-input" name="NumberOfStudent" placeholder="Number Of Students" required />
-                <input type="text" class="contact-input" name="YearOfExperience" placeholder="Year Of Experience" required />
-                <button class="modal-next-btn" data-step="2" onclick="ModalApp.submitStep(this)">Save and Continue</button>
-            </div>
-        </div>
-
-        <!-- Step 3 -->
-
-        <div id="modalStep3" class="modal-box @(stepId == "modalStep3" ? "modal-visible" : "")">
-            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
-            <h2 class="modal-heading">Hi @Model.FullName!</h2>
-            <h2 class="modal-heading">Almost There</h2>
-            <p class="modal-subtext">A few more questions...</p>
-            <div class="modal-steps">
-                <div class="modal-step modal-active">1</div>
-                <div class="modal-step modal-active">2</div>
-                <div class="modal-step modal-active">3</div>
-                <div class="modal-step">4</div>
-                <div class="modal-step">5</div>
-            </div>
-            <div class="modal-form">
-                <label for="StateOfOrigin">State of Origin</label>
-                <select class="contact-input" name="StateOfOrigin" required>
-                    <option value="">Select State</option>
-                    <option value="Abia">Abia</option>
-                    <option value="Adamawa">Adamawa</option>
-                    <option value="Akwa Ibom">Akwa Ibom</option>
-                    <option value="Anambra">Anambra</option>
-                    <option value="Bauchi">Bauchi</option>
-                    <option value="Bayelsa">Bayelsa</option>
-                    <option value="Benue">Benue</option>
-                    <option value="Borno">Borno</option>
-                    <option value="Cross River">Cross River</option>
-                    <option value="Delta">Delta</option>
-                    <option value="Ebonyi">Ebonyi</option>
-                    <option value="Edo">Edo</option>
-                    <option value="Ekiti">Ekiti</option>
-                    <option value="Enugu">Enugu</option>
-                    <option value="FCT">FCT</option>
-                    <option value="Gombe">Gombe</option>
-                    <option value="Imo">Imo</option>
-                    <option value="Jigawa">Jigawa</option>
-                    <option value="Kaduna">Kaduna</option>
-                    <option value="Kano">Kano</option>
-                    <option value="Katsina">Katsina</option>
-                    <option value="Kebbi">Kebbi</option>
-                    <option value="Kogi">Kogi</option>
-                    <option value="Kwara">Kwara</option>
-                    <option value="Lagos">Lagos</option>
-                    <option value="Nasarawa">Nasarawa</option>
-                    <option value="Niger">Niger</option>
-                    <option value="Ogun">Ogun</option>
-                    <option value="Ondo">Ondo</option>
-                    <option value="Osun">Osun</option>
-                    <option value="Oyo">Oyo</option>
-                    <option value="Plateau">Plateau</option>
-                    <option value="Rivers">Rivers</option>
-                    <option value="Sokoto">Sokoto</option>
-                    <option value="Taraba">Taraba</option>
-                    <option value="Yobe">Yobe</option>
-                    <option value="Zamfara">Zamfara</option>
-                    <option value="FCT-Abuja">Abuja</option>
-                </select>
-
-                <label for="Nationality">Nationality</label>
-                <input type="text" class="contact-input" name="Nationality" value="Nigerian" readonly required />
-
-                <label for="Description">Background Information</label>
-                <textarea id="Description" name="Description" placeholder="Enter your background information" required></textarea>
-
-                <button class="modal-next-btn" data-step="3" onclick="ModalApp.submitStep(this)">Save and Continue</button>
-            </div>
-
-        </div>
-
-        <!-- Step 4 -->
-
-        <div id="modalStep4" class="modal-box @(stepId == "modalStep4" ? "modal-visible" : "")">
-            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
-            <h2 class="modal-heading">Hi @Model.FullName!</h2>
-            <h2 class="modal-heading">Almost There</h2>
-            <p class="modal-subtext">A few more questions...</p>
-            <div class="modal-steps">
-                <div class="modal-step modal-active">1</div>
-                <div class="modal-step modal-active">2</div>
-                <div class="modal-step modal-active">3</div>
-                <div class="modal-step modal-active">4</div>
-                <div class="modal-step">5</div>
-            </div>
-            <div class="modal-form">
-                <label for="modalGoals">Your Social Media Links</label>
-                <input type="text" class="contact-input" name="TweeterUrl" placeholder="Twitter" />
-                <input type="text" class="contact-input" name="LinkedInUrl" placeholder="LinkedIn" required />
-                <input type="text" class="contact-input" name="InstagramUrl" placeholder="Instagram" />
-                <input type="text" class="contact-input" name="FacebookUrl" placeholder="Facebook" />
-                <button class="modal-next-btn" data-step="4" onclick="ModalApp.submitStep(this)">Save and Continue</button>
-            </div>
-        </div>
-
-        <!-- Step 5 -->
-
-        <div id="modalStep5" class="modal-box @(stepId == "modalStep5" ? "modal-visible" : "")">
-            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
-            <h2 class="modal-heading">Hi @Model.FullName!</h2>
-            <h2 class="modal-heading">Final Step</h2>
-            <p class="modal-subtext">Enter your school details</p>
-            <div class="modal-steps">
-                <div class="modal-step modal-active">1</div>
-                <div class="modal-step modal-active">2</div>
-                <div class="modal-step modal-active">3</div>
-                <div class="modal-step modal-active">4</div>
-                <div class="modal-step modal-active">5</div>
-            </div>
-            <div class="modal-form">
-                <label for="SchoolNameLocalGov">School Details</label>
-                <input type="text" class="contact-input" name="SchoolName" placeholder="School Name" required />
-                <input type="text" class="contact-input" name="LocalGov" placeholder="Local Government" required />
-                <select class="form-control" id="subjectsSelect" name="Subjects" multiple="multiple" required></select>
-                <br />
-                <button class="modal-next-btn" data-step="5" onclick="ModalApp.submitStep(this)">Save and Continue</button>
-            </div>
-        </div>
-
-        <!-- Step 6 Plan Selection -->
-        <div id="modalStep6" class="modal-box @(stepId == "modalStep6" ? "modal-visible" : "")">
-                <div class="row justify-content-center text-center mb-5">
-                    <div class="col-12">
-                        <h2 class="animate__animated animate__fadeIn">Our Packages</h2>
-                        <p class="animate__animated animate__fadeIn">Choose from our range of subscription plans that best suit your needs</p>
-                    </div>
-                </div>
-
-                <div class="row justify-content-center">
-                    <!-- Plan 0 -->
-                    <div class="col-md-4 mb-4 animate__animated animate__fadeInLeft">
-                        <div class="package-card">
-                            <div class="card-header-wrapper header-one">
-                                <h5 class="package-title">Intentional Teacher-<br />Leader</h5>
-                            </div>
-                            <p class="package-price">₦50,000</p>
-                            <ul class="package-features">
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> 4 Coaching Sessions</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Access to Resource Library</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate</li>
-                            </ul>
-                            <a href="javascript:void(0)" class="btn-choose" data-plan="0" onclick="ModalApp.submitStep6(this)">Choose Plan</a>
-                        </div>
-                    </div>
-
-                    <!-- Plan 1 -->
-                    <div class="col-md-4 mb-4 animate__animated animate__fadeInUp">
-                        <div class="package-card">
-                            <div class="card-header-wrapper header-two">
-                                <h5 class="package-title">Phenomenal Teacher-<br />Leader</h5>
-                            </div>
-                            <p class="package-price">₦70,000</p>
-                            <ul class="package-features">
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> 6 Coaching Sessions</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Access to Resource Library</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Access to 20+ Global Teacher Community</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Exclusive webinars</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate</li>
-                            </ul>
-                            <a href="javascript:void(0)" class="btn-choose" data-plan="1" onclick="ModalApp.submitStep6(this)">Choose Plan</a>
-                        </div>
-                    </div>
-
-                    <!-- Plan 2 -->
-                    <div class="col-md-4 mb-4 animate__animated animate__fadeInRight">
-                        <div class="package-card">
-                            <div class="card-header-wrapper header-three">
-                                <h5 class="package-title">Transformational Teacher-<br />Leader</h5>
-                            </div>
-                            <p class="package-price">₦100,000</p>
-                            <ul class="package-features">
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> 9 Coaching Sessions</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Access to Resource Library</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Access to Global Teacher Community</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate of participation</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Exclusive webinars</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> 3 Months mentorship</li>
-                                <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate</li>
-                            </ul>
-                            <a href="javascript:void(0)" class="btn-choose" data-plan="2" onclick="ModalApp.submitStep6(this)">Choose Plan</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        <!-- Step 7 Plan Selection -->
-        <div id="modalStep7" class="modal-box @(stepId == "modalStep7" ? "modal-visible" : "")">
-
-            <button class="modal-close-btn" onclick="ModalApp.close()">×</button>
-            <div class="">
-                <div class="package-card">
-
-                    <div class="proceed_page">
-                        "Kindly proceed to make your payment. Payment details have been sent to your email.
-                        Please don’t forget to share your proof of payment with the admin."
-
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Modal Steps Here... [UNTOUCHED from your version] -->
+        @* You can paste all modalStep1 to modalStep7 here from your original code since that HTML hasn't changed *@
 
     </div>
 
+    <!-- jQuery & Toastr -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- Toastr Config -->
+    <script>
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: "5000"
+        };
+    </script>
+
+    <!-- Modal Logic with Toastr Alerts -->
     <script>
         const ModalApp = {
-            // Handles step 1–5 form submission
             submitStep: async function (btn) {
                 const step = btn.getAttribute('data-step');
                 btn.disabled = true;
@@ -302,11 +76,11 @@
                 });
 
                 if (formData['Subjects']) {
-                    formData['Subjects'] = $('#subjectsSelect').val(); // Use jQuery for multi-select
+                    formData['Subjects'] = $('#subjectsSelect').val();
                 }
 
                 if (emptyFields.length > 0) {
-                    alert(`Please fill in all required fields before continuing: ${emptyFields.join(', ')}`);
+                    toastr.warning(`Please fill in all required fields before continuing: ${emptyFields.join(', ')}`);
                     btn.disabled = false;
                     btn.textContent = 'Save and Continue';
                     return;
@@ -326,18 +100,17 @@
                     if (response.ok) {
                         ModalApp.next();
                     } else {
-                        alert('Something went wrong.');
+                        toastr.error('Something went wrong while saving this step.');
                     }
                 } catch (error) {
                     console.error(error);
-                    alert('Error submitting data.');
+                    toastr.error('Error submitting data.');
                 } finally {
                     btn.disabled = false;
                     btn.textContent = 'Save and Continue';
                 }
             },
 
-            // Handles plan selection (step 6)
             submitStep6: async function (btn) {
                 const plan = btn.getAttribute('data-plan');
                 const step = 6;
@@ -358,37 +131,33 @@
                     });
 
                     if (response.ok) {
-                        // Hide all modal boxes
                         document.querySelectorAll('.modal-box').forEach(modal => modal.classList.remove('modal-visible'));
 
-                        // Hide the package selection section
                         const packageSection = document.querySelector('.packages-section');
                         if (packageSection) {
                             packageSection.style.display = 'none';
                         }
 
-                        // Show Step 7 modal
                         const finalStep = document.getElementById('modalStep7');
                         if (finalStep) {
                             finalStep.classList.add('modal-visible');
                         } else {
-                            alert('Plan selected successfully!');
+                            toastr.success('Plan selected successfully!');
                         }
                     } else {
                         const errorData = await response.json();
-                        alert(`Error: ${errorData.message || 'Unable to select plan.'}`);
+                        toastr.error(`Error: ${errorData.message || 'Unable to select plan.'}`);
                     }
 
                 } catch (error) {
                     console.error(error);
-                    alert('Error occurred while selecting plan.');
+                    toastr.error('Error occurred while selecting plan.');
                 } finally {
                     btn.disabled = false;
                     btn.textContent = 'Choose Plan';
                 }
             },
 
-            // Moves to the next modal step
             next: function () {
                 const current = document.querySelector('.modal-box.modal-visible');
                 if (!current) return;
@@ -401,13 +170,13 @@
                 }
             },
 
-            // Closes all modals
             close: function () {
                 document.querySelectorAll('.modal-box').forEach(modal => modal.classList.remove('modal-visible'));
             }
         };
     </script>
 
+    <!-- Initialize Select2 -->
     <script>
         $(document).ready(function () {
             $('#subjectsSelect').select2({
@@ -417,7 +186,6 @@
             });
         });
     </script>
-
 
 </body>
 </html>

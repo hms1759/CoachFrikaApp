@@ -69,72 +69,76 @@
 
             <button type="submit" class="contact-button">Send</button>
         </form>
-
-        <!-- Feedback Message -->
-        <div id="contact-message" style="margin-top: 10px;"></div>
     </div>
 </div>
 
 <div class="space"></div>
 <div class="space"></div>
 
-<!-- JavaScript --><script>
-                       document.getElementById('contact-form').addEventListener('submit', function (e) {
-                           e.preventDefault();
+<!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
-                           const fullName = document.querySelector('input[name="FullName"]').value.trim();
-                           const email = document.querySelector('input[name="Email"]').value.trim();
-                           const phone = document.querySelector('input[name="PhoneNumber"]').value.trim();
-                           const message = document.querySelector('textarea[name="Message"]').value.trim();
-                           const isHuman = document.getElementById('not-robot').checked;
-                           const feedback = document.getElementById('contact-message');
+<!-- jQuery & Toastr JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-                           // Basic validation
-                           const phoneRegex = /^\+?[0-9]{7,15}$/;
-                           if (!phoneRegex.test(phone)) {
-                               feedback.textContent = 'Invalid phone number format.';
-                               feedback.style.color = 'red';
-                               return;
-                           }
-
-                           if (!isHuman) {
-                               feedback.textContent = 'Please confirm you are not a robot.';
-                               feedback.style.color = 'red';
-                               return;
-                           }
-
-                           // Build JSON payload
-                           const payload = {
-                               fullName: fullName,
-                               email: email,
-                               phoneNumber: phone,
-                               message: message
-                           };
-
-                           console.log(payload);
-                           // Send to API
-                           fetch('/api/ContactUs/CreateContactUs', {
-                               method: 'POST',
-                               headers: {
-                                   'Content-Type': 'application/json'
-                               },
-                               body: JSON.stringify(payload)
-                           })
-                                                      .then(response => {
-                               console.log(response);
-                                   if (!response.ok) throw new Error("Network error");
-                                   return response.json();
-                               })
-                               .then(data => {
-                                   console.log(data);
-                                   feedback.textContent = 'Message sent successfully!';
-                                   feedback.style.color = 'green';
-                               })
-                               .catch(error => {
-                                   console.error('Error:', error);
-                                   feedback.textContent = 'Failed to send message.';
-                                   feedback.style.color = 'red';
-                               });
-                       });
+<!-- Toastr Config -->
+<script>
+    toastr.options = {
+        closeButton: true,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        timeOut: "5000"
+    };
 </script>
 
+<!-- JS Form Handler -->
+<script>
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const fullName = document.querySelector('input[name="FullName"]').value.trim();
+        const email = document.querySelector('input[name="Email"]').value.trim();
+        const phone = document.querySelector('input[name="PhoneNumber"]').value.trim();
+        const message = document.querySelector('textarea[name="Message"]').value.trim();
+        const isHuman = document.getElementById('not-robot').checked;
+
+        const phoneRegex = /^\+?[0-9]{7,15}$/;
+        if (!phoneRegex.test(phone)) {
+            toastr.warning('Invalid phone number format.');
+            return;
+        }
+
+        if (!isHuman) {
+            toastr.warning('Please confirm you are not a robot.');
+            return;
+        }
+
+        const payload = {
+            fullName: fullName,
+            email: email,
+            phoneNumber: phone,
+            message: message
+        };
+
+        fetch('/api/ContactUs/CreateContactUs', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Network error");
+            return response.json();
+        })
+        .then(data => {
+            toastr.success('Message sent successfully!');
+            document.getElementById('contact-form').reset();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            toastr.error('Failed to send message.');
+        });
+    });
+</script>
