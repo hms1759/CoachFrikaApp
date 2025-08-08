@@ -1,18 +1,10 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
     const toggleBtn = document.getElementById('toggleBtn');
     const sidebar = document.querySelector('.sidebar');
-    //const logoutBtn = document.getElementById('logoutBtn');
     const mainContent = document.querySelector('.main-content');
+    const logoutBtn = document.getElementById('logoutBtn'); // ✅ Declare logoutBtn safely
 
     if (toggleBtn && sidebar && mainContent) {
-        //toggleBtn.addEventListener('click', function () {
-        //    sidebar.classList.toggle('collapsed');
-        //    mainContent.classList.toggle('collapsed');
-
-        //    toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '>>' : '<<';
-        //});
-        
-
         const icon = toggleBtn.querySelector('i');
 
         // Set correct icon on initial load
@@ -29,7 +21,6 @@
                 ? 'fas fa-angle-double-right'
                 : 'fas fa-angle-double-left';
         });
-
     }
 
     const items = document.querySelectorAll('.sidebar-item');
@@ -46,10 +37,13 @@
             }
         });
     });
-});
 
-logoutBtn.addEventListener('click', function () {
-    localStorage.removeItem("authToken");
-    sessionStorage.clear();
-    window.location.href = "/Account/Login";
+    // ✅ Logout handler added safely
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function () {
+            localStorage.removeItem("authToken");
+            sessionStorage.clear();
+            window.location.href = "/Account/Login";
+        });
+    }
 });

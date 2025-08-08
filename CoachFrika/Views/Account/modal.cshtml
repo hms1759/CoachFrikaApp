@@ -22,7 +22,17 @@
     <!-- Site & Toastr CSS -->
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <!-- ✅ Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- ✅ jQuery (already included) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- ✅ Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
+
 <body>
 
     <!-- Background Blur Layer -->
@@ -179,10 +189,33 @@
     <!-- Initialize Select2 -->
     <script>
         $(document).ready(function () {
-            $('#subjectsSelect').select2({
-                placeholder: "Select or type subjects",
-                tags: true,
-                tokenSeparators: [',', ' ']
+            if ($('#subjectsSelect').length > 0) {
+                $('#subjectsSelect').select2({
+                    placeholder: "Select or type subjects",
+                    tags: true,
+                    tokenSeparators: [',', ' ']
+                });
+            } else {
+                console.warn("#subjectsSelect not found");
+            }
+
+            // Toastr sample usage (you can remove this)
+            toastr.success("Page loaded and Select2 initialized successfully!");
+
+            // Submit handler (optional)
+            $('#createRecommendationForm').on('submit', function (e) {
+                e.preventDefault();
+                let title = $('#title').val();
+                let subjects = $('#subjectsSelect').val();
+
+                if (!title || subjects.length === 0) {
+                    toastr.error("Please enter title and select at least one subject.");
+                    return;
+                }
+
+                // Simulate success
+                toastr.success("Recommendation submitted!");
+                console.log("Submitted:", { title, subjects });
             });
         });
     </script>
