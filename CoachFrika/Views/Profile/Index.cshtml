@@ -72,17 +72,18 @@
             </div>
         </div>
     </div>
-
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/slidebar.js"></script>
+
     <script>
-        const usertoken = localStorage.getItem("authToken");
+        // Get token from session via Razor
+        const userToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
 
         function getUserRoleFromToken() {
-            if (!usertoken) return null;
+            if (!userToken) return null;
             try {
-                const payload = JSON.parse(atob(usertoken.split('.')[1]));
+                const payload = JSON.parse(atob(userToken.split('.')[1]));
                 return payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null;
             } catch (e) {
                 console.error("Invalid token format:", e);
@@ -91,12 +92,14 @@
         }
 
         function showSidebarItemsByRole() {
-            const role = getUserRoleFromToken();
+            let role = getUserRoleFromToken();
 
             if (role === "Coach") {
-                document.getElementById("sidebarCoachItem").style.display = "block";
+                const coachItem = document.getElementById("sidebarCoachItem");
+                if (coachItem) coachItem.style.display = "block";
             } else if (role === "Teacher") {
-                document.getElementById("sidebarTeacherItem").style.display = "block";
+                const teacherItem = document.getElementById("sidebarTeacherItem");
+                if (teacherItem) teacherItem.style.display = "block";
             }
         }
 
@@ -120,6 +123,16 @@
                 const target = $(this).attr("href").substring(1); // remove '#'
                 $("#page-container").load(`/Profile/${target}?_=${new Date().getTime()}`);
             });
+
+            // Logout button logic
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function () {
+                    localStorage.removeItem("authToken");
+                    sessionStorage.clear();
+                    window.location.href = "/Account/Login";
+                });
+            }
         });
 
            logoutBtn.addEventListener('click', function () {
@@ -128,5 +141,6 @@
                window.location.href = "/Account/Login";
            });
     </script>
+
 </body>
 </html>

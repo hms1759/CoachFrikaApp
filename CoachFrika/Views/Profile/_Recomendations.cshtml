@@ -6,6 +6,8 @@
     ViewBag.Title = "Recommendations";
 }
 
+<!-- Toastr styles -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 <div class="rec-top-bar">
     <input type="text" id="searchTitle" placeholder="Search by title..." />
     <input type="text" id="searchTeacher" placeholder="Search by teacher ID..." />
@@ -73,9 +75,13 @@
     </div>
 </div>
 
+
+<!-- Toastr and Scripts -->
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <script>
-        const token = localStorage.getItem("authToken");
+        const token = @Html.Raw(Context.Session.GetString("Token") ?? "");
         let currentPage = 1;
         const pageSize = 6;
 
@@ -128,7 +134,7 @@
                         container.innerHTML = "<h4>No recommendations found.</h4>";
                     }
                 })
-                .catch(() => alert("Error loading recommendations"));
+                .catch(() => toastr.error("Error loading recommendations"));
         }
 
         function nextPage() {
@@ -163,10 +169,10 @@
                         });
                         document.getElementById("recModal").style.display = "flex";
                     } else {
-                        alert("No details found.");
+                        toastr.warning("No details found.");
                     }
                 })
-                .catch(() => alert("Error loading details."));
+                .catch(() => toastr.error("Error loading details"));
         }
 
         function closeRecModal() {
@@ -189,11 +195,11 @@
             })
                 .then(res => res.ok ? res.json() : Promise.reject())
                 .then(() => {
-                    alert("Comment submitted successfully");
+                    toastr.success("Comment submitted successfully");
                     closeRecModal();
                     document.getElementById("recForm").reset();
                 })
-                .catch(() => alert("Failed to submit comment"));
+                .catch(() => toastr.error("Failed to submit comment"));
         });
 
         function openCreateRecModal() {
@@ -206,6 +212,7 @@
             document.getElementById("createRecModal").style.display = "none";
         }
 
+        consol.log(token);
         function loadScheduleOptions() {
             fetch('/api/Schedule/GetScheduleList', {
                 headers: { "Authorization": `Bearer ${token}` }
@@ -219,7 +226,7 @@
                     );
                 });
         }
-
+        consol.log(token);
         function loadTeacherOptions() {
             fetch('/api/Coaches/MyTeachers?IsPaginated=false', {
                 headers: { "Authorization": `Bearer ${token}` }
@@ -251,11 +258,11 @@
             })
                 .then(res => res.json())
                 .then(() => {
-                    alert("Recommendation created successfully");
+                    toastr.success("Recommendation created successfully");
                     closeCreateRecModal();
                     loadRecommendations();
                 })
-                .catch(() => alert("Error creating recommendation"));
+                .catch(() => toastr.error("Error creating recommendation"));
         });
     </script>
 }

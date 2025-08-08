@@ -5,6 +5,8 @@
 }
 <script>
     const token = '@TempData["Token"]';
+    console.log("token");
+    console.log(token);
     if (token) {
         localStorage.setItem("authToken", token);
     }
@@ -90,24 +92,6 @@
         else
         {
         <div>
-          @*   <div class="activities-header">
-                <h3>Activities</h3>
-                    <div class="search-bar">
-                        <button onclick="window.location.href='@Url.Action("Schedule", "Profile")'">
-                            <i class="fas fa-external-link-alt"></i> View All
-                        </button>
-                </div>
-
-                </div>  
-                <div class="activities-header">
-                    <h3>Activities</h3>
-                    <div class="search-bar">
-                        <a href="#schedule" class="sidebar-item">
-                            <i class="fas fa-external-link-alt"></i> View All
-                        </a>
-                    </div>
-
-                </div> *@
 
             <div class="activity-cards">
                 @foreach (var activity in Model.Schedules)
