@@ -82,6 +82,7 @@ namespace CoachFrika.APIs.Controllerss
         }
 
         [ProducesResponseType(typeof(BaseResponse<List<GetTeacherRecommendationResponse>>), (int)HttpStatusCode.OK)]
+
         [HttpGet("GetAllRecommendations")]
         public async Task<IActionResult> GetAllRecommendations([FromQuery] GetTeacherRecommendations model)
         {

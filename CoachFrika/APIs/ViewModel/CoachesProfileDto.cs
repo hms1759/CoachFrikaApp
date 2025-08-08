@@ -128,8 +128,9 @@ namespace CoachFrika.APIs.ViewModel
     {
         public string? ScheduleTitle { get; set; }
         public string? TeacherId { get; set; }
-        [System.Text.Json.Serialization.JsonIgnore]
-        public string userId { get; set; }
+        public Subscriptions PlanTyp3 { get; set; }
+        public int Pagesize { get; set; } = 10;
+        public int PageNumber { get; set; } = 1;
 
     }
 

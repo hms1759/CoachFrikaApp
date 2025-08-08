@@ -12,13 +12,15 @@ namespace CoachFrika.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly ICoachesService _coachesService;
+        private readonly ITeacherService _teacherService;
         public readonly IWebHelpers _webHelpers;
 
-        public ProfileController(IAccountService accountService, ICoachesService coachesService, IWebHelpers webHelpers)
+        public ProfileController(IAccountService accountService, ICoachesService coachesService, IWebHelpers webHelpers, ITeacherService teacherService)
         {
             _accountService = accountService;
             _coachesService = coachesService;
             _webHelpers = webHelpers;
+            _teacherService = teacherService;
         }
         [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
    
@@ -75,17 +77,21 @@ namespace CoachFrika.Controllers
             return PartialView("_ApplicantDetails", result);
         }
 
-        public IActionResult Recomendations(Guid id, Guid userId)
+        //public IActionResult Recomendations(Guid id, Guid userId)
+        //{
+        //    var request = new GetCoachesRecommendations
+        //    {
+        //        userId = userId.ToString(),
+        //        TeacherId = id.ToString(),
+        //        PageNumber = 1,
+        //        Pagesize = 10
+        //    };
+        //    var recomendation = _coachesService.Recommendations(request);
+        //    return PartialView("_Recomendations", recomendation);
+        //}
+        public IActionResult Recomendations()
         {
-            var request = new GetCoachesRecommendations
-            {
-                userId = userId.ToString(),
-                TeacherId = id.ToString(),
-                PageNumber = 1,
-                Pagesize = 10
-            };
-            var recomendation = _coachesService.Recommendations(request);
-            return PartialView("_Recomendations", recomendation);
+            return PartialView("_Recomendations");
         }
         [HttpPost]
         public IActionResult Setup()

@@ -1,268 +1,250 @@
-﻿@using CoachFrika.APIs.ViewModel
-@using CoachFrika.Common
-@model BaseResponse<List<GetCoachesRecommendationResponse>>
+﻿<!-- Include Select2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-@{
-    ViewBag.Title = "Recommendations";
-}
+<div class="space"></div>
 
-<!-- Toastr styles -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-<div class="rec-top-bar">
-    <input type="text" id="searchTitle" placeholder="Search by title..." />
-    <input type="text" id="searchTeacher" placeholder="Search by teacher ID..." />
-    <button onclick="searchRecommendations()">Search</button>
-    <button onclick="openCreateRecModal()">+ Create Recommendation</button>
-</div>
+<!-- Top Bar -->
+<div class="teacher-top-bar">
+    <span style="font-weight: bold; font-size: 18px;">Coach Recommendations</span>
+    <div>
+        <input type="text" id="teacherSearchInput" class="teacher-search-input" placeholder="Search by name..." />
+        <button class="teacher-view-all-btn" onclick="handleTeacherSearch()">Search</button>
 
-<div class="recommendation-grid" id="recGrid">
-    @if (Model?.Data == null || !Model.Data.Any())
-    {
-        <h3>No Recommendations Found</h3>
-    }
-    else
-    {
-        foreach (var rec in Model.Data)
-        {
-            <div class="recommendation-card" style="border-top: 4px solid black;">
-                <span class="rec-page">@Model.PageNumber</span>
-                <h3>@rec.ScheduleTitle</h3>
-                <h4>@rec.Recommendation</h4>
-                <button class="rec-more-btn" onclick="loadRecommendationDetails('@rec.Id')">More</button>
+        <!-- Only for Coaches -->
+        <span id="coachOnlyButtons" style="display: none;">
+            <div id="planTypeWrapper" style="display: none; margin-top: 10px;">
+                <select id="planTypeSelect" class="teacher-search-input" style="width: auto;" onchange="handlePlanSearch()">
+                    <option value="">-- Select Plan Type --</option>
+                    <option value="Intentional">Intentional</option>
+                    <option value="Phenomenal">Phenomenal</option>
+                    <option value="Transformational">Transformational</option>
+                </select>
             </div>
-        }
-    }
+            <button class="teacher-view-all-btn" onclick="openCreateRecModal()">+ Create Recommendation</button>
+        </span>
+    </div>
 </div>
 
-<div class="pagination-controls">
-    <button onclick="previousPage()">Previous</button>
-    <span id="pageNumberDisplay">Page 1</span>
-    <button onclick="nextPage()">Next</button>
+<div class="space"></div>
+
+<!-- Teacher Cards -->
+<div class="teacher-card-wrapper" id="teacherCardWrapper">Loading Recommendations .....</div>
+
+<!-- Pagination -->
+<div class="teacher-pagination" id="teacherPagination">
+    <button onclick="teacherGoToPreviousPage()">Previous</button>
+    <span id="teacherPageInfo">Page 1</span>
+    <button onclick="teacherGoToNextPage()">Next</button>
 </div>
 
 <!-- Create Recommendation Modal -->
-<div class="rec-modal" id="createRecModal">
-    <div class="rec-modal-content">
-        <span class="rec-modal-close" onclick="closeCreateRecModal()">×</span>
-        <h2>Create Recommendation</h2>
+<div id="createRecModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
+    <div style="background-color: white; padding: 20px; border-radius: 10px; width: 500px; max-width: 90%; position: relative;">
+        <span onclick="closeCreateRecModal()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">×</span>
+        <h2 style="margin-top: 0;">Create Recommendation</h2>
         <form id="createRecForm">
-            <label for="scheduleDropdown">Schedule:</label>
-            <select id="scheduleDropdown" name="ScheduleId" required></select>
+            <label for="scheduleDropdown" style="display: block; margin-top: 10px;">Schedule:</label>
+            <select id="scheduleDropdown" name="ScheduleId" required style="width: 100%; padding: 8px; margin-top: 5px;"></select>
 
-            <label for="teacherDropdown">Select Teachers:</label>
-            <select id="teacherDropdown" name="TeacherIds" multiple required></select>
+            <label for="teacherDropdown" style="display: block; margin-top: 15px;">Select Teachers:</label>
+            <select id="teacherDropdown" name="TeacherIds" multiple required style="width: 100%; padding: 8px; margin-top: 5px;"></select>
 
-            <label for="recommendationText">Recommendation:</label>
-            <textarea id="recommendationText" name="Recommendation" required></textarea>
+            <label for="recommendationText" style="display: block; margin-top: 15px;">Recommendation:</label>
+            <textarea id="recommendationText" name="Recommendation" required style="width: 100%; padding: 10px; height: 100px; margin-top: 5px;"></textarea>
 
-            <button type="submit">Submit</button>
+            <button type="submit" style="margin-top: 20px; padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Submit</button>
         </form>
     </div>
 </div>
 
-<!-- Details Modal -->
-<div class="rec-modal" id="recModal">
-    <div class="rec-modal-content">
-        <span class="rec-modal-close" onclick="closeRecModal()">×</span>
-        <h2>Recommendation Details</h2>
-        <div class="rec-details-container" id="recDetailsContainer"></div>
+<script>
+    const teacherToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
+    let teacherPageNumber = 1;
+    const teacherPageSize = 10;
+    let teacherSearchTerm = '';
+    let selectedPlanType = '';
+    let userRole = '';
 
-        <form class="rec-form" id="recForm">
-            <input type="hidden" id="recCommentId" name="Id" />
-            <textarea name="Comment" id="recCommentInput" placeholder="Write a comment..." required></textarea>
-            <button type="submit">Submit Comment</button>
-        </form>
-    </div>
-</div>
+    function handleTeacherSearch() {
+        teacherSearchTerm = document.getElementById("teacherSearchInput").value.trim();
+        teacherPageNumber = 1;
+        loadTeachers();
+    }
 
-
-<!-- Toastr and Scripts -->
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-    <script>
-        const token = @Html.Raw(Context.Session.GetString("Token") ?? "");
-        let currentPage = 1;
-        const pageSize = 6;
-
-        document.addEventListener("DOMContentLoaded", () => {
-            loadRecommendations();
-            updatePageNumberDisplay();
-        });
-
-        function updatePageNumberDisplay() {
-            document.getElementById("pageNumberDisplay").textContent = `Page ${currentPage}`;
+    function getUserRoleFromToken() {
+        if (!teacherToken) return null;
+        try {
+            const payload = JSON.parse(atob(teacherToken.split('.')[1]));
+            return payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null;
+        } catch (e) {
+            console.error("Invalid token format:", e);
+            return null;
         }
+    }
 
-        function searchRecommendations() {
-            currentPage = 1;
-            loadRecommendations();
+    function showCoachUI() {
+        userRole = getUserRoleFromToken();
+        if (userRole === "Coaches") {
+            document.getElementById("coachOnlyButtons").style.display = "inline-block";
+            document.getElementById("planTypeWrapper").style.display = "block";
         }
+    }
 
-        function loadRecommendations() {
-            const title = document.getElementById("searchTitle").value.trim();
-            const teacherId = document.getElementById("searchTeacher").value.trim();
+    function handlePlanSearch() {
+        selectedPlanType = document.getElementById("planTypeSelect").value.trim();
+        teacherPageNumber = 1;
+        loadTeachers();
+    }
 
-            const query = new URLSearchParams({
-                Title: title,
-                TeacherId: teacherId,
-                PageSize: pageSize,
-                PageNumber: currentPage
-            });
+    function loadTeachers() {
+        const url = userRole === "Teacher"
+            ? `/api/Teachers/GetAllRecommendations?ScheduleTitle=${encodeURIComponent(teacherSearchTerm)}&PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}`
+            : `/api/Coaches/GetAllRecommendations?ScheduleTitle=${encodeURIComponent(teacherSearchTerm)}&PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}${selectedPlanType ? `&PlanType=${encodeURIComponent(selectedPlanType)}` : ''}`;
 
-            fetch(`/api/Coaches/GetAllRecommendations?${query}`, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
+        fetch(url, {
+            headers: { "Authorization": `Bearer ${teacherToken}` }
+        })
+            .then(res => res.json())
+            .then(data => {
+                const wrapper = document.getElementById("teacherCardWrapper");
+                wrapper.innerHTML = "";
+
+                if (!data?.data?.length) {
+                    wrapper.innerHTML = "<p>No Recommendations found.</p>";
+                    return;
                 }
-            })
-                .then(res => res.json())
-                .then(res => {
-                    const container = document.getElementById("recGrid");
-                    container.innerHTML = "";
 
-                    if (res.data?.length) {
-                        res.data.forEach(section => {
-                            container.innerHTML += `
-                                <div class="recommendation-card" style="border-top: 4px solid black;">
-                                    <span class="rec-page">${currentPage}</span>
-                                    <h3>${section.scheduleTitle}</h3>
-                                    <ul>${section.teacherRemark.map(item => `<li>${item}</li>`).join("")}</ul>
-                                    <button class="rec-more-btn" onclick="loadRecommendationDetails('${section.id}')">More</button>
-                                </div>`;
-                        });
-                    } else {
-                        container.innerHTML = "<h4>No recommendations found.</h4>";
-                    }
-                })
-                .catch(() => toastr.error("Error loading recommendations"));
-        }
+                data.data.forEach(teacher => {
+                    const card = document.createElement("div");
+                    card.className = "teacher-card";
 
-        function nextPage() {
-            currentPage++;
-            loadRecommendations();
-            updatePageNumberDisplay();
-        }
+                    const nameToShow = userRole === "Teacher"
+                        ? (teacher.teachersName || "")
+                        : (teacher.teachersName || teacher.coachName || "");
 
-        function previousPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                loadRecommendations();
-                updatePageNumberDisplay();
-            }
-        }
-
-        function loadRecommendationDetails(sectionId) {
-            document.getElementById("recCommentId").value = sectionId;
-
-            fetch(`/api/Recommendation/GetRecommendationDetails?sectionId=${sectionId}`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            })
-                .then(res => res.json())
-                .then(res => {
-                    const container = document.getElementById("recDetailsContainer");
-                    container.innerHTML = "";
-
-                    if (res.data?.length) {
-                        res.data.forEach(detail => {
-                            const alignment = detail.status === "left" ? "rec-detail-left" : "rec-detail-right";
-                            container.innerHTML += `<div class="${alignment}"><strong>${detail.title}</strong><p>${detail.description}</p></div>`;
-                        });
-                        document.getElementById("recModal").style.display = "flex";
-                    } else {
-                        toastr.warning("No details found.");
-                    }
-                })
-                .catch(() => toastr.error("Error loading details"));
-        }
-
-        function closeRecModal() {
-            document.getElementById("recModal").style.display = "none";
-        }
-
-        document.getElementById("recForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            const comment = document.getElementById("recCommentInput").value;
-            const id = document.getElementById("recCommentId").value;
-
-            fetch("/api/Recommendation/AddRecomendationsComment", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ id: id ? parseInt(id) : null, comment })
-            })
-                .then(res => res.ok ? res.json() : Promise.reject())
-                .then(() => {
-                    toastr.success("Comment submitted successfully");
-                    closeRecModal();
-                    document.getElementById("recForm").reset();
-                })
-                .catch(() => toastr.error("Failed to submit comment"));
-        });
-
-        function openCreateRecModal() {
-            document.getElementById("createRecModal").style.display = "flex";
-            loadScheduleOptions();
-            loadTeacherOptions();
-        }
-
-        function closeCreateRecModal() {
-            document.getElementById("createRecModal").style.display = "none";
-        }
-
-        consol.log(token);
-        function loadScheduleOptions() {
-            fetch('/api/Schedule/GetScheduleList', {
-                headers: { "Authorization": `Bearer ${token}` }
-            })
-                .then(res => res.json())
-                .then(res => {
-                    const dropdown = document.getElementById("scheduleDropdown");
-                    dropdown.innerHTML = `<option value="">-- Select Schedule --</option>`;
-                    res.data.forEach(s =>
-                        dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`
-                    );
+                    card.innerHTML = `
+                        <div class="teacher-card-content">
+                            <p class="teacher-name">${teacher.scheduleTitle || ''}</p>
+                            <p class="teacher-school">${teacher.recommendation || ''}</p>
+                            <p class="teacher-school">${nameToShow}</p>
+                            <div class="teacher-btn">
+                                <a href="/Profile/Details?id=${teacher.id}">
+                                    <button class="teacher-view-btn">View Details</button>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    wrapper.appendChild(card);
                 });
-        }
-        consol.log(token);
-        function loadTeacherOptions() {
-            fetch('/api/Coaches/MyTeachers?IsPaginated=false', {
-                headers: { "Authorization": `Bearer ${token}` }
+
+                document.getElementById("teacherPageInfo").textContent = `Page ${teacherPageNumber}`;
             })
-                .then(res => res.json())
-                .then(res => {
-                    const dropdown = document.getElementById("teacherDropdown");
-                    dropdown.innerHTML = "";
-                    res.data.forEach(t =>
-                        dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`
-                    );
+            .catch(err => {
+                console.error("Error fetching teachers:", err);
+                document.getElementById("teacherCardWrapper").innerHTML = "<p>Error loading teachers.</p>";
+            });
+    }
+
+    function teacherGoToNextPage() {
+        teacherPageNumber++;
+        loadTeachers();
+    }
+
+    function teacherGoToPreviousPage() {
+        if (teacherPageNumber > 1) {
+            teacherPageNumber--;
+            loadTeachers();
+        }
+    }
+
+    function openCreateRecModal() {
+        document.getElementById("createRecModal").style.display = "flex";
+        loadScheduleOptions();
+    }
+
+    function closeCreateRecModal() {
+        document.getElementById("createRecModal").style.display = "none";
+        document.getElementById("createRecForm").reset();
+        $('#teacherDropdown').val(null).trigger('change');
+    }
+
+    function loadScheduleOptions() {
+        fetch('/api/Scheduled/GetScheduleList', {
+            headers: { "Authorization": `Bearer ${teacherToken}` }
+        })
+            .then(res => res.json())
+            .then(res => {
+                const dropdown = document.getElementById("scheduleDropdown");
+                dropdown.innerHTML = `<option value="">-- Select Schedule --</option>`;
+                res.data.forEach(s => {
+                    dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`;
                 });
-        }
 
-        document.getElementById("createRecForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            const scheduleId = document.getElementById("scheduleDropdown").value;
-            const teacherIds = Array.from(document.getElementById("teacherDropdown").selectedOptions).map(o => o.value);
-            const recommendation = document.getElementById("recommendationText").value;
-
-            fetch('/api/Recommendation/AddRecomendations', {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ ScheduleId: scheduleId, TeacherIds: teacherIds, Recommendation: recommendation })
+                dropdown.onchange = function () {
+                    const selectedScheduleId = this.value;
+                    if (selectedScheduleId) {
+                        loadTeacherOptions(selectedScheduleId);
+                    }
+                };
             })
-                .then(res => res.json())
-                .then(() => {
-                    toastr.success("Recommendation created successfully");
-                    closeCreateRecModal();
-                    loadRecommendations();
-                })
-                .catch(() => toastr.error("Error creating recommendation"));
-        });
-    </script>
-}
+            .catch(() => alert("Failed to load schedules."));
+    }
+
+    function loadTeacherOptions(scheduleId) {
+        fetch(`/api/Scheduled/GetTeacherList?ScheduleId=${scheduleId}`, {
+            headers: { "Authorization": `Bearer ${teacherToken}` }
+        })
+            .then(res => res.json())
+            .then(res => {
+                const dropdown = document.getElementById("teacherDropdown");
+                dropdown.innerHTML = "";
+                res.data.forEach(t => {
+                    dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`;
+                });
+
+                $('#teacherDropdown').select2({
+                    width: '100%',
+                    placeholder: 'Select teachers',
+                    allowClear: true
+                });
+            })
+            .catch(() => alert("Failed to load teachers."));
+    }
+
+    document.getElementById("createRecForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const scheduleId = document.getElementById("scheduleDropdown").value;
+        const teacherIds = $('#teacherDropdown').val();
+        const recommendation = document.getElementById("recommendationText").value;
+
+        const payload = {
+            ScheduleId: scheduleId,
+            TeacherIds: teacherIds,
+            Recommendation: recommendation
+        };
+
+        fetch('/api/Coaches/AddTeachersRecomendations', {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${teacherToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(res => res.json())
+            .then(() => {
+                alert("Recommendation created successfully!");
+                closeCreateRecModal();
+                loadTeachers();
+            })
+            .catch(() => {
+                alert("Error creating recommendation.");
+            });
+    });
+
+    // Init
+    showCoachUI();
+    loadTeachers();
+</script>

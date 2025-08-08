@@ -496,7 +496,7 @@ namespace CoachFrika.APIs.Domin.Services
 
         public BaseResponse<List<GetCoachesRecommendationResponse>> Recommendations(GetCoachesRecommendations query)
         {
-            var userId =query.userId ?? _webHelpers.CurrentUserId();
+            var userId =_webHelpers.CurrentUserId();
             var res = new BaseResponse<List<GetCoachesRecommendationResponse>>();
             res.Status = true;
             try
@@ -507,7 +507,7 @@ namespace CoachFrika.APIs.Domin.Services
                                 join schd in _context.Schedule on rec.ScheduleId equals schd.Id.ToString()
                                 where rec.CoachId == userId
                                 //&& (string.IsNullOrEmpty(query.TeacherId) || teach.Id.Contains(query.TeacherId))
-                                && (string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
+                                && (string.IsNullOrEmpty(query.ScheduleTitle) || (schd.Title.Contains(query.ScheduleTitle)|| teach.FullName.Contains(query.ScheduleTitle)))
                                 select new
                                 {
                                     rec,

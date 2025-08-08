@@ -10,7 +10,7 @@
     <div class="search-box">
         <input type="text" id="teacherSearchInput" class="teacher-search-input" placeholder="Search by name..." />
         <button class="teacher-view-all-btn" onclick="handleTeacherSearch()">Search</button>
-        <span id="viewRecButtonContainer"></span> <!-- Placeholder for View Recommendation button -->
+        @* <span id="viewRecButtonContainer"></span> <!-- Placeholder for View Recommendation button --> *@
     </div>
 </div>
 
@@ -66,8 +66,8 @@
                 const wrapper = document.getElementById("teacherCardWrapper");
                 wrapper.innerHTML = "";
 
-                const container = document.getElementById("viewRecButtonContainer");
-                container.innerHTML = "";
+                // const container = document.getElementById("viewRecButtonContainer");
+                // container.innerHTML = "";
 
                 if (!data?.data?.length) {
                     wrapper.innerHTML = "<p>No teachers found.</p>";
@@ -111,17 +111,17 @@
                     wrapper.appendChild(card);
                 });
 
-                // Add View Recommendation button if applicable
-                const viewCoachId = seletedcoachId || foundSelectedCoachId;
-                if (viewCoachId) {
-                    const button = document.createElement("button");
-                    button.className = "teacher-view-all-btn";
-                    button.textContent = "View Recommendation";
-                    button.onclick = () => {
-                        window.location.href = `/Recommendation/View?coachId=${viewCoachId}`;
-                    };
-                    container.appendChild(button);
-                }
+                // // Add View Recommendation button if applicable
+                // const viewCoachId = seletedcoachId || foundSelectedCoachId;
+                // if (viewCoachId) {
+                //     const button = document.createElement("button");
+                //     button.className = "teacher-view-all-btn";
+                //     button.textContent = "View Recommendation";
+                //     button.onclick = () => {
+                //         window.location.href = `/Profile/Recomendations/${viewCoachId}`;
+                //     };
+                //     container.appendChild(button);
+                // }
 
                 document.getElementById("teacherPageInfo").textContent = `Page ${pageNumber}`;
             })
