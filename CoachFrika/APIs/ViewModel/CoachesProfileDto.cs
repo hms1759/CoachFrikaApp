@@ -77,6 +77,7 @@ namespace CoachFrika.APIs.ViewModel
         public string? SchoolName { get; set; }
         public string? LocalGov { get; set; }
         public string? Subject { get; set; }
+        public bool IsSelected { get; set; }
         public List<SchedulesViewModel>? Schedules { get; set; } = new List<SchedulesViewModel>();
 
     }

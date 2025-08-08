@@ -1,4 +1,8 @@
-﻿<div class="space"></div>
+﻿<!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<div class="space"></div>
 
 <!-- Top Bar -->
 <div class="teacher-top-bar">
@@ -6,7 +10,7 @@
     <div class="search-box">
         <input type="text" id="teacherSearchInput" class="teacher-search-input" placeholder="Search by name..." />
         <button class="teacher-view-all-btn" onclick="handleTeacherSearch()">Search</button>
-        <button class="teacher-view-all-btn" onclick="openRecModal()">View Recommendation</button>
+        <span id="viewRecButtonContainer"></span> <!-- Placeholder for View Recommendation button -->
     </div>
 </div>
 
@@ -24,44 +28,26 @@
 
 <script>
     (() => {
+        const authToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
+        const seletedcoachId = getSelectedCoachIdFromToken(authToken);
 
-    const authToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
-        const userId = getUserIdFromToken(authToken);
-        const seletedcoachId = getseletedcoachIdFromToken(authToken);
         let pageNumber = 1;
         const pageSize = 10;
         let searchTerm = '';
 
-        function getUserIdFromToken(token) {
+        function getSelectedCoachIdFromToken(token) {
             if (!token) return null;
             try {
                 const payload = JSON.parse(atob(token.split('.')[1]));
-                return payload.Profile.id;
+                const profile = typeof payload.Profile === 'string'
+                    ? JSON.parse(payload.Profile)
+                    : payload.Profile;
+                return profile.CoachId || null;
             } catch (err) {
                 console.error("Invalid token:", err);
                 return null;
             }
         }
-            function getseletedcoachIdFromToken(token) {
-        if (!token) return null;
-
-        try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-
-                console.log(payload.Profile);
-            // Profile is a JSON string, so parse it
-            const profile = typeof payload.Profile === 'string'
-                ? JSON.parse(payload.Profile)
-                : payload.Profile;
-
-            console.log("Decoded CoachId:", profile.CoachId);
-
-            return profile.CoachId || null;
-        } catch (err) {
-            console.error("Invalid token:", err);
-            return null;
-        }
-    }
 
         function handleTeacherSearch() {
             searchTerm = document.getElementById("teacherSearchInput").value.trim();
@@ -80,57 +66,74 @@
                 const wrapper = document.getElementById("teacherCardWrapper");
                 wrapper.innerHTML = "";
 
+                const container = document.getElementById("viewRecButtonContainer");
+                container.innerHTML = "";
+
                 if (!data?.data?.length) {
                     wrapper.innerHTML = "<p>No teachers found.</p>";
                     return;
                 }
-                    data.data.forEach(teacher => {
-        const card = document.createElement("div");
-        card.className = "teacher-card";
 
-        const image = teacher.imageUrl || 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740';
-        const name = teacher.fullName || 'No Name';
-        const school = teacher.schoolName || 'Unknown School';
+                let foundSelectedCoachId = null;
 
+                data.data.forEach(teacher => {
+                    const card = document.createElement("div");
+                    card.className = "teacher-card";
 
-        // Conditionally render the Select button
-        const actionButton = seletedcoachId == null
-            ? `<button class="teacher-recommendation-btn" onclick="selectCoach('${teacher.id}')">Select</button>`
-            : `<span class="already-selected-label">Already Selected</span>`;
+                    const image = teacher.imageUrl || 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740';
+                    const name = teacher.fullName || 'No Name';
+                    const school = teacher.schoolName || 'Unknown School';
 
-            console.log(seletedcoachId)
-            console.log(actionButton)
-        card.innerHTML = `
-            <div class="teacher-card">
-                <img src="${image}" alt="${name}" class="teacher-card-img" />
-                <div class="teacher-card-content">
-                    <p class="teacher-name">${name}</p>
-                    <p class="teacher-school">${school}</p>
-                    <div class="teacher-btn">
-                        <a href="/Profile/Details?id=${teacher.id}">
-                            <button class="teacher-view-btn">View Details</button>
-                        </a>
-                        ${actionButton}
-                    </div>
-                </div>
-            </div>
-        `;
+                    if (teacher.isSelected) {
+                        foundSelectedCoachId = teacher.id;
+                    }
 
-        wrapper.appendChild(card);
-    });
+                    const actionButton = (seletedcoachId == null && !teacher.isSelected)
+                        ? `<button class="teacher-recommendation-btn" onclick="selectCoach('${teacher.id}')">Select</button>`
+                        : `<span class="already-selected-label">Already Selected</span>`;
 
+                    card.innerHTML = `
+                        <div class="teacher-card">
+                            <img src="${image}" alt="${name}" class="teacher-card-img" />
+                            <div class="teacher-card-content">
+                                <p class="teacher-name">${name}</p>
+                                <p class="teacher-school">${school}</p>
+                                <div class="teacher-btn">
+                                    <a href="/Profile/Details?id=${teacher.id}">
+                                        <button class="teacher-view-btn">View Details</button>
+                                    </a>
+                                    ${actionButton}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    wrapper.appendChild(card);
+                });
+
+                // Add View Recommendation button if applicable
+                const viewCoachId = seletedcoachId || foundSelectedCoachId;
+                if (viewCoachId) {
+                    const button = document.createElement("button");
+                    button.className = "teacher-view-all-btn";
+                    button.textContent = "View Recommendation";
+                    button.onclick = () => {
+                        window.location.href = `/Recommendation/View?coachId=${viewCoachId}`;
+                    };
+                    container.appendChild(button);
+                }
 
                 document.getElementById("teacherPageInfo").textContent = `Page ${pageNumber}`;
             })
             .catch(err => {
                 console.error("Error fetching teachers:", err);
-                document.getElementById("teacherCardWrapper").innerHTML = "<p>Error loading teachers.</p>";
+                toastr.error("Error loading teachers.");
             });
         }
 
         window.selectCoach = function (coachId) {
             if (!authToken) {
-                alert("You are not authenticated.");
+                toastr.warning("You are not authenticated.");
                 return;
             }
 
@@ -148,12 +151,12 @@
                 return res.json();
             })
             .then(() => {
-                alert("Coach selected successfully!");
+                toastr.success("Coach selected successfully!");
                 loadTeachers();
             })
             .catch(err => {
                 console.error("Error selecting coach:", err);
-                alert("Failed to select coach: " + err.message);
+                toastr.error("Failed to select coach: " + err.message);
             });
         };
 

@@ -268,10 +268,10 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
+                    var user = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == _webHelpers.CurrentUser());
                 var userRole = _webHelpers.CurrentUserRole();
                 if (!string.IsNullOrEmpty(userRole) && userRole == "Teacher")
                 {
-                    var user = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == _webHelpers.CurrentUser());
                     query.CoachId = user != null && !string.IsNullOrEmpty(user.CoachId) ? user.CoachId : null;
                 }
                 var day = DateTime.Now.Day;
@@ -295,6 +295,7 @@ namespace CoachFrika.APIs.Domin.Services
                               Email = coach.Email,
                               PhoneNumber = coach.PhoneNumber,
                               ProfileImageUrl = coach.ProfileImageUrl ?? _uiSite.ProfileUrl,
+                              IsSelected = user != null && !string.IsNullOrEmpty(user.CoachId) ? true : false
                               // Using DateTime.MinValue if EndDate is null
                           };
 
