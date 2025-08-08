@@ -6,7 +6,7 @@
     <div class="search-box">
         <input type="text" id="teacherSearchInput" class="teacher-search-input" placeholder="Search by name..." />
         <button class="teacher-view-all-btn" onclick="handleTeacherSearch()">Search</button>
-        <button class="teacher-view-all-btn" onclick="openCreateRecModal()">View Recommendation</button>
+        <button class="teacher-view-all-btn" onclick="openRecModal()">View Recommendation</button>
     </div>
 </div>
 
@@ -24,7 +24,8 @@
 
 <script>
     (() => {
-        const authToken = localStorage.getItem('authToken');
+
+    const authToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
         const userId = getUserIdFromToken(authToken);
         const seletedcoachId = getseletedcoachIdFromToken(authToken);
         let pageNumber = 1;

@@ -47,7 +47,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="schedule-dd-modal-overlay" id="modal-box">
+    <div class="schedule-dd-modal-overlay" id="scheduleModal">
         <div class="schedule-modal">
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%">
                 <h3>Create New Schedule</h3>
@@ -97,8 +97,11 @@
         function closeScheduleModal() {
             $("#scheduleModal").fadeOut();
         }
-
+                function dontShoScheduleModal() {
+            document.getElementById("scheduleModal").style.display = "none";
+        }
         function loadSchedules(status) {
+        dontShoScheduleModal()
             let url = "";
             if (role === "Coach") {
                 url = `/api/Scheduled/GetCoachSchedule?status=${status}&PageSize=20&PageNumber=1`;
@@ -266,6 +269,7 @@
             $("#createScheduleBtn").hide();
         }
 
+        closeScheduleModal()
         loadSchedules("comingsoon");
     </script>
 
