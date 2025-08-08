@@ -1377,12 +1377,13 @@ sidebar.collapsed {
         box-sizing: border-box;
     }
 .schedule-modal-close-btn {
-    position: absolute;
+    width: 20px !important;
     background: none;
     border: none;
     font-size: 24px;
     cursor: pointer;
     color: #333;
+    text-align: right;
 }
 /* Background Blur */
 .modal-background {
