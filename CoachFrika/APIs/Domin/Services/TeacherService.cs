@@ -337,7 +337,7 @@ namespace CoachFrika.APIs.Domin.Services
                 await _context.SaveChangesAsync();
 
                 res.Message = "Payment directive has been sent to your email";
-                res.Status = false;
+                res.Status = true;
 
                 var bankName = "Access Bank";
                 var accountNumber = "0045072769";
