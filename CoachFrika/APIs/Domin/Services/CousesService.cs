@@ -44,18 +44,18 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 var day = DateTime.Now.AddDays(-1).Date;
                 var mail = req.Role == Roles.Coach ? req.Email : _context.CoachFrikaUsers.FirstOrDefault(x => x.Id == req.CoachId)?.Email;
-               var cos = from schedule in _context.Schedule
-                         where schedule.CreatedBy == mail
-                        && schedule.StartDate.Value.Date > day
-                         select new SchedulesViewModel
-                         {
-                             Id = schedule.Id,
-                             Title = schedule.Title,
-                             Focus = schedule.Focus.ToString(),
-                             MeetingUrl = schedule.MeetingLink,
-                             StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
-                             EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
-                         };
+                var cos = from schedule in _context.Schedule
+                          where schedule.CreatedBy == mail
+                         && schedule.StartDate.Value.Date > day
+                          select new SchedulesViewModel
+                          {
+                              Id = schedule.Id,
+                              Title = schedule.Title,
+                              Focus = schedule.Focus.ToString(),
+                              MeetingUrl = schedule.MeetingLink,
+                              StartDate = schedule.StartDate ?? DateTime.MinValue,  // Using DateTime.MinValue if StartDate is null
+                              EndDate = schedule.EndDate ?? DateTime.MinValue      // Using DateTime.MinValue if EndDate is null
+                          };
 
                 res.Data = cos.OrderBy(x => x.StartDate).Take(3).ToList();
                 return res;
@@ -98,6 +98,34 @@ namespace CoachFrika.APIs.Domin.Services
                 var schRepository = _unitOfWork.GetRepository<Schedule>();
                 await schRepository.AddAsync(dto);
                 await _unitOfWork.SaveChangesAsync();
+
+                var teaches = _context.CoachFrikaUsers.Where(x => x.Subscriptions == model.Focus);
+                if (teaches.Any())
+                {
+                    foreach (var tch in teaches)
+                    {
+
+                        var subject = "Coach Schedules";
+                        var userbody = $@"Dear {tch.Title} {tch.FullName} kindly check for your new Schedule
+
+                                 Thank you for choosing us!";
+
+                        var bodyTemplate = await _emailService.ReadTemplate("paymentRequest");
+                        //inserting variable
+                        //inserting variable
+                        var UsermessageToParse = new Dictionary<string, string>
+                    {
+
+                        { "{Message}", userbody},
+                    };
+
+                        //  email notification
+                        var UsermessageBody = bodyTemplate.ParseTemplate(UsermessageToParse);
+                        var message = new Message(new List<string> { tch.Email }, subject, UsermessageBody);
+
+                        await _emailService.SendEmail(message);
+                    }
+                }
                 return res;
             }
             catch (Exception ex)
@@ -201,7 +229,7 @@ namespace CoachFrika.APIs.Domin.Services
                 }
                 var cos = from teacher in _context.CoachFrikaUsers
                           where
-                          teacher.CoachId == schedule.CoachId && 
+                          teacher.CoachId == schedule.CoachId &&
                           teacher.Subscriptions == schedule.Focus
                           select new ProfileDto
                           {

@@ -12,11 +12,13 @@ using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
 using coachfrikaaaa.Common;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Org.BouncyCastle.Crypto.Macs;
 using System.Text;
 using System.Text.RegularExpressions;
+using Twilio.TwiML.Voice;
 using static CoachFrika.Common.LogingHandler.JwtServiceHandler;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -452,10 +454,31 @@ namespace CoachFrika.APIs.Domin.Services
 
                         };
                         listrecm.Add(recm);
+
+                        var subject = "Coach Recommendations";
+                        var userbody = $@"Dear {tch.Title} {tch.FullName} kindly check for your new recommendations
+
+                                 Thank you for choosing us!";
+
+                        var bodyTemplate = await _emailService.ReadTemplate("paymentRequest");
+                        //inserting variable
+                        //inserting variable
+                        var UsermessageToParse = new Dictionary<string, string>
+                    {
+
+                        { "{Message}", userbody},
+                    };
+
+                        //  email notification
+                        var UsermessageBody = bodyTemplate.ParseTemplate(UsermessageToParse);
+                        var message = new Message(new List<string> { tch.Email }, subject, UsermessageBody);
+
+                        await _emailService.SendEmail(message);
                     }
 
                     _context.Recommendations.AddRange(listrecm);
                     await _context.SaveChangesAsync();
+
                     return res;
                 }
                 else
