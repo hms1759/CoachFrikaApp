@@ -596,5 +596,59 @@ namespace CoachFrika.APIs.Domin.Services
         {
             throw new NotImplementedException();
         }
+
+        public BaseResponse<List<ProfileDto>> GetRecommendationTeacherList(GetRecomendationTeachers query)
+        {
+            var userId = _webHelpers.CurrentUserId();
+            var res = new BaseResponse<List<ProfileDto>>();
+            res.Status = true;
+            try
+            {
+                var day = DateTime.Now.Day;
+                // Apply filters based on the query parameters
+                var cos = from rec in _context.Recommendations
+                          join teacher in _context.CoachFrikaUsers on rec.TeacherId equals teacher.Id
+                          where rec.Recommendation.ToLower().Trim() == query.Recomendation.ToLower().Trim()
+                          && teacher.Id == userId && teacher.Role == Roles.Teacher
+                         && (string.IsNullOrEmpty(query.Name) || teacher.FullName.Contains(query.Name))
+                          select new ProfileDto
+                          {
+                              CoachId = teacher.CoachId,
+                              Id = teacher.Id,
+                              Title = teacher.Title,
+                              FullName = teacher.FullName,
+                              ProfessionalTitle = teacher.ProfessionalTitle,
+                              NumbersOfStudents = teacher.NumbersOfStudents,
+                              Description = teacher.Description,
+                              LinkedInUrl = teacher.LinkedInUrl,
+                              FacebookUrl = teacher.FacebookUrl,
+                              TweeterUrl = teacher.TweeterUrl,
+                              Email = teacher.Email,
+                              SchoolName = teacher.SchoolName,
+                              PhoneNumber = teacher.PhoneNumber   // Using DateTime.MinValue if EndDate is null
+                          };
+
+                // Apply pagination using Skip and Take
+                var pagedData = query.IsPaginated ? (cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList()) : cos.ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                res.TotalCount = cos.Count();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
     }
 }

@@ -163,5 +163,15 @@ namespace CoachFrika.APIs.Controllerss
             return BadRequest(result);
         }
 
+        [HttpGet("GetRecommendationTeacherList")]
+        public IActionResult GetRecommendationTeacherList([FromQuery] GetRecomendationTeachers Recomendation)
+        {
+            var result = _coachesService.GetRecommendationTeacherList(Recomendation);
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
     }
 }

@@ -81,6 +81,12 @@ namespace CoachFrika.APIs.ViewModel
         public List<SchedulesViewModel>? Schedules { get; set; } = new List<SchedulesViewModel>();
 
     }
+    
+    public class GetRecomendationTeachers : GetTeachers
+    {
+        public string? Recomendation { get; set; }
+
+    }
     public class GetTeachers : Pagination
     {
         public bool IsPaginated { get; set; } = true;

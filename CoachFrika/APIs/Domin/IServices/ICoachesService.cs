@@ -20,6 +20,7 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<Recommendations>> GetRecommendationById(string Id);
         BaseResponse<List<ProfileDto>> GetAllCoaches(GetTeachersSearch query);
         Task<BaseResponse<string>> AddRecomendationsComment(CoachRecommendationComment model);
+        BaseResponse<List<ProfileDto>> GetRecommendationTeacherList(GetRecomendationTeachers model);
     }
 }
 
