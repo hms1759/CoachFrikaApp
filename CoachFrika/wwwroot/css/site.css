@@ -1855,7 +1855,7 @@ sidebar.collapsed {
     padding: 8px 12px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    width: 250px;
+    /*width: 250px;*/
 }
 
 .teacher-view-all-btn {

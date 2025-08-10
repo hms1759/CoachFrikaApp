@@ -268,7 +268,7 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                    var user = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == _webHelpers.CurrentUser());
+                var user = _context.CoachFrikaUsers.FirstOrDefault(x => x.Email == _webHelpers.CurrentUser());
                 var userRole = _webHelpers.CurrentUserRole();
                 if (!string.IsNullOrEmpty(userRole) && userRole == "Teacher")
                 {
@@ -423,6 +423,16 @@ namespace CoachFrika.APIs.Domin.Services
                     res.Message = "schedule not found";
                     return res;
                 }
+
+                var rec = await _context.Recommendations.Where(x => x.Recommendation.ToLower().Trim() == model.Recommendation.ToLower().Trim() && x.ScheduleId == model.ScheduleId.ToString()).FirstOrDefaultAsync();
+
+                if (rec != null)
+                {
+                    res.Status = false;
+                    res.Message = "Recommendation already exist";
+                    return res;
+                }
+
                 var listrecm = new List<Recommendations>();
                 var teachs = _context.CoachFrikaUsers
                 .Where(x => model.TeacherIds.Contains(x.Id) && x.Subscriptions == schedule.Focus)
@@ -496,41 +506,38 @@ namespace CoachFrika.APIs.Domin.Services
 
         public BaseResponse<List<GetCoachesRecommendationResponse>> Recommendations(GetCoachesRecommendations query)
         {
-            var userId =_webHelpers.CurrentUserId();
+            var userId = _webHelpers.CurrentUserId();
             var res = new BaseResponse<List<GetCoachesRecommendationResponse>>();
             res.Status = true;
             try
             {
                 // Base query with joins and filtering
                 var queryable = from rec in _context.Recommendations
-                                join teach in _context.CoachFrikaUsers on rec.TeacherId equals teach.Id
+                                    //join teach in _context.CoachFrikaUsers on rec.TeacherId equals teach.Id
                                 join schd in _context.Schedule on rec.ScheduleId equals schd.Id.ToString()
                                 where rec.CoachId == userId
                                 //&& (string.IsNullOrEmpty(query.TeacherId) || teach.Id.Contains(query.TeacherId))
-                                && (string.IsNullOrEmpty(query.ScheduleTitle) || (schd.Title.Contains(query.ScheduleTitle)|| teach.FullName.Contains(query.ScheduleTitle)))
-                                select new
+                                && (string.IsNullOrEmpty(query.ScheduleTitle) || (schd.Title.Contains(query.ScheduleTitle) || rec.Recommendation.Contains(query.ScheduleTitle)))
+
+                                select new GetCoachesRecommendationResponse
                                 {
-                                    rec,
-                                    teach,
-                                    schd
+                                    Id = rec.Id.ToString(),
+                                    ScheduleId = schd.Id.ToString(),
+                                    ScheduleTitle = schd.Title,
+                                    Recommendation = rec.Recommendation,
+                                    CreatedDate = rec.CreatedDate,
                                 };
+
+
+                // Total count for pagination
+                //var totalCount = queryable.Count();
 
                 // Materialize the query to avoid EF Core translation issues
                 var groupedData = queryable
-                    .AsEnumerable() // Forces execution and avoids EF translation issues
-                    .GroupBy(g => new { g.schd.Id, g.schd.Title })
-                    .Select(grouped => new GetCoachesRecommendationResponse
-                    {
-                        Id = grouped.Key.Id.ToString(),
-                        ScheduleTitle = grouped.Key.Title,
-                        Recommendation = grouped.FirstOrDefault()?.rec.Recommendation ?? string.Empty,
-                        TeacherRemark = grouped.Select(g => new TeachersRemarks
-                        {
-                            TeachersRemark = g.rec.TeacherRemark ?? string.Empty,
-                            TeachersName = g.teach.FullName ?? string.Empty
-                        }).ToList()
-                    });
-
+                                  .AsEnumerable() // Use only if EF can't translate the group
+                                  .GroupBy(g => g.Recommendation)
+                                  .Select(g => g.First()) // Pick first item from each group
+                                  .ToList();
                 // Total count for pagination
                 var totalCount = groupedData.Count();
 
@@ -541,7 +548,7 @@ namespace CoachFrika.APIs.Domin.Services
                     .ToList();
 
                 // Set response data
-                res.Data = pagedData;
+                res.Data = groupedData;
                 res.PageNumber = query.PageNumber;
                 res.PageSize = query.Pagesize;
                 res.TotalCount = totalCount;

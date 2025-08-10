@@ -1,26 +1,31 @@
 ﻿<!-- Include Select2 CSS and JS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<!-- Toastr CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <div class="space"></div>
 
 <!-- Top Bar -->
 <div class="teacher-top-bar">
     <span style="font-weight: bold; font-size: 18px;">Coach Recommendations</span>
-    <div>
-        <input type="text" id="teacherSearchInput" class="teacher-search-input" placeholder="Search by name..." />
-        <button class="teacher-view-all-btn" onclick="handleTeacherSearch()">Search</button>
+    <div style="display:flex">
+        <!-- Only for Coaches -->
+        <div id="planTypeWrapper" style="display: none; margin-right: 10px;">
+            <select id="planTypeSelect" class="teacher-search-input" onchange="handleRecomSearch()">
+                <option value="">-- Select Plan Type --</option>
+                <option value="Intentional">Intentional</option>
+                <option value="Phenomenal">Phenomenal</option>
+                <option value="Transformational">Transformational</option>
+            </select>
+        </div>
+        <input type="text" style="margin-right: 10px" id="teacherSearchInput" class="teacher-search-input" placeholder="Search by name..." />
+        <button class="teacher-view-all-btn" onclick="handleRecomSearch()">Search</button>
 
         <!-- Only for Coaches -->
-        <span id="coachOnlyButtons" style="display: none;">
-            <div id="planTypeWrapper" style="display: none; margin-top: 10px;">
-                <select id="planTypeSelect" class="teacher-search-input" style="width: auto;" onchange="handlePlanSearch()">
-                    <option value="">-- Select Plan Type --</option>
-                    <option value="Intentional">Intentional</option>
-                    <option value="Phenomenal">Phenomenal</option>
-                    <option value="Transformational">Transformational</option>
-                </select>
-            </div>
+        <span id="coachOnlyButtons" style="display: none;margin-left: 20px;">
             <button class="teacher-view-all-btn" onclick="openCreateRecModal()">+ Create Recommendation</button>
         </span>
     </div>
@@ -28,7 +33,7 @@
 
 <div class="space"></div>
 
-<!-- Teacher Cards -->
+<!-- Recommendation Cards -->
 <div class="teacher-card-wrapper" id="teacherCardWrapper">Loading Recommendations .....</div>
 
 <!-- Pagination -->
@@ -36,6 +41,38 @@
     <button onclick="teacherGoToPreviousPage()">Previous</button>
     <span id="teacherPageInfo">Page 1</span>
     <button onclick="teacherGoToNextPage()">Next</button>
+</div>
+
+<!-- Coach-Only Teacher List Section (Hidden by default) -->
+<div id="coachTeacherListSection" style="display:none; margin-top: 30px;">
+    <h2 style="font-weight: bold; font-size: 18px;">Teachers List</h2>
+
+    <!-- Search -->
+    <div style="margin-bottom: 10px;">
+        <input type="text" id="coachTeacherSearchInput" placeholder="Search by name..." style="margin-right: 10px; padding: 5px;" />
+        <button class="teacher-view-all-btn" onclick="handleCoachTeacherSearch()">Search</button>
+    </div>
+
+    <!-- Table -->
+    <table border="1" width="100%" style="border-collapse: collapse; margin-top: 10px;">
+        <thead style="background: #f4f4f4;">
+            <tr>
+                <th style="padding: 8px;">Name</th>
+                <th style="padding: 8px;">Title</th>
+                <th style="padding: 8px;">School</th>
+            </tr>
+        </thead>
+        <tbody id="coachTeacherTableBody">
+            <tr><td colspan="3" style="text-align:center; padding:10px;">No data loaded</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div style="margin-top: 10px;">
+        <button onclick="coachTeacherPrevPage()">Previous</button>
+        <span id="coachTeacherPageInfo">Page 1</span>
+        <button onclick="coachTeacherNextPage()">Next</button>
+    </div>
 </div>
 
 <!-- Create Recommendation Modal -->
@@ -59,17 +96,24 @@
 </div>
 
 <script>
-    const teacherToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
+    let teacherToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
     let teacherPageNumber = 1;
     const teacherPageSize = 10;
     let teacherSearchTerm = '';
     let selectedPlanType = '';
     let userRole = '';
 
-    function handleTeacherSearch() {
+    // Coach Teacher List variables
+    let coachTeacherPageNumber = 1;
+    const coachTeacherPageSize = 10;
+    let coachTeacherSearchTerm = '';
+    let currentRecomendationId = null;
+
+    function handleRecomSearch() {
         teacherSearchTerm = document.getElementById("teacherSearchInput").value.trim();
+        selectedPlanType = document.getElementById("planTypeSelect").value.trim();
         teacherPageNumber = 1;
-        loadTeachers();
+        LoadRecomSearch();
     }
 
     function getUserRoleFromToken() {
@@ -85,65 +129,104 @@
 
     function showCoachUI() {
         userRole = getUserRoleFromToken();
-        if (userRole === "Coaches") {
-            document.getElementById("coachOnlyButtons").style.display = "inline-block";
+        if (userRole === "Coach") {
+            document.getElementById("coachOnlyButtons").style.display = "block";
             document.getElementById("planTypeWrapper").style.display = "block";
         }
     }
 
-    function handlePlanSearch() {
-        selectedPlanType = document.getElementById("planTypeSelect").value.trim();
-        teacherPageNumber = 1;
-        loadTeachers();
-    }
-
-    function loadTeachers() {
+    function LoadRecomSearch() {
         const url = userRole === "Teacher"
             ? `/api/Teachers/GetAllRecommendations?ScheduleTitle=${encodeURIComponent(teacherSearchTerm)}&PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}`
-            : `/api/Coaches/GetAllRecommendations?ScheduleTitle=${encodeURIComponent(teacherSearchTerm)}&PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}${selectedPlanType ? `&PlanType=${encodeURIComponent(selectedPlanType)}` : ''}`;
+            : `/api/Coaches/GetAllRecommendations?ScheduleTitle=${encodeURIComponent(teacherSearchTerm)}&PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}${selectedPlanType ? `&SelectedPlanType=${encodeURIComponent(selectedPlanType)}` : ''}`;
 
         fetch(url, {
             headers: { "Authorization": `Bearer ${teacherToken}` }
         })
-            .then(res => res.json())
-            .then(data => {
-                const wrapper = document.getElementById("teacherCardWrapper");
-                wrapper.innerHTML = "";
+        .then(res => res.json())
+        .then(data => {
+            const wrapper = document.getElementById("teacherCardWrapper");
+            wrapper.innerHTML = "";
 
-                if (!data?.data?.length) {
-                    wrapper.innerHTML = "<p>No Recommendations found.</p>";
-                    return;
-                }
+            if (!data?.data?.length) {
+                wrapper.innerHTML = "<p>No Recommendations found.</p>";
+                return;
+            }
 
-                data.data.forEach(teacher => {
-                    const card = document.createElement("div");
-                    card.className = "teacher-card";
+            data.data.forEach(teacher => {
+                const card = document.createElement("div");
+                card.className = "teacher-card";
 
-                    const nameToShow = userRole === "Teacher"
-                        ? (teacher.teachersName || "")
-                        : (teacher.teachersName || teacher.coachName || "");
+                const nameToShow = userRole === "Teacher"
+                    ? (teacher.teachersName || "")
+                    : (teacher.teachersName || teacher.coachName || "");
 
-                    card.innerHTML = `
-                        <div class="teacher-card-content">
-                            <p class="teacher-name">${teacher.scheduleTitle || ''}</p>
-                            <p class="teacher-school">${teacher.recommendation || ''}</p>
-                            <p class="teacher-school">${nameToShow}</p>
-                            <div class="teacher-btn">
-                                <a href="/Profile/Details?id=${teacher.id}">
-                                    <button class="teacher-view-btn">View Details</button>
-                                </a>
-                            </div>
+                card.innerHTML = `
+                    <div class="teacher-card-content">
+                        <p class="teacher-name">${teacher.scheduleTitle || ''}</p>
+                        <p class="teacher-school">${teacher.recommendation || ''}</p>
+                        <p class="teacher-school">${nameToShow}</p>
+                        <div class="teacher-btn">
+                            <button class="teacher-view-btn" onclick="showCoachTeacherList('${teacher.id}')">View Details</button>
                         </div>
-                    `;
-                    wrapper.appendChild(card);
-                });
-
-                document.getElementById("teacherPageInfo").textContent = `Page ${teacherPageNumber}`;
-            })
-            .catch(err => {
-                console.error("Error fetching teachers:", err);
-                document.getElementById("teacherCardWrapper").innerHTML = "<p>Error loading teachers.</p>";
+                    </div>
+                `;
+                wrapper.appendChild(card);
             });
+
+            document.getElementById("teacherPageInfo").textContent = `Page ${teacherPageNumber}`;
+        })
+        .catch(err => {
+            console.error("Error fetching teachers:", err);
+            document.getElementById("teacherCardWrapper").innerHTML = "<p>Error loading teachers.</p>";
+        });
+    }
+
+    function loadTeachers() {
+        const url = userRole === "Teacher"
+            ? `/api/Teachers/GetAllRecommendations?PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}`
+            : `/api/Coaches/GetAllRecommendations?PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}`;
+
+        fetch(url, {
+            headers: { "Authorization": `Bearer ${teacherToken}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const wrapper = document.getElementById("teacherCardWrapper");
+            wrapper.innerHTML = "";
+
+            if (!data?.data?.length) {
+                wrapper.innerHTML = "<p>No Recommendations found.</p>";
+                return;
+            }
+
+            data.data.forEach(teacher => {
+                const card = document.createElement("div");
+                card.className = "teacher-card";
+
+                const nameToShow = userRole === "Teacher"
+                    ? (teacher.teachersName || "")
+                    : (teacher.teachersName || teacher.coachName || "");
+
+                card.innerHTML = `
+                    <div class="teacher-card-content">
+                        <p class="teacher-name">${teacher.scheduleTitle || ''}</p>
+                        <p class="teacher-school">${teacher.recommendation || ''}</p>
+                        <p class="teacher-school">${nameToShow}</p>
+                        <div class="teacher-btn">
+                            <button class="teacher-view-btn" onclick="showCoachTeacherList('${teacher.id}')">View Details</button>
+                        </div>
+                    </div>
+                `;
+                wrapper.appendChild(card);
+            });
+
+            document.getElementById("teacherPageInfo").textContent = `Page ${teacherPageNumber}`;
+        })
+        .catch(err => {
+            console.error("Error fetching teachers:", err);
+            document.getElementById("teacherCardWrapper").innerHTML = "<p>Error loading teachers.</p>";
+        });
     }
 
     function teacherGoToNextPage() {
@@ -158,6 +241,70 @@
         }
     }
 
+    // ==== Coach Teacher List functions ====
+    function showCoachTeacherList(recomendationId) {
+        if (userRole !== "Coach") return;
+        currentRecomendationId = recomendationId;
+        coachTeacherPageNumber = 1;
+        document.getElementById("coachTeacherListSection").style.display = "block";
+        loadCoachTeacherList();
+    }
+
+    function handleCoachTeacherSearch() {
+        coachTeacherSearchTerm = document.getElementById("coachTeacherSearchInput").value.trim();
+        coachTeacherPageNumber = 1;
+        loadCoachTeacherList();
+    }
+
+    function loadCoachTeacherList() {
+        if (!currentRecomendationId) return;
+
+        const url = `/api/Scheduled/GetTeacherList?Recomendation=${encodeURIComponent(currentRecomendationId)}&Search=${encodeURIComponent(coachTeacherSearchTerm)}&PageSize=${coachTeacherPageSize}&PageNumber=${coachTeacherPageNumber}`;
+
+        fetch(url, {
+            headers: { "Authorization": `Bearer ${teacherToken}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById("coachTeacherTableBody");
+            tbody.innerHTML = "";
+
+            if (!data?.data?.length) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px;">No teachers found.</td></tr>`;
+                return;
+            }
+
+            data.data.forEach(t => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="padding: 8px;">${t.fullName || ''}</td>
+                        <td style="padding: 8px;">${t.title || ''}</td>
+                        <td style="padding: 8px;">${t.schoolName || ''}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("coachTeacherPageInfo").textContent = `Page ${coachTeacherPageNumber}`;
+        })
+        .catch(err => {
+            console.error("Error loading teacher list:", err);
+            toastr.error("Failed to load teacher list.");
+        });
+    }
+
+    function coachTeacherNextPage() {
+        coachTeacherPageNumber++;
+        loadCoachTeacherList();
+    }
+
+    function coachTeacherPrevPage() {
+        if (coachTeacherPageNumber > 1) {
+            coachTeacherPageNumber--;
+            loadCoachTeacherList();
+        }
+    }
+
+    // ==== Modal Functions ====
     function openCreateRecModal() {
         document.getElementById("createRecModal").style.display = "flex";
         loadScheduleOptions();
@@ -173,43 +320,43 @@
         fetch('/api/Scheduled/GetScheduleList', {
             headers: { "Authorization": `Bearer ${teacherToken}` }
         })
-            .then(res => res.json())
-            .then(res => {
-                const dropdown = document.getElementById("scheduleDropdown");
-                dropdown.innerHTML = `<option value="">-- Select Schedule --</option>`;
-                res.data.forEach(s => {
-                    dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`;
-                });
+        .then(res => res.json())
+        .then(res => {
+            const dropdown = document.getElementById("scheduleDropdown");
+            dropdown.innerHTML = `<option value="">-- Select Schedule --</option>`;
+            res.data.forEach(s => {
+                dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`;
+            });
 
-                dropdown.onchange = function () {
-                    const selectedScheduleId = this.value;
-                    if (selectedScheduleId) {
-                        loadTeacherOptions(selectedScheduleId);
-                    }
-                };
-            })
-            .catch(() => alert("Failed to load schedules."));
+            dropdown.onchange = function () {
+                const selectedScheduleId = this.value;
+                if (selectedScheduleId) {
+                    loadTeacherOptions(selectedScheduleId);
+                }
+            };
+        })
+        .catch(() => toastr.error("Failed to load schedules."));
     }
 
     function loadTeacherOptions(scheduleId) {
         fetch(`/api/Scheduled/GetTeacherList?ScheduleId=${scheduleId}`, {
             headers: { "Authorization": `Bearer ${teacherToken}` }
         })
-            .then(res => res.json())
-            .then(res => {
-                const dropdown = document.getElementById("teacherDropdown");
-                dropdown.innerHTML = "";
-                res.data.forEach(t => {
-                    dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`;
-                });
+        .then(res => res.json())
+        .then(res => {
+            const dropdown = document.getElementById("teacherDropdown");
+            dropdown.innerHTML = "";
+            res.data.forEach(t => {
+                dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`;
+            });
 
-                $('#teacherDropdown').select2({
-                    width: '100%',
-                    placeholder: 'Select teachers',
-                    allowClear: true
-                });
-            })
-            .catch(() => alert("Failed to load teachers."));
+            $('#teacherDropdown').select2({
+                width: '100%',
+                placeholder: 'Select teachers',
+                allowClear: true
+            });
+        })
+        .catch(() => toastr.error("Failed to load teachers."));
     }
 
     document.getElementById("createRecForm").addEventListener("submit", function (e) {
@@ -233,15 +380,22 @@
             },
             body: JSON.stringify(payload)
         })
-            .then(res => res.json())
-            .then(() => {
-                alert("Recommendation created successfully!");
-                closeCreateRecModal();
-                loadTeachers();
-            })
-            .catch(() => {
-                alert("Error creating recommendation.");
-            });
+        .then(async res => {
+            const data = await res.json();
+            if (!res.ok) {
+                toastr.error(data?.message || data?.error || "An error occurred while creating recommendation.");
+                throw new Error(data?.message || data?.error || "Error");
+            }
+            return data;
+        })
+        .then(() => {
+            toastr.success("Recommendation created successfully!");
+            closeCreateRecModal();
+            loadTeachers();
+        })
+        .catch(err => {
+            console.error("Error:", err);
+        });
     });
 
     // Init

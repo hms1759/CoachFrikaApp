@@ -128,7 +128,7 @@ namespace CoachFrika.APIs.ViewModel
     {
         public string? ScheduleTitle { get; set; }
         public string? TeacherId { get; set; }
-        public Subscriptions PlanTyp3 { get; set; }
+        public Subscriptions? SelectedPlanType { get; set; }
         public int Pagesize { get; set; } = 10;
         public int PageNumber { get; set; } = 1;
 
@@ -179,7 +179,9 @@ namespace CoachFrika.APIs.ViewModel
     {
         public string? Id { get; set; }
         public string? ScheduleTitle { get; set; }
+        public string? ScheduleId { get; set; }
         public string? Recommendation { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public List<TeachersRemarks>? TeacherRemark { get; set; }
 
     }
