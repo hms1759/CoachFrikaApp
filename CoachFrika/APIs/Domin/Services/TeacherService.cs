@@ -594,9 +594,8 @@ namespace CoachFrika.APIs.Domin.Services
                 var cos = from rec in _context.Recommendations
                           join coach in _context.CoachFrikaUsers on rec.CoachId equals coach.Id
                           join schd in _context.Schedule on rec.ScheduleId equals schd.Id.ToString()
-
-                          // rec.TeacherId == userId
-                           where(string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
+                          where rec.TeacherId == userId &&
+                          (string.IsNullOrEmpty(query.ScheduleTitle) || schd.Title.Contains(query.ScheduleTitle))
                           select new GetTeacherRecommendationResponse
                           {
                               Id = rec.Id.ToString(),

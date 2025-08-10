@@ -23,7 +23,7 @@
         }
 
     #coachTeacherSearchInput {
-        border: 1px solid #ccc;
+        /* border: 1px solid #ccc; */
         border-radius: 4px;
         padding: 6px 10px;
         font-size: 14px;
@@ -31,7 +31,7 @@
 
     .teacher-view-all-btn {
         /* background-color: #007bff; */
-        color: #fff;
+        /* color: #fff; */
         border: none;
         border-radius: 4px;
         padding: 6px 12px;
@@ -56,7 +56,7 @@
 
     th, td {
         padding: 8px;
-        border: 1px solid #ddd;
+        /* border: 1px solid #ddd; */
     }
 
     tr:hover {
@@ -74,7 +74,7 @@
         .teacher-pagination button {
             padding: 5px 10px;
             border: none;
-            /* background: #007bff; */
+            background: green; 
             color: #fff;
             border-radius: 4px;
             cursor: pointer;
@@ -141,9 +141,11 @@
     <table>
         <thead>
             <tr>
-                <th>Name</th>
                 <th>Title</th>
+                <th>Name</th>
                 <th>School</th>
+                <th>PhoneNumber</th>
+                <th>Email</th>
             </tr>
         </thead>
         <tbody id="coachTeacherTableBody">
@@ -179,7 +181,8 @@
 </div>
 
 <script>
-    let teacherToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
+    (function () {
+    const teacherRecToken  = @Html.Raw(Context.Session.GetString("Token") ?? "");
     let teacherPageNumber = 1;
     const teacherPageSize = 10;
     let teacherSearchTerm = '';
@@ -200,9 +203,9 @@
     }
 
     function getUserRoleFromToken() {
-        if (!teacherToken) return null;
+        if (!teacherRecToken ) return null;
         try {
-            const payload = JSON.parse(atob(teacherToken.split('.')[1]));
+            const payload = JSON.parse(atob(teacherRecToken .split('.')[1]));
             return payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || null;
         } catch (e) {
             console.error("Invalid token format:", e);
@@ -224,7 +227,7 @@
             : `/api/Coaches/GetAllRecommendations?ScheduleTitle=${encodeURIComponent(teacherSearchTerm)}&PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}${selectedPlanType ? `&SelectedPlanType=${encodeURIComponent(selectedPlanType)}` : ''}`;
 
         fetch(url, {
-            headers: { "Authorization": `Bearer ${teacherToken}` }
+            headers: { "Authorization": `Bearer ${teacherRecToken }` }
         })
         .then(res => res.json())
         .then(data => {
@@ -242,14 +245,15 @@
         console.log(teacher)
                 card.className = "teacher-card";
 
-                const nameToShow = userRole === "Teacher"
+                const nameToShow = userRole === "Coach"
                     ? (teacher.teachersName || "")
-                    : (teacher.teachersName || teacher.coachName || "");
+                    : (teacher.coachName || "");
 
                 card.innerHTML = `
                     <div class="teacher-card-content">
                         <p class="teacher-name">${teacher.scheduleTitle || ''}</p>
                         <p class="teacher-school">${teacher.recommendation || ''}</p>
+                        <p class="teacher-school">${teacher.CreatedDate ? new Date(teacher.CreatedDate).toLocaleDateString('en-GB') : ''}</p>
                         <p class="teacher-school">${nameToShow}</p>
                         <div class="teacher-btn">
                             <button class="teacher-view-btn" onclick="showCoachTeacherList('${teacher.recommendation}')">View Details</button>
@@ -273,7 +277,7 @@
             : `/api/Coaches/GetAllRecommendations?PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}`;
 
         fetch(url, {
-            headers: { "Authorization": `Bearer ${teacherToken}` }
+            headers: { "Authorization": `Bearer ${teacherRecToken }` }
         })
         .then(res => res.json())
         .then(data => {
@@ -352,7 +356,7 @@
         const url = `/api/Coaches/GetRecommendationTeacherList?Recomendation=${encodeURIComponent(currentRecomendationId)}&IsPaginated=true&Name=${encodeURIComponent(coachTeacherSearchTerm)}&Pagesize=${coachTeacherPageSize}&PageNumber=${coachTeacherPageNumber}`;
 
         fetch(url, {
-            headers: { "Authorization": `Bearer ${teacherToken}` }
+            headers: { "Authorization": `Bearer ${teacherRecToken }` }
         })
         .then(res => res.json())
         .then(data => {
@@ -367,9 +371,11 @@
             data.data.forEach(t => {
                 tbody.innerHTML += `
                     <tr>
-                        <td>${t.fullName || ''}</td>
                         <td>${t.title || ''}</td>
+                        <td>${t.fullName || ''}</td>
                         <td>${t.schoolName || ''}</td>
+                        <td>${t.phoneNumber || ''}</td>
+                        <td>${t.email || ''}</td>
                     </tr>
                 `;
             });
@@ -408,7 +414,7 @@
 
     function loadScheduleOptions() {
         fetch('/api/Scheduled/GetScheduleList', {
-            headers: { "Authorization": `Bearer ${teacherToken}` }
+            headers: { "Authorization": `Bearer ${teacherRecToken }` }
         })
         .then(res => res.json())
         .then(res => {
@@ -430,7 +436,7 @@
 
     function loadTeacherOptions(scheduleId) {
         fetch(`/api/Scheduled/GetTeacherList?ScheduleId=${scheduleId}`, {
-            headers: { "Authorization": `Bearer ${teacherToken}` }
+            headers: { "Authorization": `Bearer ${teacherRecToken }` }
         })
         .then(res => res.json())
         .then(res => {
@@ -465,7 +471,7 @@
         fetch('/api/Coaches/AddTeachersRecomendations', {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${teacherToken}`,
+                "Authorization": `Bearer ${teacherRecToken }`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(payload)
@@ -490,5 +496,5 @@
 
     // Init
     showCoachUI();
-    loadTeachers();
+    loadTeachers();})();
 </script>

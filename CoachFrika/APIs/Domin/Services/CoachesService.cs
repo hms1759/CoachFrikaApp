@@ -604,13 +604,12 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
-                query.Recomendation ="Read 001";
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from rec in _context.Recommendations
                           join teacher in _context.CoachFrikaUsers on rec.TeacherId equals teacher.Id
                           where rec.Recommendation.ToLower().Trim() == query.Recomendation.ToLower().Trim()
-                          && teacher.Id == userId && teacher.Role == Roles.Teacher
+                          && teacher.CoachId == userId && teacher.Role == Roles.Teacher
                          && (string.IsNullOrEmpty(query.Name) || teacher.FullName.Contains(query.Name))
                           select new ProfileDto
                           {

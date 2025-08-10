@@ -75,6 +75,7 @@
     </div>
 
     <script>
+                (function () {
         const usertoken = @Html.Raw(Context.Session.GetString("Token") ?? "");
 
         const role = getRoleFromToken();
@@ -271,6 +272,7 @@
 
         closeScheduleModal()
         loadSchedules("comingsoon");
+        })();
     </script>
 
 </body>
