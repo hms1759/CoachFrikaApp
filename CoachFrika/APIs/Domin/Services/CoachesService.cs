@@ -604,6 +604,7 @@ namespace CoachFrika.APIs.Domin.Services
             res.Status = true;
             try
             {
+                query.Recomendation ="Read 001";
                 var day = DateTime.Now.Day;
                 // Apply filters based on the query parameters
                 var cos = from rec in _context.Recommendations
@@ -629,9 +630,9 @@ namespace CoachFrika.APIs.Domin.Services
                           };
 
                 // Apply pagination using Skip and Take
-                var pagedData = query.IsPaginated ? (cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                var pagedData = (cos.Skip((query.PageNumber - 1) * query.Pagesize)
                                    .Take(query.Pagesize)
-                                   .ToList()) : cos.ToList();
+                                   .ToList());
 
                 // Set the response data
                 res.Data = pagedData;

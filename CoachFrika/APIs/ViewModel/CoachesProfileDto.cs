@@ -82,8 +82,9 @@ namespace CoachFrika.APIs.ViewModel
 
     }
     
-    public class GetRecomendationTeachers : GetTeachers
+    public class GetRecomendationTeachers : Pagination
     {
+        public string? Name { get; set; }
         public string? Recomendation { get; set; }
 
     }

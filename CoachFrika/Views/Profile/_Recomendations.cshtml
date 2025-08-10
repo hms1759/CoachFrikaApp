@@ -238,6 +238,8 @@
 
             data.data.forEach(teacher => {
                 const card = document.createElement("div");
+
+        console.log(teacher)
                 card.className = "teacher-card";
 
                 const nameToShow = userRole === "Teacher"
@@ -343,8 +345,10 @@
      }
      
       function loadCoachTeacherList() {
-        if (!currentRecomendationId) return;
 
+        console.log(currentRecomendationId)
+        if (!currentRecomendationId) return;
+        console.log(currentRecomendationId)
         const url = `/api/Coaches/GetRecommendationTeacherList?Recomendation=${encodeURIComponent(currentRecomendationId)}&IsPaginated=true&Name=${encodeURIComponent(coachTeacherSearchTerm)}&Pagesize=${coachTeacherPageSize}&PageNumber=${coachTeacherPageNumber}`;
 
         fetch(url, {
