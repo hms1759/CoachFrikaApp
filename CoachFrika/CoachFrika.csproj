@@ -43,6 +43,9 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Update="Views\Profile\_Dashboard.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="wwwroot\images\twitter-icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
