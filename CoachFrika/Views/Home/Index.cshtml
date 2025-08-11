@@ -4,7 +4,362 @@
     ViewData["Title"] = "Home Page";
     ViewData["BodyClass"] = "home-page";
 }
+<style>
+    .Personalized-text-box {
+        font-family: 'Roboto Flex', sans-serif;
+        font-weight: 700;
+        font-size: 48px;
+        line-height: 100%;
+        text-align: left;
+        justify-content: left;
+        align-items: flex-end;
+        padding: 20px 70px 0px 0px;
+    }
 
+    .Supported-text-box {
+        font-family: 'Roboto Flex', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 100%;
+        text-align: left;
+        /*display: flex;*/
+        justify-content: left;
+        align-items: flex-end;
+        margin: 10px 0px;
+        padding-right: 50px;
+    }
+
+    .group-img {
+        margin: 0px 10px;
+    }
+
+    .support-board {
+        width: 50%;
+        margin-top: 20px;
+        padding-top: 10px;
+    }
+
+    .grouped-img-box {
+        margin-top: 20px;
+        padding-top: 20px;
+        display: flex;
+    }
+
+    .carousel-bottom-controls .carousel-indicators button {
+        background-color: greenyellow;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin: 0 4px;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: greenyellow;
+        border-radius: 50%;
+        margin: 30px;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        background-color: greenyellow;
+        border-radius: 50%;
+    }
+
+    .Featured-Coaches-Header {
+        margin: 30px;
+        color: white;
+        font-family: 'Roboto Flex', sans-serif;
+        font-weight: 700;
+        font-size: 36px;
+        line-height: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .Featured-coach-img img {
+        border-radius: 10px;
+    }
+
+    .Featured-Coaches {
+        margin-top: 5rem;
+        padding: 15px;
+        background-color: rgba(1, 33, 18, 1);
+    }
+
+    .Featured-coach-img {
+        padding-bottom: 10px;
+        border-radius: 10px;
+    }
+
+    .Featured-coach {
+        margin: 20px 5px;
+        padding: 3px;
+        padding-bottom: 30px
+    }
+
+    .Featured-coach-text {
+        margin: 20px 10px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+    }
+
+    .educator {
+        margin: 20px 0px;
+    }
+
+    .EventHeader,
+    .EducatorHeader {
+        padding: 0cm 9cm;
+        margin: 8rem 0rem;
+        font-family: "Roboto Flex", sans-serif;
+        font-weight: 700;
+        font-size: 36px;
+        line-height: 100%;
+        text-align: center; /* horizontal alignment */
+        display: flex;
+        align-items: center; /* vertical alignment */
+        justify-content: center; /* also centers horizontally if in a flex container */
+        height: 100%; /* needed for vertical centering to work */
+    }
+
+    .EventHeader {
+        padding: 0cm 10cm;
+        margin-bottom: 1rem;
+    }
+
+    .Eventtext {
+        padding: 0cm 8cm;
+        margin-top: 20px;
+        font-weight: 400;
+        font-size: 16px;
+        text-align: center;
+        justify-content: center;
+        margin-bottom: 8rem;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        height: 20%;
+        margin-bottom: 10px;
+    }
+
+    .profile-section {
+        display: flex;
+        width: 50%;
+    }
+
+    .profile-img-wrapper {
+        border-radius: 60px;
+        /*background-color: green;*/
+        padding: 2px;
+        margin-right: 5px;
+    }
+
+    .profile-info {
+        font-family: Manrope;
+        font-size: 12px;
+    }
+
+    .profile-name,
+    .profile-location {
+        text-align: left;
+        margin: 5px 0;
+    }
+
+    .profile-name {
+        font-family: Inter;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 30px;
+        letter-spacing: 0px;
+    }
+
+    .school-info {
+        font-family: Manrope;
+        font-weight: 700;
+        width: 50%;
+        font-size: 12px;
+        text-align: right;
+    }
+
+    .card-body {
+        font-family: Manrope;
+        font-size: 12px;
+        margin: 10px 0;
+        text-align: justify;
+    }
+
+    .alignleft {
+        text-align: left;
+    }
+
+    .evenDate {
+        font-size: 12px;
+    }
+
+    .eventContent {
+        font-family: "Roboto Flex", sans-serif;
+        font-weight: 700;
+        font-size: 36px;
+        line-height: 100%;
+    }
+
+    .Readmore {
+        font-family: "Roboto Flex", sans-serif;
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    .evenImage {
+        padding: 10px;
+    }
+
+        .evenImage img {
+            width: 100%;
+        }
+
+    .eventCard {
+        width: 32%;
+        margin: 20px 0px;
+    }
+
+    .eventBody {
+        margin-top: 20px;
+    }
+
+    @@media (max-width: 1024px) {
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .Personalized-text-box {
+            font-size: 36px;
+            padding: 10px 20px;
+        }
+
+        .Empowering-text-box {
+            font-size: 20px;
+            padding: 0 20px;
+        }
+
+        .support-board {
+            width: 80%;
+            text-align: center;
+        }
+
+        .side-image img {
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        .EventHeader, .EducatorHeader {
+            padding: 0 3rem;
+            font-size: 28px;
+            margin: 4rem 0;
+        }
+
+        .Eventtext {
+            padding: 0 2rem;
+        }
+
+        .eventCard {
+            width: 48%;
+        }
+    }
+
+    /* ---------- Mobile (≤768px) ---------- */
+    @@media (max-width: 768px) {
+        .Personalized-text-box {
+            font-size: 28px;
+            padding: 10px;
+        }
+
+        .Empowering-text-box {
+            font-size: 18px;
+            padding: 0 10px;
+        }
+
+        .support-board {
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .grouped-img-box {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .group-img {
+            margin: 5px;
+        }
+
+        .record {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .mission {
+            flex-direction: column;
+        }
+
+        .mission-child-1, .mission-child-2 {
+            width: 100%;
+            padding: 10px;
+        }
+
+        .Featured-child {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .eventCard {
+            width: 100%;
+        }
+
+        .EventHeader, .EducatorHeader {
+            font-size: 22px;
+            padding: 0 1rem;
+        }
+
+        .Eventtext {
+            font-size: 14px;
+            padding: 0 1rem;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            margin: 10px;
+        }
+    }
+
+    /* ---------- Small Mobile (≤480px) ---------- */
+    @@media (max-width: 480px) {
+        .Personalized-text-box {
+            font-size: 22px;
+        }
+
+        .Empowering-text-box {
+            font-size: 16px;
+        }
+
+        .Featured-Coaches-Header {
+            font-size: 24px;
+        }
+
+        .eventContent {
+            font-size: 20px;
+        }
+
+        .Readmore {
+            font-size: 14px;
+        }
+    }
+</style>"
 <div>
     <!-- div 1: Two children widely spaced -->
     <div class="d-flex justify-content-between">
@@ -16,7 +371,8 @@
                 Empowering Africa's Educators Through A Modern and  Smart Approach.
             </div>
             <div class="nnb_join">
-                Join Us
+                <a class="nav-link" asp-controller="Account" asp-action="SignUp">Join Us</a>
+                
             </div>
 
             <div class="support-board">
@@ -97,7 +453,7 @@
             </div>
             <div class="mission-child-btn">
                 <div class="nnWH_join">
-                    Join Us
+                    <a class="nav-link" asp-controller="Account" asp-action="SignUp">Join Us</a>
                 </div>
             </div>
         </div>
@@ -132,7 +488,8 @@
                                     <img src="~/images/1content.png" />
                                 </div>
                                 <div class="nnWH_join">
-                                    Book now
+
+                                    <a class="nav-link" asp-controller="Account" asp-action="SignUp">Book now</a>
 
                                 </div>
                             </div>
@@ -159,7 +516,7 @@
                                     <img src="~/images/2content.png" />
                                 </div>
                                 <div class="nnWH_join">
-                                    Book now
+                                    <a class="nav-link" asp-controller="Account" asp-action="SignUp">Book now</a>
 
                                 </div>
                             </div>
@@ -185,7 +542,7 @@
                                     <img src="~/images/3content.png" />
                                 </div>
                                 <div class="nnWH_join">
-                                    Book now
+                                    <a class="nav-link" asp-controller="Account" asp-action="SignUp">Book now</a>
 
                                 </div>
                             </div>
