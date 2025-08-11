@@ -10,10 +10,11 @@ namespace CoachFrika.Controllers
     public class AccountController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-
-        public AccountController(IHttpClientFactory httpClientFactory)
+        private readonly string _apiBaseUrl;
+        public AccountController(IHttpClientFactory httpClientFactory, IConfiguration config)
         {
             _httpClientFactory = httpClientFactory;
+            _apiBaseUrl = config["ApiBaseUrl"];
         }
 
         [HttpGet]
@@ -27,20 +28,28 @@ namespace CoachFrika.Controllers
         {
 
             var request = HttpContext.Request;
-            var baseUrl = $"{request.Scheme}://{request.Host}";
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError(string.Empty, "Invalid Model");
                 return View(model);
             }
             var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsJsonAsync($"{baseUrl}/api/UserAccount/SignUp", model);
+            var response = await client.PostAsJsonAsync($"{_apiBaseUrl}/api/UserAccount/SignUp", model);
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorContent = await response.Content.ReadFromJsonAsync<BaseResponse<SignpStage1Resp>>();
-                ModelState.AddModelError(string.Empty, errorContent.Message);
-
+                var rawContent = await response.Content.ReadAsStringAsync();
+                if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                {
+                    // Parse JSON normally
+                    //var errorContent = JsonSerializer.Deserialize<BaseResponse<SignpStage1Resp>>(rawContent);
+                    ModelState.AddModelError(string.Empty, rawContent ?? "Unknown error");
+                }
+                else
+                {
+                    // Handle as plain text/HTML error
+                    ModelState.AddModelError(string.Empty, "Server returned HTML error page: " + rawContent);
+                }
                 return View(model);
             }
 
@@ -68,20 +77,29 @@ namespace CoachFrika.Controllers
         {
 
             var request = HttpContext.Request;
-            var baseUrl = $"{request.Scheme}://{request.Host}";
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError(string.Empty, "Invalid Model");
                 return View(model);
             }
             var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsJsonAsync($"{baseUrl}/api/UserAccount/Login", model);
+            var response = await client.PostAsJsonAsync($"{_apiBaseUrl}/api/UserAccount/Login", model);
+
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorContent = await response.Content.ReadFromJsonAsync<BaseResponse<LoginDetails>>();
-                ModelState.AddModelError(string.Empty, errorContent.Message);
-
+                var rawContent = await response.Content.ReadAsStringAsync();
+                if (response.Content.Headers.ContentType?.MediaType == "application/json")
+                {
+                    // Parse JSON normally
+                    //var errorContent = JsonSerializer.Deserialize<BaseResponse<SignpStage1Resp>>(rawContent);
+                    ModelState.AddModelError(string.Empty, rawContent ?? "Unknown error");
+                }
+                else
+                {
+                    // Handle as plain text/HTML error
+                    ModelState.AddModelError(string.Empty, "Server returned HTML error page: " + rawContent);
+                }
                 return View(model);
             }
 

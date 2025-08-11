@@ -23,16 +23,18 @@ namespace CoachFrika.Controllers
         public readonly IEmailService _emailService;
         private readonly EmailConfigSettings _emailConfig;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly string _apiBaseUrl;
 
 
         public HomeController(ILogger<HomeController> logger,
             IEmailService emailService, IOptions<EmailConfigSettings> emailConfig,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,IConfiguration config)
         {
             _logger = logger;
             _emailConfig = emailConfig.Value;
             _emailService = emailService;
-            _httpClientFactory = httpClientFactory;
+            _httpClientFactory = httpClientFactory; 
+            _apiBaseUrl = config["ApiBaseUrl"];
         }
 
         public async Task<IActionResult> Index()
@@ -40,10 +42,9 @@ namespace CoachFrika.Controllers
             try { 
 
             var request = HttpContext.Request;
-            var baseUrl = $"{request.Scheme}://{request.Host}";
 
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>($"{baseUrl}/api/Public/GetLandingPageCount");
+            var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>($"{_apiBaseUrl}/api/Public/GetLandingPageCount");
             if(response.Data == null)
             {
                 return View();
