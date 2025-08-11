@@ -124,10 +124,7 @@ namespace CoachFrika.Controllers
             var messageBody = body.ParseTemplate(messageToParse);
             var message = new Message(mailto, mailSubject, messageBody);
             await _emailService.SendEmail(message);
-
-
             return RedirectToAction("Index");
-
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

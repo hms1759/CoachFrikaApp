@@ -77,7 +77,7 @@ namespace CoachFrika.APIs.Domin.Services
                     //  email notification
                     var messageBody = body.ParseTemplate(messageToParse);
                     var message = new Message(mailto, mailSubject, messageBody);
-                    //await _emailService.SendEmail(message);
+                    await _emailService.SendEmail(message);
 
                     return res;
                 }
