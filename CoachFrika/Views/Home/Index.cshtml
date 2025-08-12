@@ -231,11 +231,7 @@
     }
 
     @@media (max-width: 1024px) {
-        .d-flex.justify-content-between {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
+      
 
         .Personalized-text-box {
             font-size: 36px;
@@ -274,11 +270,26 @@
 
     /* ---------- Mobile (≤768px) ---------- */
     @@media (max-width: 768px) {
+
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            text-align: center;
+        }
         .Personalized-text-box {
             font-size: 28px;
             padding: 10px;
         }
 
+        .side-text1 {
+            margin: 40px 0px;
+            max-width: 80%;
+            padding-top: 20px;
+        }
+
+        .side-image {
+            max-width: 80%;
+            margin: 20px 0px 0px 30px;
+        }
         .Empowering-text-box {
             font-size: 18px;
             padding: 0 10px;
@@ -331,6 +342,32 @@
             padding: 0 1rem;
         }
 
+        .big-card-content {
+            color: black;
+            /* padding: 20px; */
+            font-family: "Roboto Flex", sans-serif;
+            font-weight: 400;
+            font-size: 28px;
+            /* line-height: 100%; */
+            /* text-align: center; */
+            /* display: flex
+        ; */
+            /* align-items: center; */
+            /* justify-content: center; */
+            /* height: 100%; */
+        }
+
+        .big-card-text {
+            font-family: "Roboto Flex", sans-serif;
+            color: black;
+            /* padding: 0px 100px; */
+            font-weight: 400;
+            font-size: 16px;
+            text-align: center;
+            justify-content: center;
+            margin-bottom: 8rem;
+            margin: 20px 0px;
+        }
         .carousel-control-prev-icon,
         .carousel-control-next-icon {
             margin: 10px;
@@ -357,6 +394,34 @@
 
         .Readmore {
             font-size: 14px;
+        }
+
+        .side-image {
+            max-width: 110%;
+            /* margin: 20px 0px 0px 30px; */
+        }
+
+        .big-card {
+            font-family: "Roboto Flex", sans-serif;
+            color: black;
+            padding-top: 10px;
+            /* width: 70%; */
+            text-align: center;
+            border-radius: 10px;
+        }
+        .bigcardContainer {
+            /* margin: 30px; */
+            margin-top: 2cm;
+            padding: 10px;
+            background-color: rgba(121, 199, 1, 1);
+            border-radius: 10px;
+        }
+        .mission {
+            padding: 10PX;}
+        .side-text1 {
+            /* margin: 40px 0px; */
+            max-width: 100%;
+            /* padding-top: 20px; */
         }
     }
 </style>"

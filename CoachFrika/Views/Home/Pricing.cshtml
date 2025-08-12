@@ -1,6 +1,38 @@
 ﻿@{
     ViewData["Title"] = "Pricing";
 }
+<style>
+
+    @@media (max-width: 1024px) {
+        .services-container{
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+    }
+    @@media (max-width: 768px){
+        .priceContent {
+            font-family: Roboto Flex;
+            font-weight: 400;
+            font-size: 28px;
+            line-height: 100%;
+            vertical-align: middle;
+            margin-bottom: 0px !important;
+        }
+
+        .fqaClass {
+            width: 100% !important;
+        }
+
+        .you_Know, .priceContent {
+            font-family: Roboto Flex;
+            font-weight: 400;
+            font-size: 28px;
+            line-height: 100%;}
+    }
+
+</style>
 <div class="container">
     
     <section class="ready-section py-5">
@@ -9,7 +41,7 @@
                 <div class="col-md-8">
                     <h2 class="animate__animated animate__fadeInDown">Are You Ready To Take Your Teaching Career To New Heights?</h2>
                     <p class="animate__animated animate__fadeInUp">Join Coachtrika's exclusive subscription model and embark on a transformative experience that will empower you as an educator and leader. Our subscription is designed to provide you with ongoing support, professional development, and a thriving community of like-minded educators.</p>
-                    <a href="#" class="btn btn-success animate__animated animate__pulse animate__infinite">Get Started</a>
+                    <a class="btn btn-success animate__animated animate__pulse animate__infinite" asp-controller="Account" asp-action="SignUp">Get Started</a>
                 </div>
             </div>
         </div>
@@ -37,7 +69,7 @@
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Access to Resource Library</li>
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate</li>
                         </ul>
-                        <a href="#" class="btn-choose">Choose Plan</a>
+                        <a class="btn-choose" asp-controller="Account" asp-action="SignUp">Choose Plan</a>
                     </div>
                 </div>
 
@@ -54,7 +86,7 @@
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Exclusive webinars</li>
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate</li>
                         </ul>
-                        <a href="#" class="btn-choose">Choose Plan</a>
+                        <a class="btn-choose" asp-controller="Account" asp-action="SignUp">Choose Plan</a>
                     </div>
                 </div>
 
@@ -73,7 +105,7 @@
                             <li><i class="fas fa-check-circle text-success mr-2"></i> 3 Months mentorship</li>
                             <li><i class="fas fa-check-circle text-success mr-2"></i> Certificate</li>
                         </ul>
-                        <a href="#" class="btn-choose">Choose Plan</a>
+                        <a class="btn-choose" asp-controller="Account" asp-action="SignUp">Choose Plan</a>
                     </div>
                 </div>
             </div>
@@ -92,7 +124,8 @@
                     <div class="you_Know">Do You Know </div><div class="mb-4 you_Know">That</div>
                     <div class="you_Know">With #30,000</div>
                     <p>You can give a child access to quality education through a professional teacher in a low-income community.</p>
-                    <a href="#" class="cta-button mt-4">Sponsor a Child</a>
+                    <a href="#" class="cta-button mt-4" data-bs-toggle="modal" data-bs-target="#priceContactAdminModal">Sponsor a Child</a>
+
                 </div>
             </div>
         </div>
@@ -114,8 +147,9 @@
                         coaching programs, we cultivate a cadre of exceptional teachers,
                         equipped with the skills and knowledge to navigate the 
                         ever-evolving educational landscape.</div>
-                  <div class="space"></div>
-                    <a href="#" class="price_services-button">Enroll Your School</a>
+                    <div class="space"></div> 
+                    <a href="#" class="price_services-button" data-bs-toggle="modal" data-bs-target="#priceContactAdminModal">Enroll Your School</a>
+
                 </div>
                 <div class="image-container">
                     <img src="~/images/sponsorchild2.png" alt="Teacher Image" />
@@ -136,8 +170,8 @@
                 <div>Frequently Asked Questions</div>
             </div>
         </div>
-        <div class=" d-flex justify-content-center">
-            <div class="accordion" id="faqAccordion">
+        <div class=" d-flex justify-content-center fqaClass">
+                <div class="accordion fqaClass" id="faqAccordion">
                 <!-- FAQ 1 -->
                 <div class="accordion-item">
                     <h2 class="accordion-header">
@@ -207,4 +241,25 @@
     </div>
 
     </section>
+
+    <!-- Modal -->
+    <div class="modal fade" id="priceContactAdminModal" tabindex="-1" aria-labelledby="contactAdminModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="contactAdminModalLabel">Contact Admin</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-3">For this feature, please contact admin via:</p>
+                    <p class="fw-bold">📱 WhatsApp: <a href="https://wa.me/2348068783985" target="_blank">+234 816 412 4811</a></p>
+                    <p class="fw-bold">📧 Email: <a href="mailto:Afeeziyiola17@gmail.com">Afeeziyiola17@gmail.com</a></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
