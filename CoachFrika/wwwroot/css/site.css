@@ -316,44 +316,6 @@ html, body {
     text-align: justify;
 }
 
-.abouteventBody {
-    background-color: white;
-    margin-top: 20px;
-    padding: 20px;
-    box-shadow: 2px 2px 2px lightgray;
-}
-
-.abouteventCard {
-    width: 32%;
-    margin: 20px 10px;
-}
-
-.aboutevenImage img {
-    width: 100%;
-}
-
-.abouteventContent, .about_titile {
-    color: black;
-    font-family: 'Manrope', sans-serif;
-    font-weight: 700;
-    font-size: 28px;
-    line-height: 180%;
-    letter-spacing: -0.02em; /* -2% letter spacing */
-    vertical-align: middle;
-}
-
-.about-tii {
-    margin: 50px 10px
-}
-
-.about-our {
-    color: black;
-    padding: 20px;
-    font-family: "Roboto Flex", sans-serif;
-    font-weight: 700;
-    font-size: 36px;
-    line-height: 100%;
-}
 
 .big-card-content, .contactAddress-topic {
     color: black;
