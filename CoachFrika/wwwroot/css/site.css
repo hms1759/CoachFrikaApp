@@ -500,7 +500,7 @@ html, body {
     margin-right: 15px;
 }
 
-
+/*sider bar*/
 .sidebar {
     width: 250px;
     background-color: #fff;
@@ -685,6 +685,8 @@ sidebar.collapsed {
 
 .proceed_Payment {
 }
+
+
 /*dashboard*/
 .dashboard-container {
     max-width: 1200px;
@@ -693,196 +695,6 @@ sidebar.collapsed {
 }
 
 /**8888888888888888888888888888888888*/
-.profile-card {
-    font-family: 'Segoe UI', sans-serif;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #eee;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-}
-
-.profile-banner {
-    background: #7ed321;
-    padding: 40px 20px;
-    color: white;
-    position: relative;
-}
-
-.profile-banner-text {
-    max-width: 50%;
-    margin: auto;
-    text-align: center;
-}
-
-.banner-camera {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    width: 30px;
-}
-
-.profile-info {
-    display: flex;
-    align-items: flex-start;
-    padding: 20px;
-    gap: 30px;
-    flex-wrap: wrap;
-}
-
-.profile-image {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    flex-shrink: 0;
-    top: -8rem;
-}
-
-    .profile-image img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 6px solid #fff;
-        box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
-    }
-
-.camera-badge {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background: #7ed321;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-    .camera-badge img {
-        width: 16px;
-    }
-
-.profile-details {
-    flex: 1;
-}
-
-    .profile-details h3 {
-        margin: 0;
-        font-size: 22px;
-        font-weight: 600;
-    }
-
-    .profile-details .title {
-        color: #555;
-        margin-bottom: 10px;
-    }
-
-.social-links {
-    text-align: center;
-    margin: 10px 0;
-    color: gray;
-}
-
-.Schedules_null {
-    max-width: 100%;
-    height: 400px;
-    text-align: center;
-    justify-content: center;
-    margin: 40px
-}
-
-.social-links span {
-    margin: 10px 0;
-    font-family: Inter;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 22px;
-    letter-spacing: 0px;
-}
-
-.social-links a {
-    color: gray;
-    margin: 10px 5px;
-    text-decoration: none;
-    font-size: 16px;
-}
-
-.experience {
-    color: #3cb371;
-    margin: 10px 0;
-    font-size: 16px;
-}
-
-    .experience strong {
-        font-size: 20px;
-    }
-
-.meta-info {
-    margin-top: 10px;
-    font-size: 15px;
-    line-height: 1.8;
-    display: flex;
-    justify-content: space-between
-}
-
-    .meta-info i {
-        margin-right: 8px;
-        color: #3cb371;
-    }
-
-.profile_description {
-    font-family: Inter;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 22px;
-    letter-spacing: 0px;
-    text-align: justify;
-}
-
-.profile_social-links {
-    font-family: Inter;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 22px;
-    letter-spacing: 0px;
-    text-align: center;
-    color: #333;
-}
-
-.profile_name {
-    font-family: Inter;
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 30px;
-    letter-spacing: 0px;
-}
-/*************************************/
-.activities-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; /* Allow wrapping on small screens */
-    gap: 10px;
-}
-
-    .activities-header input {
-        padding: 5px 10px;
-        border-radius: 20px;
-        border: 1px solid #ccc;
-        flex-grow: 1;
-    }
-
-    .activities-header button {
-        padding: 6px 12px;
-        background: #6cc24a;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        margin-left: 10px;
-    }
-
 @media (max-width: 576px) {
     .activities-header {
         flex-wrap: wrap;
