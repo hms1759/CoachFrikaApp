@@ -44,7 +44,7 @@ namespace CoachFrika.Controllers
                 var request = HttpContext.Request;
                 var client = _httpClientFactory.CreateClient();
                 _logger.LogInformation("start Api call");
-                var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>($"https://coachfrika.com/api/Public/GetLandingPageCount");
+                var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>($"{_apiBaseUrl}/api/Public/GetLandingPageCount");
 
                 _logger.LogInformation("start Api call");
                 if (response.Data == null)
@@ -55,7 +55,7 @@ namespace CoachFrika.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation(ex.InnerException.ToString());
+                _logger.LogError(ex, "API call failed to {ApiUrl}", _apiBaseUrl);
                 return View();
             }
         }
