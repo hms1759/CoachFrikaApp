@@ -28,34 +28,35 @@ namespace CoachFrika.Controllers
 
         public HomeController(ILogger<HomeController> logger,
             IEmailService emailService, IOptions<EmailConfigSettings> emailConfig,
-            IHttpClientFactory httpClientFactory,IConfiguration config)
+            IHttpClientFactory httpClientFactory, IConfiguration config)
         {
             _logger = logger;
             _emailConfig = emailConfig.Value;
             _emailService = emailService;
-            _httpClientFactory = httpClientFactory; 
+            _httpClientFactory = httpClientFactory;
             _apiBaseUrl = config["ApiBaseUrl"];
         }
 
         public async Task<IActionResult> Index()
         {
-            try { 
-
-            var request = HttpContext.Request;
-
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>($"{_apiBaseUrl}/api/Public/GetLandingPageCount");
-            if(response.Data == null)
+            try
             {
-                return View();
+                var request = HttpContext.Request;
+                var client = _httpClientFactory.CreateClient();
+                _logger.LogInformation("start Api call");
+                var response = await client.GetFromJsonAsync<BaseResponse<PublicCountDto>>($"https://coachfrika.com/api/Public/GetLandingPageCount");
 
+                _logger.LogInformation("start Api call");
+                if (response.Data == null)
+                {
+                    return View();
+                }
+                return View(response?.Data);
             }
-            return View(response?.Data);
-            }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogInformation(ex.InnerException.ToString());
                 return View();
-
             }
         }
         public IActionResult About()
