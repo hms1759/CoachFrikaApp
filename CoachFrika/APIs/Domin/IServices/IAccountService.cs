@@ -1,5 +1,6 @@
 ﻿using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
+using CoachFrika.Common.AutoMapper;
 
 namespace CoachFrika.APIs.Domin.IServices
 {
@@ -14,5 +15,6 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<string>> GetProfileImageUrl();
         Task<BaseResponse<ProfileDto>> GetApplicant(string Id);
         Task<BaseResponse<string>> ApproveApplicantion(string Id);
+        BaseResponse<ProfileDto> GetDetails(string Id);
     }
 }

@@ -103,9 +103,9 @@ namespace CoachFrika.APIs.Controllerss
 
         [Authorize]
         [HttpGet("userById")]
-        public async Task<IActionResult> UploadFile([FromQuery] Guid id)
+        public IActionResult UploadFile([FromQuery] Guid id)
         {
-            var result = await _accountService.GetApplicant(id.ToString());
+            var result =  _accountService.GetDetails(id.ToString());
             if (result.Status)
             {
                 return Ok(result);

@@ -35,8 +35,8 @@ namespace CoachFrika.Common.LogingHandler
             {
 
                 var profile = ProfileMapper.MapToProfileDto(user);
-                var schd = _service.GetMyScheduleAtLogin(user);
-                profile.Schedules = schd.Data;
+                //var schd = _service.GetMyScheduleAtLogin(user);
+                //profile.Schedules = schd.Data;
                 // Serialize the object to a JSON string
                 var myObjectJson = JsonSerializer.Serialize(profile);
                 // Create claims for the user

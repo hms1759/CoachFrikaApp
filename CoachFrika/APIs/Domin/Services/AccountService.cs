@@ -7,6 +7,7 @@ using CoachFrika.Common.AutoMapper;
 using CoachFrika.Common.Enum;
 using CoachFrika.Common.Extension;
 using CoachFrika.Extensions;
+using CoachFrika.Migrations;
 using CoachFrika.Models;
 using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
@@ -34,8 +35,9 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly UiSiteConfigSettings _uiSite;
         private readonly IPaystackService _paymentService;
         private readonly AppDbContext _context;
+        private readonly ICousesService _service;
         public AccountService(UserManager<CoachFrikaUsers> userManager, SignInManager<CoachFrikaUsers> signInManager,
-            IJwtService jwtService, IEmailService emailService, IOptions<UiSiteConfigSettings> uiSite, IWebHelpers webHelpers, ICloudinaryService cloudinaryService, IPaystackService paymentService, AppDbContext context)
+            IJwtService jwtService, IEmailService emailService, IOptions<UiSiteConfigSettings> uiSite, IWebHelpers webHelpers, ICloudinaryService cloudinaryService, IPaystackService paymentService, AppDbContext context, ICousesService service)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -46,6 +48,7 @@ namespace CoachFrika.APIs.Domin.Services
             _cloudinaryService = cloudinaryService;
             _paymentService = paymentService;
             _context = context;
+            _service = service;
         }
 
         public async Task<BaseResponse<LoginDetails>> Login(LoginDto login)
@@ -520,7 +523,7 @@ namespace CoachFrika.APIs.Domin.Services
                               LocalGov = user.LocalGov,
                               Subscriptions = user.Subscriptions,
                               Subject = user.Subject,
-                              
+
 
                           };
                 res.Data = await cos.FirstOrDefaultAsync();
@@ -534,7 +537,6 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
 
-            throw new NotImplementedException();
         }
 
         public async Task<BaseResponse<string>> ApproveApplicantion(string Id)
@@ -560,6 +562,34 @@ namespace CoachFrika.APIs.Domin.Services
                 res.Message = ex.Message;
                 res.Status = false;
                 return res;
+            }
+        }
+
+        public BaseResponse<ProfileDto> GetDetails(string Id)
+        {
+            {
+                var res = new BaseResponse<ProfileDto>();
+                res.Status = true;
+                try
+                {
+                    var listUser = from users in _context.CoachFrikaUsers
+                                   where (users.Id == Id)
+                                   select users;
+                    var user = listUser.FirstOrDefault();
+
+                    var profile = ProfileMapper.MapToProfileDto(user);
+                    var schd = _service.GetMyScheduleAtLogin(user);
+                    profile.Schedules = schd.Data;
+                    res.Data = profile;
+                    return res;
+                }
+                catch (Exception ex)
+                {
+                    res.Message = ex.Message;
+                    res.Status = false;
+                    return res;
+
+                }
             }
         }
     }
