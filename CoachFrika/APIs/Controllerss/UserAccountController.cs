@@ -101,7 +101,18 @@ namespace CoachFrika.APIs.Controllerss
             return BadRequest(result);
         }
 
-      
+        [Authorize]
+        [HttpGet("userById")]
+        public async Task<IActionResult> UploadFile([FromQuery] Guid id)
+        {
+            var result = await _accountService.GetApplicant(id.ToString());
+            if (result.Status)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+        }
     }
 
 }

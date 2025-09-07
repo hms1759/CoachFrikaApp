@@ -143,7 +143,7 @@ namespace CoachFrika.Controllers
             }
 
             HttpContext.Session.SetString("Token", JsonConvert.SerializeObject(token));
-            HttpContext.Session.SetString("ProfileData", JsonConvert.SerializeObject(profile));
+            HttpContext.Session.SetString("ProfileData", JsonConvert.SerializeObject(profile.Id));
             return RedirectToAction("Index", "Profile", profile);
         }
         [HttpPost]

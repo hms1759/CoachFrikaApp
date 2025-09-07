@@ -30,8 +30,8 @@ namespace CoachFrika.Controllers
             var profile = HttpContext.Session.GetString("ProfileData");
             if (!string.IsNullOrEmpty(profile))
             {
-                var model = JsonConvert.DeserializeObject<userProfileViewModel>(profile);
-                if (model != null || !string.IsNullOrEmpty(model?.Email))
+                var model = JsonConvert.DeserializeObject<Guid>(profile);
+                if (Guid.Empty != model)
                 {
                     return View(model);
 
@@ -44,8 +44,8 @@ namespace CoachFrika.Controllers
             var profileJson = HttpContext.Session.GetString("ProfileData");
             if (!string.IsNullOrEmpty(profileJson))
             {
-                var model = JsonConvert.DeserializeObject<userProfileViewModel>(profileJson);
-                if (model != null && !string.IsNullOrEmpty(model.Email))
+                var model = JsonConvert.DeserializeObject<Guid>(profileJson);
+                if (Guid.Empty != model)
                 {
                     return PartialView("_Dashboard", model);
                 }
