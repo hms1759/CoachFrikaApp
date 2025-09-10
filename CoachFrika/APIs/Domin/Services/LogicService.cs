@@ -224,21 +224,22 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
-        public async Task<BaseResponse<string>> CreateSubject(List<string> sub)
+        public async Task<BaseResponse<string>> CreateSubject(List<string> subRequest)
         {
-
+            var userId = _webHelpers.CurrentUserId();
             var res = new BaseResponse<string>();
             res.Status = true;
             try
             {
                 var subRepository = _unitOfWork.GetRepository<Subjects>();
                 var dtoList = new List<Subjects>();
-                foreach (var subItem in sub)
+                foreach (var subItem in subRequest)
                 {
 
-                    var dto = new Subjects();
-                    dto.SubjectName = subItem;
-                    dtoList.Add(dto);
+                    var sub = new Subjects();
+                    sub.TeachersId = userId;
+                    sub.SubjectName = subItem;
+                    dtoList.Add(sub);
                 }
                 await subRepository.AddRangeAsync(dtoList);
                 await _unitOfWork.SaveChangesAsync();

@@ -12,48 +12,41 @@ namespace CoachFrika.APIs.Controllerss
     // [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Coach},{AppRoles.SuperAdmin}")]
     [AllowAnonymous]
     [ApiController]
-    public class SchoolsController : BaseController
+    public class StudentsController : BaseController
     {
-        private readonly ISchoolsService _service;
+        private readonly IStudentsService _service;
         private readonly ILogicService _logicService;
-        public SchoolsController(ISchoolsService service, ILogicService logicService)
+        public StudentsController(IStudentsService service, ILogicService logicService)
         {
             _service = service;
             _logicService = logicService;
         }
-        [HttpPost("CreateSchool")]
-        public async Task<IActionResult> CreateSchedule(CreateSchoolDto model)
+        [HttpPost("CreateStudent")]
+        public async Task<IActionResult> CreateSchedule(CreateStudentDto model)
         {
-            var result = await _service.CreateSchools(model);
+            var result = await _service.CreateStudents(model);
             if (result.Status) return Ok(result); return BadRequest(result);
         }
-        [HttpGet("GetSchools")]
-        public IActionResult GetSchedule([FromQuery] GetSchoolSearch query)
+        [HttpGet("GetStudents")]
+        public IActionResult GetSchedule([FromQuery] GetStudentSearch query)
         {
-            var result = _service.GetAllSchools(query);
+            var result = _service.GetAllStudents(query);
             if(result.Status)return Ok(result);return BadRequest(result);
         }
-        //Get All teacher in the School by schoolId
-        [HttpGet("GetSchoolById/{Id}")]
-        public async Task<IActionResult> GetSchoolById(Guid Id)
+        //Get All teacher in the Student by StudentId
+        [HttpGet("GetStudentById/{Id}")]
+        public async Task<IActionResult> GetStudentById(Guid Id)
         {
-            var result = await _service.GetSchoolById(Id);
+            var result = await _service.GetStudentById(Id);
             if (result.Status) return Ok(result); return BadRequest(result);
         }
-        [HttpGet("GetSchoolTeachers")]
-        public IActionResult GetSchoolTeachers([FromQuery] GetSchoolTeachersSearch query)
+        [HttpGet("GetStudents")]
+        public IActionResult GetStudentTeachers([FromQuery] GetStudentsSearch query)
         {
-            var result = _service.GetSchoolTeachers(query);
+            var result = _service.GetStudentTeachers(query);
             if (result.Status) return Ok(result); return BadRequest(result);
         }
-        [HttpPost("InviteSchoolTeacher")]
-        public async Task<IActionResult> InviteSchoolTeacher(CreateSchoolTeacherDto model)
-        {
-            var logoUrl = $"{Request.Scheme}://{Request.Host}/images/logo.png";
-            model.LogoUrl = logoUrl;
-            var result =await  _service.InviteSchoolTeacher(model);
-            if(result.Status)return Ok(result);return BadRequest(result);
-        }
+       
        
     }
 }

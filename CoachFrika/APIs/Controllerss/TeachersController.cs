@@ -117,12 +117,12 @@ namespace CoachFrika.APIs.Controllerss
         ////    var result = await _service.CreateSchool(school);
         ////    if(result.Status)return Ok(result);return BadRequest(result);
         ////}
-        //[HttpPost("CreateSubject")]
-        //public async Task<IActionResult> CreateSubject(List<string> school)
-        //{
-        //    var result = await _service.CreateSubject(school);
-        //    if(result.Status)return Ok(result);return BadRequest(result);
-        //}
+        [HttpPost("CreateSubject")]
+        public async Task<IActionResult> CreateSubject(List<string> school)
+        {
+            var result = await _service.CreateSubject(school);
+            if (result.Status) return Ok(result); return BadRequest(result);
+        }
 
         //[HttpGet("GetTeacherById")]
         //public async Task<IActionResult> GetTeacherById([FromQuery] Guid userId)
