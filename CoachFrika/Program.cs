@@ -72,8 +72,9 @@ void ConfigureServices(IServiceCollection services, IConfiguration configuration
     services.AddTransient<ITeacherService, TeacherService>();
     services.AddTransient<ICousesService, CousesService>(); 
     services.AddTransient<ICloudinaryService, CloudinaryService>();
-    services.AddTransient<IContactUsService, ContactUsService>();
-    services.AddTransient<ISchoolsService, SchoolsService>(); 
+    services.AddTransient<IContactUsService, ContactUsService>(); 
+    services.AddTransient<ISchoolsService, SchoolsService>();
+    services.AddTransient<IStudentsService, StudentsService>();
     services.Configure<EmailConfigSettings>(configuration.GetSection("EmailConfig"));
     services.Configure<UiSiteConfigSettings>(configuration.GetSection("UiSiteConfig"));
     services.Configure<SubscriptionsConfigSettings>(configuration.GetSection("Subscriptions"));

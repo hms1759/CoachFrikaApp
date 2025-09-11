@@ -224,7 +224,7 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
-        public async Task<BaseResponse<string>> CreateSubject(List<string> subRequest)
+        public async Task<BaseResponse<string>> CreateSubject(List<SubjectDTO> subRequest)
         {
             var userId = _webHelpers.CurrentUserId();
             var res = new BaseResponse<string>();
@@ -238,9 +238,28 @@ namespace CoachFrika.APIs.Domin.Services
 
                     var sub = new Subjects();
                     sub.TeachersId = userId;
-                    sub.SubjectName = subItem;
+                    sub.SubjectName = subItem.Subject;
+                    sub.SubjectCode = subItem.SubjectCode;
+
+                    var studentList = _context.Subjects.Where(x => x.TeachersId == userId);
+                    var liststd = new List<StudentScoreSheet>();
+                    if (studentList.Any())
+                    {
+                        foreach (var std in studentList)
+                        {
+                            var scoreSheet = new StudentScoreSheet()
+                            {
+                                TeachersId = sub.TeachersId,
+                                StudentId = std.Id.ToString(),
+                                SubjectId = sub.Id
+                            };
+                            liststd.Add(scoreSheet);
+                        }
+                        await _context.StudentScoreSheet.AddRangeAsync(liststd);
+                    }
                     dtoList.Add(sub);
                 }
+
                 await subRepository.AddRangeAsync(dtoList);
                 await _unitOfWork.SaveChangesAsync();
                 res.Message = "Successful";
@@ -338,14 +357,28 @@ namespace CoachFrika.APIs.Domin.Services
             return res;
         }
 
-        public BaseResponse<string?[]> GetSubject()
+        //public BaseResponse<string?[]> GetSubject()
+        //{
+        //    var id = _webHelpers.CurrentUserId();
+        //    var res = new BaseResponse<string?[]>();
+        //    res.Status = true;
+        //    var schs = from sch in _context.Subjects
+        //               where sch.TeachersId == id
+        //               select sch;
+        //    var scharray = schs.Select(x => x.SubjectName).ToArray();
+        //    res.Data = scharray;
+        //    return res;
+        //}
+
+        public BaseResponse<List<Subjects>> GetSubject()
         {
-            var res = new BaseResponse<string?[]>();
+            var id = _webHelpers.CurrentUserId();
+            var res = new BaseResponse<List<Subjects>>();
             res.Status = true;
             var schs = from sch in _context.Subjects
+                       where sch.TeachersId == id
                        select sch;
-            var scharray = schs.Select(x => x.SubjectName).ToArray();
-            res.Data = scharray;
+            res.Data = schs.ToList();
             return res;
         }
         public BaseResponse<List<Schedule>> GetMySchedule()

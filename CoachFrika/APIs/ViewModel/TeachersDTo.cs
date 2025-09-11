@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CoachFrika.APIs.ViewModel
 {
-    public class TeachersDTo 
+    public class TeachersDTo
     {
         public string? Id { get; set; }
         public string? FullName { get; set; }
@@ -18,5 +18,11 @@ namespace CoachFrika.APIs.ViewModel
         public int YearOfExperience { get; set; }
         public string? School { get; set; }
         public string[]? Subjects { get; set; }
+    }
+    public class SubjectDTO
+    {
+        public string Subject { get; set; }
+        public string SubjectCode { get; set; }
+
     }
 }

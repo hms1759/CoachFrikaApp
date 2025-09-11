@@ -12,6 +12,7 @@ using CoachFrika.Models;
 using CoachFrika.Services;
 using coachfrikaaaa.APIs.Entity;
 using coachfrikaaaa.Common;
+using DnsClient;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -47,49 +48,63 @@ namespace CoachFrika.APIs.Domin.Services
 
         public async Task<BaseResponse<string>> CreateStudents(CreateStudentsDto model)
         {
+            var tchId = _webHelpers.CurrentUserId();
             var res = new BaseResponse<string>();
             res.Status = true;
-            var sch = await _context.SchoolEnrollmentRequest.FirstOrDefaultAsync(x => x.ContactPersonEmail == model.ContactPersonEmail
-            || x.ContactPersonPhoneNumber == model.ContactPersonPhoneNumber || x.SchoolName.ToLower().Contains(model.SchoolName.ToLower()));
+            var std = await _context.Students.FirstOrDefaultAsync(x => x.ClassId == model.ClassId && x.StudentNumber == model.ClassNumber);
 
-            if (sch != null)
+            if (std != null)
             {
-                res.Message = "Schools already Onboarded";
+                res.Message = "Student already Onboarded";
                 res.Status = false;
                 return res;
             }
 
-            var newEnt = new SchoolEnrollmentRequest()
+            var newEnt = new Students()
             {
-                SchoolName = model.SchoolName,
-                SchoolAddress = model.SchoolAddress,
-                SchoolPhoneNumber = model.ContactPersonPhoneNumber,
-                SchoolEmail = model.ContactPersonEmail,
-                NumbersOfTeachers = model.NumbersOfTeachers,
-                Goals = model.Goals,
-                ContactPersonEmail = model.ContactPersonEmail,
-                ContactPersonName = model.ContactPersonName,
-                ContactPersonPhoneNumber = model.ContactPersonPhoneNumber,
-                isSubscribed = false
+                ClassId = model.ClassId,
+                Name = model.Name,
+                Class = model.Class,
+                ParentName = model.ParentName,
+                ParentPhoneNumber = model.ParentPhoneNumber,
+                Address = model.Address,
+                TeachersId = tchId,
+                StudentNumber = model.ClassNumber,
             };
-
-            await _context.SchoolEnrollmentRequest.AddAsync(newEnt);
+            var subjectList = _context.Subjects.Where(x => x.TeachersId == tchId);
+                var listsheet = new List<StudentScoreSheet>();
+            if (subjectList.Any())
+            {
+                foreach (var sub in subjectList)
+                {
+                    var scoreSheet = new StudentScoreSheet()
+                    {
+                        TeachersId = sub.TeachersId,
+                        StudentId = newEnt.Id.ToString(),
+                        SubjectId = sub.Id
+                    }; 
+                    listsheet.Add(scoreSheet);
+                }
+            }
+            await _context.StudentScoreSheet.AddRangeAsync(listsheet);
+            await _context.Students.AddAsync(newEnt);
             _context.SaveChanges();
-            res.Message = "Schools Successfully Onboarded";
+            res.Message = "Student Successfully Onboarded";
             res.Status = true;
             return res;
         }
 
-        public BaseResponse<List<SchoolEnrollmentRequest>> GetAllSchools(GetSchoolSearch query)
+        public BaseResponse<List<Students>> GetAllStudents(GetStudentsSearch query)
         {
             var userId = _webHelpers.CurrentUserId();
-            var res = new BaseResponse<List<SchoolEnrollmentRequest>>();
+            var res = new BaseResponse<List<Students>>();
             res.Status = true;
             try
             {
                 // Apply filters based on the query parameters
-                var cos = from rec in _context.SchoolEnrollmentRequest
-                          where query.Name == null || rec.SchoolName.Contains(query.Name)
+                var cos = from rec in _context.Students
+                          where (query.Name == null || rec.Name.Contains(query.Name))
+                          && (query.ClassId == null || rec.ClassId == query.ClassId)
                           select rec;
 
                 // Apply pagination using Skip and Take
@@ -114,202 +129,9 @@ namespace CoachFrika.APIs.Domin.Services
 
         }
 
-        public async Task<BaseResponse<SchoolEnrollmentRequest>> GetSchoolById(Guid Id)
+        public BaseResponse<List<Students>> GetAllStudentsScores(GetStudentsSearch query)
         {
-            var res = new BaseResponse<SchoolEnrollmentRequest>();
-            res.Status = true;
-            try
-            {
-                var sch = await _context.SchoolEnrollmentRequest.FirstOrDefaultAsync(x => x.Id == Id);
-                if (sch == null)
-                {
-                    res.Message = "School not found";
-                    res.Status = false;
-                    return res;
-                }
-
-                res.Data = sch;
-                res.Status = false;
-                return res;
-            }
-            catch (Exception ex)
-            {
-                res.Message = ex.Message;
-                res.Status = false;
-                return res;
-
-            }
-
+            throw new NotImplementedException();
         }
-
-        public BaseResponse<List<CoachFrikaUsers>> GetSchoolTeachers(GetSchoolTeachersSearch query)
-        {
-            var res = new BaseResponse<List<CoachFrikaUsers>>();
-            res.Status = true;
-            try
-            {
-                var day = DateTime.Now.Day;
-                // Apply filters based on the query parameters
-                var cos = _context.CoachFrikaUsers
-                            .Where(t => t.Role == Roles.Teacher
-                                && t.SchoolId.ToString() == query.SchoolId
-                                && (string.IsNullOrEmpty(query.Name) || t.FullName.ToLower().Contains(query.Name.ToLower())))
-                            .ToList();
-
-                // Apply pagination using Skip and Take
-                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
-                                   .Take(query.Pagesize)
-                                   .ToList();
-
-                // Set the response data
-                res.Data = pagedData;
-                res.PageNumber = query.PageNumber;
-                res.PageSize = query.Pagesize;
-                return res;
-            }
-            catch (Exception ex)
-            {
-                res.Message = ex.Message;
-                res.Status = false;
-                return res;
-
-            }
-        }
-        private async Task SendEmail(CreateSchoolTeacherDto user, string newPassword)
-        {
-            var subject = "Your Login Credentials ";
-            var body = $"Your default password is: {newPassword} <br> click here <a href={_uiSite.SiteUrl}/login>here</a> to complete your registration ";
-
-            var bodyTemplate = await _emailService.ReadTemplate("newPassword");
-            //inserting variable
-            var messageToParse = new Dictionary<string, string>
-                    {
-                        { "{Fullname}", user.Name},
-                        { "{Message}", body},
-                        { "{logo}", user.LogoUrl},
-                    };
-
-            //  email notification
-            var messageBody = bodyTemplate.ParseTemplate(messageToParse);
-            var message = new Message(new List<string> { user.Email }, subject, messageBody);
-
-            await _emailService.SendEmail(message);
-        }
-        public async Task<BaseResponse<string>> InviteSchoolTeacher(CreateSchoolTeacherDto model)
-        {
-            var res = new BaseResponse<string>();
-            res.Status = true;
-            var sch = await _context.SchoolEnrollmentRequest.FirstOrDefaultAsync(x => x.Id == model.SchoolId);
-            if (sch == null)
-            {
-                res.Message = "School not exist";
-                res.Status = false;
-                return res;
-            }
-            var teach = await _context.CoachFrikaUsers.FirstOrDefaultAsync(x => x.Email == model.Email);
-            if (teach != null)
-            {
-                res.Message = "Teacher already exist";
-                res.Status = false;
-                return res;
-            }
-            var req = await _context.SchoolTeacherRequest.FirstOrDefaultAsync(x => x.Email == model.Email || x.PhoneNumber == model.PhoneNumber);
-            if (req != null)
-            {
-                res.Message = "Teacher Request already exist";
-                res.Status = false;
-                return res;
-            }
-            var schTeacher = new CoachFrikaUsers()
-            {
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                FullName = model.Name,
-                Title = model.Title,
-                hasPaid = true,
-                SchoolId = model.SchoolId
-            };
-
-            var dd = new SchoolTeacherRequest
-            {
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                Title = model.Title,
-                Name = model.Name
-            };
-
-            var newp = new SignpUpDto()
-            {
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                FullName = model.Name,
-                isCoach = false,
-                SchoolId = model.SchoolId,
-                Title = model.Title
-                
-
-            };
-            try
-            {
-                newp.Password = GeneratePassword();
-                var newUser = await _accountService.SignUp(newp);
-                if (newUser == null )
-                {
-                    res.Status = false;
-                    res.Message = "Ooops an error Occor";
-                    return res;
-                }
-
-                if (newUser.Status == false)
-                {
-                    res.Status = false;
-                    res.Message = newUser.Message;
-                    return res;
-                }
-
-                _context.SchoolTeacherRequest.Add(dd);
-                _context.SaveChanges();
-                SendEmail(model, newp.Password);
-                res.Status = true;
-                res.Message = "Sucessfully requsted";
-                return res;
-            }
-            catch (Exception ex)
-            {
-                res.Status = false;
-                res.Message = ex.Message;
-                return res;
-
-            }
-        }
-        public string GeneratePassword()
-        {
-            int length = 8;
-            const string uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const string lowercase = "abcdefghijklmnopqrstuvwxyz";
-            const string digits = "0123456789";
-            const string special = "@";
-
-            var random = new Random();
-            var password = new List<char>
-    {
-        uppercase[random.Next(uppercase.Length)],
-        digits[random.Next(digits.Length)],
-        special[random.Next(special.Length)],
-        lowercase[random.Next(lowercase.Length)]
-    };
-
-            string allChars = uppercase + lowercase + digits + special;
-
-            // Fill the rest of the password
-            for (int i = password.Count; i < length; i++)
-            {
-                password.Add(allChars[random.Next(allChars.Length)]);
-            }
-
-            // Shuffle the password so required characters aren't predictable
-            return new string(password.OrderBy(x => random.Next()).ToArray());
-        }
-
     }
 }

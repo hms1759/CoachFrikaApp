@@ -40,14 +40,14 @@
                     </a>
                 </li>
 
-                <!-- Coach Only -->
+                <!-- Teacher Only -->
                 <li id="sidebarTeacherItem" style="display: none;">
                     <a href="#myCoach" class="sidebar-item">
                         <i class="fas fa-user-friends"></i> My Coach and I
                     </a>
                 </li>
 
-                <!-- Teacher Only -->
+                <!-- Coach Only -->
                 <li id="sidebarCoachItem" style="display: none;">
                     <a href="#myTeacher" class="sidebar-item">
                         <i class="fas fa-user-friends"></i> My Teacher and I
@@ -59,12 +59,13 @@
                         <i class="fas fa-calendar-alt"></i> Recomendations
                     </a>
                 </li>
-                <!-- Coach Only -->
-                <li id="sidebarTeacherItem" style="display: none;">
-                    <a href="#myCoach" class="sidebar-item">
+                <!-- Teacher Only -->
+                <li id="sidebarTeacherStudent" style="display: none;">
+                    <a href="#myStudent" class="sidebar-item">
                         <i class="fas fa-user-friends"></i> My Student and I
                     </a>
                 </li>
+
             </ul>
 
             <button class="logout-btn" id="logoutBtn">
@@ -107,11 +108,10 @@
             let role = getUserRoleFromToken();
 
             if (role === "Coach") {
-                const coachItem = document.getElementById("sidebarCoachItem");
-                if (coachItem) coachItem.style.display = "block";
+              document.getElementById("sidebarCoachItem").style.display = "block";
             } else if (role === "Teacher") {
-                const teacherItem = document.getElementById("sidebarTeacherItem");
-                if (teacherItem) teacherItem.style.display = "block";
+                document.getElementById("sidebarTeacherItem").style.display = "block";
+                document.getElementById("sidebarTeacherStudent").style.display = "block";
             }
         }
 

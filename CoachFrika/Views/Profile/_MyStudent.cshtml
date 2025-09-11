@@ -1,6 +1,91 @@
-﻿<!-- Include Select2 CSS and JS -->
+﻿<!-- ================== LIBRARIES ================== -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<!-- Include Select2 + Chart.js -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    /* ====== Modal Styles ====== */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        width: 400px;
+        max-width: 95%;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .modal-content button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+            .modal-content button[type="submit"] {
+                background: #007bff;
+                color: white;
+            }
+
+            .modal-content button[type="button"] {
+                background: #ccc;
+            }
+
+    .subject-field {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    }
+</style>
 
 <div class="space"></div>
 
@@ -8,215 +93,239 @@
 <div class="teacher-top-bar">
     <span style="font-weight: bold; font-size: 18px;">Student and I</span>
     <div>
-        <input type="text" id="teacherSearchInput" class="teacher-search-input" placeholder="Search by name..." />
-        <button class="teacher-view-all-btn" onclick="handleTeacherSearch()">Search</button>
-        <button class="teacher-view-all-btn" onclick="openCreateRecModal()">+ Add Student</button>
+        <input type="text" id="studentSearchInput" class="teacher-search-input" placeholder="Search by name..." />
+        <button class="teacher-view-all-btn" onclick="handleStudentSearch()">Search Student</button>
+        <button class="teacher-view-all-btn" onclick="openCreateSubjectModal()">+ Add Subject</button>
+        <button class="teacher-view-all-btn" onclick="openCreateStudentModal()">+ Add Student</button>
     </div>
 </div>
 
 <div class="space"></div>
 
-<!-- Teacher Cards -->
-<div class="teacher-card-wrapper" id="teacherCardWrapper">Loading...</div>
-
-<!-- Pagination -->
-<div class="teacher-pagination" id="teacherPagination">
-    <button onclick="teacherGoToPreviousPage()">Previous</button>
-    <span id="teacherPageInfo">Page 1</span>
-    <button onclick="teacherGoToNextPage()">Next</button>
+<!-- Chart -->
+<div class="chart-container" style="width: 100%; max-width: 600px; margin: 0 auto;">
+    <canvas id="studentChart"></canvas>
 </div>
 
-<!-- Create Recommendation Modal -->
-<div id="createRecModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000;">
-    <div style="background-color: white; padding: 20px; border-radius: 10px; width: 500px; max-width: 90%; position: relative;">
-        <span onclick="closeCreateRecModal()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer;">×</span>
-        <h2 style="margin-top: 0;">Create Recommendation</h2>
-        <form id="createRecForm">
-            <label for="scheduleDropdown" style="display: block; margin-top: 10px;">Schedule:</label>
-            <select id="scheduleDropdown" name="ScheduleId" required style="width: 100%; padding: 8px; margin-top: 5px;"></select>
-            </select>
+<div class="space"></div>
 
-            <label for="teacherDropdown" style="display: block; margin-top: 15px;">Select Teachers:</label>
-            <select id="teacherDropdown" name="TeacherIds" multiple required style="width: 100%; padding: 8px; margin-top: 5px; height: 100px;"></select>
-            </select>
+<!-- Student Cards -->
+<div class="teacher-card-wrapper" id="studentCardWrapper">Loading...</div>
 
-            <label for="recommendationText" style="display: block; margin-top: 15px;">Recommendation:</label>
-            <textarea id="recommendationText" name="Recommendation" required style="width: 100%; padding: 10px; height: 100px; margin-top: 5px;"></textarea>
+<!-- Pagination -->
+<div class="teacher-pagination" id="studentPagination">
+    <button onclick="studentGoToPreviousPage()">Previous</button>
+    <span id="studentPageInfo">Page 1</span>
+    <button onclick="studentGoToNextPage()">Next</button>
+</div>
 
-            <button type="submit" style="margin-top: 20px; padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Submit</button>
+<!-- ================= MODALS ================= -->
+<!-- Add Subject Modal -->
+<div id="createSubjectModal" class="modal">
+    <div class="modal-content">
+        <h3>Add Subjects</h3>
+        <form id="createSubjectForm">
+            <div id="subjectFieldsWrapper">
+                <div class="subject-field">
+                    <input type="text" name="Subject" placeholder="Subject Name" required />
+                    <input type="text" name="SubjectCode" placeholder="Subject Code" required />
+                </div>
+            </div>
+            <button type="button" onclick="addMoreSubjectField()">+ Add More</button>
+            <br /><br />
+            <button type="submit">Submit</button>
+            <button type="button" onclick="closeCreateSubjectModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Student Modal -->
+<div id="createStudentModal" class="modal">
+    <div class="modal-content">
+        <h3>Add Student</h3>
+        <form id="createStudentForm">
+            <input type="number" name="ClassId" placeholder="ClassId" required />
+            <input type="number" name="ClassNumber" placeholder="Class Number" required />
+            <input type="text" name="Name" placeholder="Student Name" required />
+            <input type="text" name="Address" placeholder="Address" />
+            <input type="text" name="ParentName" placeholder="Parent Name" required />
+            <input type="text" name="Class" placeholder="Class" required />
+            <input type="text" name="ParentPhoneNumber" placeholder="Parent Phone Number" required />
+            <br /><br />
+            <button type="submit">Submit</button>
+            <button type="button" onclick="closeCreateStudentModal()">Cancel</button>
         </form>
     </div>
 </div>
 
 <script>
-    var teacherToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
-   let teacherPageNumber = 1;
-    const teacherPageSize = 10;
-    let teacherSearchTerm = '';
+    let studentPageNumber = 1;
+    const studentPageSize = 10;
+    let studentSearchTerm = '';
+    let studentChart;
 
-    function handleTeacherSearch() {
-        teacherSearchTerm = document.getElementById("teacherSearchInput").value.trim();
-        teacherPageNumber = 1;
-        loadTeachers();
+    // ================= STUDENTS =================
+    function handleStudentSearch() {
+        studentSearchTerm = document.getElementById("studentSearchInput").value.trim();
+        studentPageNumber = 1;
+        loadStudents();
     }
 
-    function loadTeachers() {
-        const url = `/api/Coaches/MyTeachers?IsPaginated=true&Name=${encodeURIComponent(teacherSearchTerm)}&PageSize=${teacherPageSize}&PageNumber=${teacherPageNumber}`;
+    function loadStudents() {
+        const url = `/api/Students/GetAllStudents?IsPaginated=true&Name=${encodeURIComponent(studentSearchTerm)}&PageSize=${studentPageSize}&PageNumber=${studentPageNumber}`;
 
-        fetch(url, {
-            headers: { "Authorization": `Bearer ${teacherToken}` }
-        })
+        fetch(url, { headers: { "Authorization": `Bearer ${userToken}` } })
             .then(res => res.json())
             .then(data => {
-                const wrapper = document.getElementById("teacherCardWrapper");
+                const wrapper = document.getElementById("studentCardWrapper");
                 wrapper.innerHTML = "";
 
                 if (!data?.data?.length) {
-                    wrapper.innerHTML = "<p>No teachers found.</p>";
+                    wrapper.innerHTML = "<p>No students found.</p>";
+                    updateStudentChart([]);
                     return;
                 }
 
-                data.data.forEach(teacher => {
+                // Cards
+                data.data.forEach(stu => {
                     const card = document.createElement("div");
                     card.className = "teacher-card";
                     card.innerHTML = `
                         <div class="teacher-card">
-                            <img
-                                src="${teacher.imageUrl || 'https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-174669.jpg?semt=ais_hybrid&w=740'}"
-                                alt="${teacher.fullName || 'Teacher'}"
-                                class="teacher-card-img"
-                            />
+                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png"
+                                alt="${stu.name || 'Student'}"
+                                class="teacher-card-img" />
                             <div class="teacher-card-content">
-                                <p class="teacher-name">${teacher.fullName || 'No Name'}</p>
-                                <p class="teacher-school">${teacher.schoolName || 'Unknown School'}</p>
-                                <div class="teacher-btn">
-                                    <a href="/Profile/Details?id=${teacher.id}">
-                                        <button class="teacher-view-btn">View Details</button>
-                                    </a>
-                                    <a href="/Profile/Recomendations?id=${teacher.id}&userId=${teacher.coachId}">
-                                        <button class="teacher-recomendation-btn">Recommendation</button>
-                                    </a>
-                                </div>
+                                <p class="teacher-name">${stu.name}</p>
+                                <p class="teacher-school">${stu.class || 'Unknown Class'}</p>
                             </div>
                         </div>
                     `;
                     wrapper.appendChild(card);
                 });
 
-                document.getElementById("teacherPageInfo").textContent = `Page ${teacherPageNumber}`;
+                // Chart
+                updateStudentChart(data.data);
+
+                document.getElementById("studentPageInfo").textContent = `Page ${studentPageNumber}`;
             })
             .catch(err => {
-                console.error("Error fetching teachers:", err);
-                document.getElementById("teacherCardWrapper").innerHTML = "<p>Error loading teachers.</p>";
+                console.error("Error fetching students:", err);
+                toastr.error("Error loading students.");
             });
     }
 
-    function teacherGoToNextPage() {
-        teacherPageNumber++;
-        loadTeachers();
+    function studentGoToNextPage() {
+        studentPageNumber++;
+        loadStudents();
     }
 
-    function teacherGoToPreviousPage() {
-        if (teacherPageNumber > 1) {
-            teacherPageNumber--;
-            loadTeachers();
+    function studentGoToPreviousPage() {
+        if (studentPageNumber > 1) {
+            studentPageNumber--;
+            loadStudents();
         }
     }
 
-    function openCreateRecModal() {
-        document.getElementById("createRecModal").style.display = "flex";
-        loadScheduleOptions();
-        // loadTeacherOptions();
+    // ================= CHART =================
+    function updateStudentChart(students) {
+        const ctx = document.getElementById("studentChart").getContext("2d");
+        const labels = students.map(s => s.name);
+        const values = students.map(s => s.classNumber || 0);
+
+        if (studentChart) studentChart.destroy();
+
+        studentChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Class Number",
+                    data: values
+                }]
+            }
+        });
     }
 
-    function closeCreateRecModal() {
-        document.getElementById("createRecModal").style.display = "none";
-        document.getElementById("createRecForm").reset();
-        $('#teacherDropdown').val(null).trigger('change'); // clear Select2
+    // ================= MODALS =================
+    function openCreateSubjectModal() {
+        document.getElementById("createSubjectModal").style.display = "flex";
     }
-     function loadScheduleOptions() {
-
-        fetch('/api/Scheduled/GetScheduleList', {
-            headers: { "Authorization": `Bearer ${teacherToken}` }
-        })
-            .then(res => res.json())
-            .then(res => {
-                const dropdown = document.getElementById("scheduleDropdown");
-                dropdown.innerHTML = `<option value="">-- Select Schedule --</option>`;
-                res.data.forEach(s => {
-                    dropdown.innerHTML += `<option value="${s.id}">${s.title} (${s.focus})</option>`;
-                });
-
-                // Add change event listener once options are loaded
-                dropdown.onchange = function () {
-                    const selectedScheduleId = this.value;
-                    if (selectedScheduleId) {
-                        loadTeacherOptions(selectedScheduleId);
-                    }
-                };
-            })
-            .catch(() => {
-                alert("Failed to load schedules.");
-            });
+    function closeCreateSubjectModal() {
+        document.getElementById("createSubjectModal").style.display = "none";
+        document.getElementById("createSubjectForm").reset();
+        document.getElementById("subjectFieldsWrapper").innerHTML = `
+            <div class="subject-field">
+                <input type="text" name="Subject" placeholder="Subject Name" required />
+                <input type="text" name="SubjectCode" placeholder="Subject Code" required />
+            </div>`;
+    }
+    function addMoreSubjectField() {
+        const wrapper = document.getElementById("subjectFieldsWrapper");
+        const div = document.createElement("div");
+        div.className = "subject-field";
+        div.innerHTML = `
+            <input type="text" name="Subject" placeholder="Subject Name" required />
+            <input type="text" name="SubjectCode" placeholder="Subject Code" required />`;
+        wrapper.appendChild(div);
     }
 
-    function loadTeacherOptions(scheduleId) {
-        fetch(`/api/Scheduled/GetTeacherList?ScheduleId=${scheduleId}`, {
-            headers: { "Authorization": `Bearer ${teacherToken}` }
-        })
-            .then(res => res.json())
-            .then(res => {
-                const dropdown = document.getElementById("teacherDropdown");
-                dropdown.innerHTML = "";
-                res.data.forEach(t => {
-                    dropdown.innerHTML += `<option value="${t.id}">${t.title} ${t.fullName}</option>`;
-                });
-
-                // Initialize Select2
-                $('#teacherDropdown').select2({
-                    width: '100%',
-                    placeholder: 'Select teachers',
-                    allowClear: true
-                });
-            })
-            .catch(() => {
-                alert("Failed to load teachers.");
-            });
+    function openCreateStudentModal() {
+        document.getElementById("createStudentModal").style.display = "flex";
+    }
+    function closeCreateStudentModal() {
+        document.getElementById("createStudentModal").style.display = "none";
+        document.getElementById("createStudentForm").reset();
     }
 
-
-    document.getElementById("createRecForm").addEventListener("submit", function (e) {
+    // ================= FORM SUBMITS =================
+    document.getElementById("createSubjectForm").addEventListener("submit", function (e) {
         e.preventDefault();
+        const subjects = [];
+        document.querySelectorAll("#subjectFieldsWrapper .subject-field").forEach(div => {
+            const subject = div.querySelector('input[name="Subject"]').value;
+            const code = div.querySelector('input[name="SubjectCode"]').value;
+            subjects.push({ subject, subjectCode: code });
+        });
 
-        const scheduleId = document.getElementById("scheduleDropdown").value;
-        const teacherIds = $('#teacherDropdown').val();
-        const recommendation = document.getElementById("recommendationText").value;
-
-        const payload = {
-            ScheduleId: scheduleId,
-            TeacherIds: teacherIds,
-            Recommendation: recommendation
-        };
-
-        fetch('/api/Coaches/AddTeachersRecomendations', {
+        fetch("/api/Teachers/CreateSubject", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${teacherToken}`,
+                "Authorization": `Bearer ${userToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(subjects)
+        })
+        .then(res => res.json())
+        .then(() => {
+            toastr.success("Subjects created successfully!");
+            closeCreateSubjectModal();
+        })
+        .catch(() => toastr.error("Error creating subjects."));
+    });
+
+    document.getElementById("createStudentForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const payload = Object.fromEntries(formData.entries());
+
+        fetch("/api/Students/CreateStudent", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${userToken}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(payload)
         })
-            .then(res => res.json())
-            .then(() => {
-                alert("Recommendation created successfully!");
-                closeCreateRecModal();
-                loadTeachers(); // Reload after creation
-            })
-            .catch(() => {
-                alert("Error creating recommendation.");
-            });
+        .then(res => res.json())
+        .then(() => {
+            toastr.success("Student created successfully!");
+            closeCreateStudentModal();
+            loadStudents();
+        })
+        .catch(() => toastr.error("Error creating student."));
     });
 
-    // Load teachers on page load
-    loadTeachers();
+    // ================= INIT =================
+    loadStudents();
 </script>

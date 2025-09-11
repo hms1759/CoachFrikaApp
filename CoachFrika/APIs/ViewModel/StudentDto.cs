@@ -9,6 +9,8 @@ namespace CoachFrika.APIs.ViewModel
         [Required]
         public long? ClassId { get; set; }
         [Required]
+        public long? ClassNumber { get; set; }
+        [Required]
         public string? Name { get; set; }
         public string? Address { get; set; }
         [Required]
@@ -16,12 +18,14 @@ namespace CoachFrika.APIs.ViewModel
         [Required]
         public string? Class { get; set; }
         [Required]
-        public string? PhonePhoneNumber { get; set; }
+        public string? ParentPhoneNumber { get; set; }
+        
     }
 
     public class GetStudentsSearch : Pagination
     {
         public string? Name { get; set; }
+        public long? ClassId { get; set; }
 
     }
 }

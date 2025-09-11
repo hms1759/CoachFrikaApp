@@ -105,12 +105,12 @@ namespace CoachFrika.APIs.Controllerss
             if(result.Status)return Ok(result);return BadRequest(result);
         }
 
-        //[HttpGet("GetSubject")]
-        //public IActionResult GetSubject()
-        //{
-        //    var result =  _service.GetSubject();
-        //    if(result.Status)return Ok(result);return BadRequest(result);
-        //}
+        [HttpGet("GetSubject")]
+        public IActionResult GetSubject()
+        {
+            var result = _service.GetSubject();
+            if (result.Status) return Ok(result); return BadRequest(result);
+        }
         ////[HttpPost("CreateSchool")]
         ////public async Task<IActionResult> CreateSchool(string school)
         ////{
@@ -118,7 +118,7 @@ namespace CoachFrika.APIs.Controllerss
         ////    if(result.Status)return Ok(result);return BadRequest(result);
         ////}
         [HttpPost("CreateSubject")]
-        public async Task<IActionResult> CreateSubject(List<string> school)
+        public async Task<IActionResult> CreateSubject(List<SubjectDTO> school)
         {
             var result = await _service.CreateSubject(school);
             if (result.Status) return Ok(result); return BadRequest(result);

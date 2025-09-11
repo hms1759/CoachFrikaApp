@@ -11,11 +11,11 @@ namespace CoachFrika.APIs.Domin.IServices
         Task<BaseResponse<string>> NewSubscription(SubscriptionDto modle);
         Task<BaseResponse<string>> ContactUs(ContactUsDto modle);
         Task<BaseResponse<string>> SchoolEnrollment(SchoolEnrollmentDto modle);
-        Task<BaseResponse<string>> CreateSubject(List<string> sub);
+        Task<BaseResponse<string>> CreateSubject(List<SubjectDTO> sub);
         Task<BaseResponse<TeachersDTo>> GetUserById(Guid modle);
         Task<BaseResponse<TeachersDTo>> GetUserDetails();
         BaseResponse<string?[]> GetSchool();
-        BaseResponse<string?[]> GetSubject();
+        BaseResponse<List<Subjects>> GetSubject();
         BaseResponse<List<Schedule>> GetMySchedule();
         Task<BaseResponse<string>> SponsorAchild(SponsorDto modle);
 

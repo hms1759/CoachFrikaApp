@@ -7,8 +7,9 @@ namespace CoachFrika.APIs.Domin.IServices
     public interface IStudentsService
     {
         Task<BaseResponse<string>> CreateStudents(CreateStudentsDto model);
-        BaseResponse<List<SchoolEnrollmentRequest>> GetAllStudents(GetStudentsSearch query);
-        Task<BaseResponse<SchoolEnrollmentRequest>> GetStudentsById(Guid Id);
+        BaseResponse<List<Students>> GetAllStudents(GetStudentsSearch query);
+        BaseResponse<List<Students>> GetAllStudentsScores(GetStudentsSearch query);
+        //Task<BaseResponse<SchoolEnrollmentRequest>> GetStudentsById(Guid Id);
     }
 }
 

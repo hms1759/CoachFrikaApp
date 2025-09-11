@@ -70,6 +70,11 @@ namespace CoachFrika.Controllers
             return PartialView("_MyTeacher");
         }
 
+        public IActionResult MyStudent()
+        {
+            return PartialView("_MyStudent");
+        }
+
 
         public async Task<IActionResult> Details(string id)
         {

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using coachfrikaaaa.Common;
 
@@ -11,9 +12,10 @@ using coachfrikaaaa.Common;
 namespace CoachFrika.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250911151310_student")]
+    partial class student
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,7 +65,7 @@ namespace CoachFrika.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ChildSponsor", (string)null);
+                    b.ToTable("ChildSponsor");
                 });
 
             modelBuilder.Entity("CoachFrika.APIs.Entity.Payment", b =>
@@ -112,7 +114,7 @@ namespace CoachFrika.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Payment", (string)null);
+                    b.ToTable("Payment");
                 });
 
             modelBuilder.Entity("CoachFrika.APIs.Entity.SchoolTeacherRequest", b =>
@@ -156,7 +158,7 @@ namespace CoachFrika.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SchoolTeacherRequest", (string)null);
+                    b.ToTable("SchoolTeacherRequest");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Coaches", b =>
@@ -199,7 +201,7 @@ namespace CoachFrika.Migrations
 
                     b.HasIndex("CoachFrikaUserId1");
 
-                    b.ToTable("Coaches", (string)null);
+                    b.ToTable("Coaches");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.ContactUs", b =>
@@ -243,7 +245,7 @@ namespace CoachFrika.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ContactUs", (string)null);
+                    b.ToTable("ContactUs");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.NewsSubscription", b =>
@@ -278,7 +280,7 @@ namespace CoachFrika.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NewsSubscription", (string)null);
+                    b.ToTable("NewsSubscription");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Recommendations", b =>
@@ -330,7 +332,7 @@ namespace CoachFrika.Migrations
 
                     b.HasIndex("ScheduleId1");
 
-                    b.ToTable("Recommendations", (string)null);
+                    b.ToTable("Recommendations");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Schedule", b =>
@@ -388,7 +390,7 @@ namespace CoachFrika.Migrations
 
                     b.HasIndex("CoachId");
 
-                    b.ToTable("Schedule", (string)null);
+                    b.ToTable("Schedule");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.SchoolEnrollmentRequest", b =>
@@ -462,7 +464,7 @@ namespace CoachFrika.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SchoolEnrollmentRequest", (string)null);
+                    b.ToTable("SchoolEnrollmentRequest");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Students", b =>
@@ -518,7 +520,7 @@ namespace CoachFrika.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Students", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Subjects", b =>
@@ -559,7 +561,7 @@ namespace CoachFrika.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects", (string)null);
+                    b.ToTable("Subjects");
                 });
 
             modelBuilder.Entity("coachfrikaaaa.APIs.Entity.Teachers", b =>
@@ -600,7 +602,7 @@ namespace CoachFrika.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Teachers", (string)null);
+                    b.ToTable("Teachers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
