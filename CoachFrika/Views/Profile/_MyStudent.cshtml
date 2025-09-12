@@ -57,7 +57,7 @@
         }
 
             .modal-content button[type="submit"] {
-                background: #007bff;
+                background: green;
                 color: white;
             }
 
@@ -85,22 +85,130 @@
     }
 
     }
+
+    /* ====== Table Styles ====== */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    thead {
+        background: green;
+        color: white;
+    }
+
+        thead th {
+            text-align: left;
+            padding: 12px;
+            font-weight: bold;
+        }
+
+    tbody tr {
+        transition: background 0.2s ease;
+    }
+
+        tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background: #eef5ff;
+        }
+
+    tbody td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* ====== Pagination ====== */
+    .teacher-pagination {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .teacher-pagination button {
+            background: green;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+            .teacher-pagination button:hover {
+                background: darkgreen;
+            }
+
+        .teacher-pagination span {
+            font-weight: bold;
+        }
+    /* Container for spacing */
+    .subject-dropdown-container {
+        margin: 15px 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Label styling */
+    .subject-label {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    /* Styled dropdown */
+    .subject-dropdown {
+        width: 250px;
+        padding: 10px 14px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+        /* Hover effect */
+        .subject-dropdown:hover {
+            border-color: #007bff;
+        }
+
+        /* Focus effect */
+        .subject-dropdown:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 6px rgba(0,123,255,0.4);
+        }
 </style>
 
+<div class="space"></div>
+<span style="font-weight: bold; font-size: 18px;">Student and I</span>
 <div class="space"></div>
 
 <!-- Top Bar -->
 <div class="teacher-top-bar">
-    <span style="font-weight: bold; font-size: 18px;">Student and I</span>
     <div>
+        <!-- Subject Dropdown -->
+        <select id="subjectDropdown">
+            <option value="">-- Select Subject --</option>
+        </select>
         <input type="text" id="studentSearchInput" class="teacher-search-input" placeholder="Search by name..." />
         <button class="teacher-view-all-btn" onclick="handleStudentSearch()">Search Student</button>
         <button class="teacher-view-all-btn" onclick="openCreateSubjectModal()">+ Add Subject</button>
         <button class="teacher-view-all-btn" onclick="openCreateStudentModal()">+ Add Student</button>
     </div>
 </div>
-
-<div class="space"></div>
 
 <!-- Chart -->
 <div class="chart-container" style="width: 100%; max-width: 600px; margin: 0 auto;">
@@ -109,9 +217,25 @@
 
 <div class="space"></div>
 
-<!-- Student Cards -->
-<div class="teacher-card-wrapper" id="studentCardWrapper">Loading...</div>
-
+<!-- Student Table -->
+<table id="studentScoreTable">
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Parent Number</th>
+            <th>Class</th>
+            <th>Subject</th>
+            <th>1st CA</th>
+            <th>2nd CA</th>
+            <th>Exam</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody id="scoreSheetTableBody">
+        <!-- JS will inject rows here -->
+    </tbody>
+</table>
+<div class="space"></div><div class="space"></div>
 <!-- Pagination -->
 <div class="teacher-pagination" id="studentPagination">
     <button onclick="studentGoToPreviousPage()">Previous</button>
@@ -159,10 +283,58 @@
 </div>
 
 <script>
-    let studentPageNumber = 1;
-    const studentPageSize = 10;
-    let studentSearchTerm = '';
-    let studentChart;
+    // ================= GLOBAL STATE =================
+    var studentPageNumber = 1;
+    var studentPageSize = 10;
+    var studentSearchTerm = '';
+    var selectedSubjectId = '';
+    var studentChart;
+    var selectedClassId = '';
+
+    // ================= SUBJECTS =================
+     function loadSubjects() {
+        fetch("/api/Teachers/GetSubject", {
+            headers: { "Authorization": `Bearer ${userToken}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("Subjects API response:", data); // 👈 see what comes back
+
+            const dropdown = document.getElementById("subjectDropdown");
+            dropdown.innerHTML = `<option value="">-- Select Subject --</option>`;
+
+            // Case 1: plain array
+            if (Array.isArray(data)) {
+                data.forEach(sub => {
+                    const opt = document.createElement("option");
+                    opt.value = sub.id || sub.subjectId;
+                    opt.textContent = sub.subjectName || sub.name;
+                    dropdown.appendChild(opt);
+                });
+            }
+            // Case 2: wrapped object { data: [...] }
+            else if (data.data && Array.isArray(data.data)) {
+                data.data.forEach(sub => {
+                    const opt = document.createElement("option");
+                    opt.value = sub.id || sub.subjectId;
+                    opt.textContent = sub.subjectName || sub.name;
+                    dropdown.appendChild(opt);
+                });
+            } else {
+                toastr.warning("No subjects found from API.");
+            }
+        })
+        .catch(err => {
+            console.error("Error loading subjects:", err);
+            toastr.error("Error loading subjects.");
+        });
+    }
+
+    document.getElementById("subjectDropdown").addEventListener("change", function () {
+        selectedSubjectId = this.value;
+        studentPageNumber = 1;
+        loadStudents();
+    });
 
     // ================= STUDENTS =================
     function handleStudentSearch() {
@@ -172,47 +344,45 @@
     }
 
     function loadStudents() {
-        const url = `/api/Students/GetAllStudents?IsPaginated=true&Name=${encodeURIComponent(studentSearchTerm)}&PageSize=${studentPageSize}&PageNumber=${studentPageNumber}`;
+        const url = `/api/Students/GetAllStudentsScores?SubjectId=${selectedSubjectId || ''}&StudentName=${encodeURIComponent(studentSearchTerm)}&ClassId=${selectedClassId || ''}&Pagesize=${studentPageSize}&PageNumber=${studentPageNumber}`;
+        fetch(url, {
+            headers: { "Authorization": `Bearer ${userToken}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const tableBody = document.getElementById("scoreSheetTableBody");
+            tableBody.innerHTML = ""; // clear old rows
 
-        fetch(url, { headers: { "Authorization": `Bearer ${userToken}` } })
-            .then(res => res.json())
-            .then(data => {
-                const wrapper = document.getElementById("studentCardWrapper");
-                wrapper.innerHTML = "";
+            if (!data?.data?.length) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:15px;">No students found.</td></tr>`;
+                updateStudentChart([]);
+                return;
+            }
 
-                if (!data?.data?.length) {
-                    wrapper.innerHTML = "<p>No students found.</p>";
-                    updateStudentChart([]);
-                    return;
-                }
-
-                // Cards
-                data.data.forEach(stu => {
-                    const card = document.createElement("div");
-                    card.className = "teacher-card";
-                    card.innerHTML = `
-                        <div class="teacher-card">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png"
-                                alt="${stu.name || 'Student'}"
-                                class="teacher-card-img" />
-                            <div class="teacher-card-content">
-                                <p class="teacher-name">${stu.name}</p>
-                                <p class="teacher-school">${stu.class || 'Unknown Class'}</p>
-                            </div>
-                        </div>
-                    `;
-                    wrapper.appendChild(card);
-                });
-
-                // Chart
-                updateStudentChart(data.data);
-
-                document.getElementById("studentPageInfo").textContent = `Page ${studentPageNumber}`;
-            })
-            .catch(err => {
-                console.error("Error fetching students:", err);
-                toastr.error("Error loading students.");
+            data.data.forEach(stu => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${stu.studentName || ""}</td>
+                    <td>${stu.parentNumber || ""}</td>
+                    <td>${stu.className || ""}</td>
+                    <td>${stu.subject || ""}</td>
+                    <td>${stu.firstCA ?? ""}</td>
+                    <td>${stu.secondCA ?? ""}</td>
+                    <td>${stu.exam ?? ""}</td>
+                    <td><strong>${stu.total ?? ""}</strong></td>
+                `;
+                tableBody.appendChild(row);
             });
+
+            // Chart
+            updateStudentChart(data.data);
+
+            document.getElementById("studentPageInfo").textContent = `Page ${studentPageNumber}`;
+        })
+        .catch(err => {
+            console.error("Error fetching students:", err);
+            toastr.error("Error loading students.");
+        });
     }
 
     function studentGoToNextPage() {
@@ -230,7 +400,7 @@
     // ================= CHART =================
     function updateStudentChart(students) {
         const ctx = document.getElementById("studentChart").getContext("2d");
-        const labels = students.map(s => s.name);
+        const labels = students.map(s => s.studentName);
         const values = students.map(s => s.classNumber || 0);
 
         if (studentChart) studentChart.destroy();
@@ -241,7 +411,8 @@
                 labels: labels,
                 datasets: [{
                     label: "Class Number",
-                    data: values
+                    data: values,
+                    backgroundColor: "#007bff"
                 }]
             }
         });
@@ -300,6 +471,7 @@
         .then(() => {
             toastr.success("Subjects created successfully!");
             closeCreateSubjectModal();
+            loadSubjects();
         })
         .catch(() => toastr.error("Error creating subjects."));
     });
@@ -327,5 +499,6 @@
     });
 
     // ================= INIT =================
+    loadSubjects();
     loadStudents();
 </script>

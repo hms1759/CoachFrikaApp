@@ -34,7 +34,7 @@ namespace CoachFrika.APIs.Controllerss
             if (result.Status) return Ok(result); return BadRequest(result);
         }
         [HttpGet("GetAllStudentsScores")]
-        public IActionResult GetAllStudentsScores([FromQuery] GetStudentsSearch query)
+        public IActionResult GetAllStudentsScores([FromQuery] ScoreSheetsSearch query)
         {
             var result = _service.GetAllStudentsScores(query);
             if (result.Status) return Ok(result); return BadRequest(result);

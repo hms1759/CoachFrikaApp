@@ -10,9 +10,9 @@ namespace coachfrikaaaa.APIs.Entity
     {
         public string? StudentId { get; set; }
         public string? TeachersId { get; set; }
-        public string? FirstCA { get; set; }
-        public string? SecondCA { get; set; }
-        public string? Exam { get; set; }
+        public int? FirstCA { get; set; }
+        public int? SecondCA { get; set; }
+        public int? Exam { get; set; }
         [ForeignKey(nameof(Subject))]
         public Guid SubjectId { get; set; }
         public virtual Subjects? Subject { get; set; }

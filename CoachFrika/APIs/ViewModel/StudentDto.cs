@@ -28,4 +28,12 @@ namespace CoachFrika.APIs.ViewModel
         public long? ClassId { get; set; }
 
     }
+    public class ScoreSheetsSearch : Pagination
+    {
+        public string? SubjectId { get; set; }
+        public string? StudentName { get; set; }
+        public long? ClassId { get; set; }
+        public bool isAll{ get; set; }
+
+    }
 }
