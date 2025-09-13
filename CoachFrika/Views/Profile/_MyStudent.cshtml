@@ -72,18 +72,15 @@
     }
 
     @@keyframes fadeIn {
-        from
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
 
-    {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
 
     /* ====== Table Styles ====== */
@@ -151,6 +148,7 @@
         .teacher-pagination span {
             font-weight: bold;
         }
+
     /* Container for spacing */
     .subject-dropdown-container {
         margin: 15px 0;
@@ -179,17 +177,39 @@
         cursor: pointer;
     }
 
-        /* Hover effect */
         .subject-dropdown:hover {
             border-color: #007bff;
         }
 
-        /* Focus effect */
         .subject-dropdown:focus {
             border-color: #007bff;
             outline: none;
             box-shadow: 0 0 6px rgba(0,123,255,0.4);
         }
+
+    .student-top-bar {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        margin-bottom: 3rem;
+    }
+
+    .subjectDropdown {
+        height: 30px;
+    }
+
+    .chart-container {
+        width: 80%; /* Chart takes 80% of parent width */
+        margin: 20px auto; /* Centers it horizontally */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #studentChart {
+        width: 100% !important; /* Make canvas responsive */
+        height: auto !important;
+    }
 </style>
 
 <div class="space"></div>
@@ -197,25 +217,25 @@
 <div class="space"></div>
 
 <!-- Top Bar -->
-<div class="teacher-top-bar">
+<div class="student-top-bar">
     <div>
-        <!-- Subject Dropdown -->
-        <select id="subjectDropdown">
+        <select id="subjectDropdown" class="subjectDropdown">
             <option value="">-- Select Subject --</option>
         </select>
-        <input type="text" id="studentSearchInput" class="teacher-search-input" placeholder="Search by name..." />
-        <button class="teacher-view-all-btn" onclick="handleStudentSearch()">Search Student</button>
+        <select id="studentDropdown" class="subjectDropdown">
+            <option value="">-- Select Student --</option>
+        </select>
+        <input type="text" id="classSearchInput" class="teacher-search-input" placeholder="Search by Class..." />
+        <button class="teacher-view-all-btn" onclick="handleStudentScoreSearch()">Search Student</button>
         <button class="teacher-view-all-btn" onclick="openCreateSubjectModal()">+ Add Subject</button>
         <button class="teacher-view-all-btn" onclick="openCreateStudentModal()">+ Add Student</button>
     </div>
 </div>
 
 <!-- Chart -->
-<div class="chart-container" style="width: 100%; max-width: 600px; margin: 0 auto;">
+<div class="chart-container">
     <canvas id="studentChart"></canvas>
 </div>
-
-<div class="space"></div>
 
 <!-- Student Table -->
 <table id="studentScoreTable">
@@ -231,11 +251,9 @@
             <th>Total</th>
         </tr>
     </thead>
-    <tbody id="scoreSheetTableBody">
-        <!-- JS will inject rows here -->
-    </tbody>
+    <tbody id="scoreSheetTableBody"></tbody>
 </table>
-<div class="space"></div><div class="space"></div>
+
 <!-- Pagination -->
 <div class="teacher-pagination" id="studentPagination">
     <button onclick="studentGoToPreviousPage()">Previous</button>
@@ -244,7 +262,6 @@
 </div>
 
 <!-- ================= MODALS ================= -->
-<!-- Add Subject Modal -->
 <div id="createSubjectModal" class="modal">
     <div class="modal-content">
         <h3>Add Subjects</h3>
@@ -263,7 +280,6 @@
     </div>
 </div>
 
-<!-- Add Student Modal -->
 <div id="createStudentModal" class="modal">
     <div class="modal-content">
         <h3>Add Student</h3>
@@ -286,35 +302,69 @@
     // ================= GLOBAL STATE =================
     var studentPageNumber = 1;
     var studentPageSize = 10;
-    var studentSearchTerm = '';
+     var classSearchTerm = '';
     var selectedSubjectId = '';
+    var selectedStudentId = '';
     var studentChart;
     var selectedClassId = '';
+   var isAllClass = false;
+    var selectedSubjectName = '';
+
+        // Check if any has a value
+    if (
+        (selectedStudentId && selectedStudentId.trim() !== '') ||
+        (selectedSubjectId && selectedSubjectId.trim() !== '')
+    ) {
+        isAllClass = true;
+    }
+
+    // ================= STUDENTS =================
+    function loadStudentsDropdown() {
+        fetch("/api/Students/GetAllStudents", {
+            headers: { "Authorization": `Bearer ${userToken}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const dropdown = document.getElementById("studentDropdown");
+            dropdown.innerHTML = `<option value="">-- Select Student --</option>`;
+
+            const list = data.data || data;
+            if (Array.isArray(list)) {
+                list.forEach(std => {
+                    const opt = document.createElement("option");
+                    opt.value = std.id;
+                    opt.textContent = std.name;
+                    dropdown.appendChild(opt);
+                });
+            } else {
+                toastr.warning("No Student found from API.");
+            }
+        })
+        .catch(err => {
+            console.error("Error loading Students:", err);
+            toastr.error("Error loading Students.");
+        });
+    }
+
+    document.getElementById("studentDropdown").addEventListener("change", function () {
+        selectedStudentId = this.value;
+        selectedSubjectName = this.options[this.selectedIndex].text;
+        studentPageNumber = 1;
+    });
 
     // ================= SUBJECTS =================
-     function loadSubjects() {
+    function loadSubjectsDropdown() {
         fetch("/api/Teachers/GetSubject", {
             headers: { "Authorization": `Bearer ${userToken}` }
         })
         .then(res => res.json())
         .then(data => {
-            console.log("Subjects API response:", data); // 👈 see what comes back
-
             const dropdown = document.getElementById("subjectDropdown");
             dropdown.innerHTML = `<option value="">-- Select Subject --</option>`;
 
-            // Case 1: plain array
-            if (Array.isArray(data)) {
-                data.forEach(sub => {
-                    const opt = document.createElement("option");
-                    opt.value = sub.id || sub.subjectId;
-                    opt.textContent = sub.subjectName || sub.name;
-                    dropdown.appendChild(opt);
-                });
-            }
-            // Case 2: wrapped object { data: [...] }
-            else if (data.data && Array.isArray(data.data)) {
-                data.data.forEach(sub => {
+            const list = data.data || data;
+            if (Array.isArray(list)) {
+                list.forEach(sub => {
                     const opt = document.createElement("option");
                     opt.value = sub.id || sub.subjectId;
                     opt.textContent = sub.subjectName || sub.name;
@@ -333,33 +383,32 @@
     document.getElementById("subjectDropdown").addEventListener("change", function () {
         selectedSubjectId = this.value;
         studentPageNumber = 1;
-        loadStudents();
     });
 
-    // ================= STUDENTS =================
-    function handleStudentSearch() {
-        studentSearchTerm = document.getElementById("studentSearchInput").value.trim();
+    // ================= STUDENTSCORES =================
+    function handleStudentScoreSearch() {
+        classSearchTerm = document.getElementById("classSearchInput").value.trim();
         studentPageNumber = 1;
-        loadStudents();
+        loadStudentsScores();
     }
 
-    function loadStudents() {
-        const url = `/api/Students/GetAllStudentsScores?SubjectId=${selectedSubjectId || ''}&StudentName=${encodeURIComponent(studentSearchTerm)}&ClassId=${selectedClassId || ''}&Pagesize=${studentPageSize}&PageNumber=${studentPageNumber}`;
+    function loadStudentsScores() {
+           const url = `/api/Students/GetAllStudentsScores?SubjectId=${selectedSubjectId || ''}&StudentId=${encodeURIComponent(classSearchTerm)}&ClassId=${selectedClassId || ''}&StudentId=${encodeURIComponent(selectedStudentId)}&isAll=${isAllClass}&Pagesize=${studentPageSize}&PageNumber=${studentPageNumber}`;
         fetch(url, {
             headers: { "Authorization": `Bearer ${userToken}` }
         })
         .then(res => res.json())
         .then(data => {
             const tableBody = document.getElementById("scoreSheetTableBody");
-            tableBody.innerHTML = ""; // clear old rows
+            tableBody.innerHTML = "";
 
-            if (!data?.data?.length) {
+            if (!data?.data?.score?.length) {
                 tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:15px;">No students found.</td></tr>`;
                 updateStudentChart([]);
                 return;
             }
 
-            data.data.forEach(stu => {
+            data.data.score.forEach(stu => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${stu.studentName || ""}</td>
@@ -374,8 +423,11 @@
                 tableBody.appendChild(row);
             });
 
-            // Chart
-            updateStudentChart(data.data);
+            if (isAllClass) {
+                updateAllStudentChart(data.data.score);
+            } else {
+                updateStudentChart(data.data.score);
+            }
 
             document.getElementById("studentPageInfo").textContent = `Page ${studentPageNumber}`;
         })
@@ -387,118 +439,51 @@
 
     function studentGoToNextPage() {
         studentPageNumber++;
-        loadStudents();
+        loadStudentsScores();
     }
 
     function studentGoToPreviousPage() {
         if (studentPageNumber > 1) {
             studentPageNumber--;
-            loadStudents();
+            loadStudentsScores();
         }
     }
 
     // ================= CHART =================
-    function updateStudentChart(students) {
+   
+
+    function updateStudentChart(students = []) {
+        if (!Array.isArray(students)) students = [];
         const ctx = document.getElementById("studentChart").getContext("2d");
-        const labels = students.map(s => s.studentName);
-        const values = students.map(s => s.classNumber || 0);
+        const labels = students.map(s => s.studentName || "");
+        const values = students.map(s => s.total || 0);
 
         if (studentChart) studentChart.destroy();
 
         studentChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: labels,
+                labels,
                 datasets: [{
-                    label: "Class Number",
+                     label: selectedSubjectName || "Class Member", // ✅ Subject name or default
                     data: values,
-                    backgroundColor: "#007bff"
+                    backgroundColor: "green"
                 }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        min: 10,
+                        max: 100,
+                        ticks: { stepSize: 10 }
+                    }
+                }
             }
         });
     }
 
-    // ================= MODALS =================
-    function openCreateSubjectModal() {
-        document.getElementById("createSubjectModal").style.display = "flex";
-    }
-    function closeCreateSubjectModal() {
-        document.getElementById("createSubjectModal").style.display = "none";
-        document.getElementById("createSubjectForm").reset();
-        document.getElementById("subjectFieldsWrapper").innerHTML = `
-            <div class="subject-field">
-                <input type="text" name="Subject" placeholder="Subject Name" required />
-                <input type="text" name="SubjectCode" placeholder="Subject Code" required />
-            </div>`;
-    }
-    function addMoreSubjectField() {
-        const wrapper = document.getElementById("subjectFieldsWrapper");
-        const div = document.createElement("div");
-        div.className = "subject-field";
-        div.innerHTML = `
-            <input type="text" name="Subject" placeholder="Subject Name" required />
-            <input type="text" name="SubjectCode" placeholder="Subject Code" required />`;
-        wrapper.appendChild(div);
-    }
-
-    function openCreateStudentModal() {
-        document.getElementById("createStudentModal").style.display = "flex";
-    }
-    function closeCreateStudentModal() {
-        document.getElementById("createStudentModal").style.display = "none";
-        document.getElementById("createStudentForm").reset();
-    }
-
-    // ================= FORM SUBMITS =================
-    document.getElementById("createSubjectForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const subjects = [];
-        document.querySelectorAll("#subjectFieldsWrapper .subject-field").forEach(div => {
-            const subject = div.querySelector('input[name="Subject"]').value;
-            const code = div.querySelector('input[name="SubjectCode"]').value;
-            subjects.push({ subject, subjectCode: code });
-        });
-
-        fetch("/api/Teachers/CreateSubject", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${userToken}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(subjects)
-        })
-        .then(res => res.json())
-        .then(() => {
-            toastr.success("Subjects created successfully!");
-            closeCreateSubjectModal();
-            loadSubjects();
-        })
-        .catch(() => toastr.error("Error creating subjects."));
-    });
-
-    document.getElementById("createStudentForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const payload = Object.fromEntries(formData.entries());
-
-        fetch("/api/Students/CreateStudent", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${userToken}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(() => {
-            toastr.success("Student created successfully!");
-            closeCreateStudentModal();
-            loadStudents();
-        })
-        .catch(() => toastr.error("Error creating student."));
-    });
-
     // ================= INIT =================
-    loadSubjects();
-    loadStudents();
+    loadSubjectsDropdown();
+    loadStudentsDropdown();
+    loadStudentsScores();
 </script>

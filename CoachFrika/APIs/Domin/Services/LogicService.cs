@@ -235,14 +235,30 @@ namespace CoachFrika.APIs.Domin.Services
                 var dtoList = new List<Subjects>();
                 foreach (var subItem in subRequest)
                 {
+                    var existSub = await _context.Subjects
+    .FirstOrDefaultAsync(x => x.TeachersId == userId &&
+                              x.SubjectName.ToLower() == subItem.Subject.ToLower());
 
+                    if (existSub != null)
+                    {
+                        res.Message = $"Subject with the name {subItem.Subject}: Already exist";
+                        res.Status = false;
+                        return res;
+
+                    }
                     var sub = new Subjects();
                     sub.TeachersId = userId;
                     sub.SubjectName = subItem.Subject;
                     sub.SubjectCode = subItem.SubjectCode;
 
-                    var studentList = _context.Subjects.Where(x => x.TeachersId == userId);
-                    var liststd = new List<StudentScoreSheet>();
+                    dtoList.Add(sub);
+                }
+
+                await subRepository.AddRangeAsync(dtoList);
+                var studentList = _context.Students.Where(x => x.TeachersId == userId);
+                var liststd = new List<StudentScoreSheet>();
+                foreach (var sub in dtoList)
+                {
                     if (studentList.Any())
                     {
                         foreach (var std in studentList)
@@ -251,16 +267,13 @@ namespace CoachFrika.APIs.Domin.Services
                             {
                                 TeachersId = sub.TeachersId,
                                 StudentId = std.Id.ToString(),
-                                SubjectId = sub.Id
+                                SubjectId = sub.Id.ToString()
                             };
                             liststd.Add(scoreSheet);
                         }
                         await _context.StudentScoreSheet.AddRangeAsync(liststd);
                     }
-                    dtoList.Add(sub);
                 }
-
-                await subRepository.AddRangeAsync(dtoList);
                 await _unitOfWork.SaveChangesAsync();
                 res.Message = "Successful";
                 return res;

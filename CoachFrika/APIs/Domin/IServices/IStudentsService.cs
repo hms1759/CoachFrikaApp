@@ -9,7 +9,7 @@ namespace CoachFrika.APIs.Domin.IServices
     {
         Task<BaseResponse<string>> CreateStudents(CreateStudentsDto model);
         BaseResponse<List<Students>> GetAllStudents(GetStudentsSearch query);
-        BaseResponse<List<ScoreSheetDTo>> GetAllStudentsScores(ScoreSheetsSearch query);
+        BaseResponse<ResponseScoreSheetDTo> GetAllStudentsScores(ScoreSheetsSearch query);
         //Task<BaseResponse<SchoolEnrollmentRequest>> GetStudentsById(Guid Id);
     }
 }

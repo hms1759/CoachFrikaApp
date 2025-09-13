@@ -13,8 +13,6 @@ namespace coachfrikaaaa.APIs.Entity
         public int? FirstCA { get; set; }
         public int? SecondCA { get; set; }
         public int? Exam { get; set; }
-        [ForeignKey(nameof(Subject))]
-        public Guid SubjectId { get; set; }
-        public virtual Subjects? Subject { get; set; }
+        public string? SubjectId { get; set; }
     }
 }

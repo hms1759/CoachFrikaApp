@@ -82,7 +82,7 @@ namespace CoachFrika.APIs.Domin.Services
                     {
                         TeachersId = sub.TeachersId,
                         StudentId = newEnt.Id.ToString(),
-                        SubjectId = sub.Id
+                        SubjectId = sub.Id.ToString()
                     };
                     listsheet.Add(scoreSheet);
                 }
@@ -130,10 +130,10 @@ namespace CoachFrika.APIs.Domin.Services
 
         }
 
-        public BaseResponse<List<ScoreSheetDTo>> GetAllStudentsScores(ScoreSheetsSearch query)
+        public BaseResponse<ResponseScoreSheetDTo> GetAllStudentsScores(ScoreSheetsSearch query)
         {
             var userId = _webHelpers.CurrentUserId();
-            var res = new BaseResponse<List<ScoreSheetDTo>>();
+            var res = new BaseResponse<ResponseScoreSheetDTo>();
             res.Status = true;
             try
             {
@@ -155,7 +155,7 @@ namespace CoachFrika.APIs.Domin.Services
         equals new { TeacherId = score.TeachersId, StudentId = score.StudentId }
         into scoreGroup
     from score in scoreGroup.DefaultIfEmpty()
-    where (query.StudentName == null || std.Name.Contains(query.StudentName))
+    where (query.StudentId == null || std.Id.ToString() ==query.StudentId)
                                    && (query.ClassId == null || std.ClassId == query.ClassId)
                                    && (query.SubjectId == null || sub.Id.ToString() == query.SubjectId)
     select new ScoreSheetDTo
@@ -168,18 +168,21 @@ namespace CoachFrika.APIs.Domin.Services
         Exam = score.Exam,
         Total = score.Exam + score.FirstCA + score.SecondCA,
 
-        Subject = query.isAll ? sub.SubjectName : "Over-All",
+        Subject = sub.SubjectName,
 
         ClassName = std.Class,
         SubjectId = sub.Id.ToString()
     };
 
                 IQueryable<ScoreSheetDTo> result;
-
-                if (query.SubjectId == null)
+                /// all class group by studentId 
+                /// subject : where the student did the subject
+                /// Student: where student did subject
+                /// 
+                if (query.isAll)
                 {
                     // Group by StudentId and sum scores
-                    result = baseQuery
+                    baseQuery = baseQuery
                         .GroupBy(x => x.StudentId)
                         .Select(g => new ScoreSheetDTo
                         {
@@ -193,41 +196,25 @@ namespace CoachFrika.APIs.Domin.Services
                             Total = g.Sum(x => x.Total),
                             // Replace Subject with ClassName
                             ClassName = g.First().ClassName,
-                            Subject = g.First().Subject
+                            Subject = "Over-All"
                             // Replace Subject with ClassName
                         });
                 }
-                else
-                {// Group by StudentId and sum scores
-                    result = baseQuery.Where(x => x.SubjectId == query.SubjectId);
-                        //.GroupBy(x => x.SubjectId)
-                        //.Select(g => new ScoreSheetDTo
-                        //{
-                        //    StudentId = g.Key,
-                        //    StudentName = g.First().StudentName,
-                        //    ParentNumber = g.First().ParentNumber,
-
-                        //    FirstCA = g.Sum(x => x.FirstCA),
-                        //    SecondCA = g.Sum(x => x.SecondCA),
-                        //    Exam = g.Sum(x => x.Exam),
-                        //    Total = g.Sum(x => x.Total),
-                        //    // Replace Subject with ClassName
-                        //    ClassName = g.First().ClassName,
-                        //    Subject = g.First().Subject
-                        //    // Replace Subject with ClassName
-                        //});
-                }
+             
 
                 // Apply pagination using Skip and Take
-                var pagedData = result.Skip((query.PageNumber - 1) * query.Pagesize)
+                var pagedData = baseQuery.Skip((query.PageNumber - 1) * query.Pagesize)
                                    .Take(query.Pagesize)
                                    .ToList();
-
+                var resu = new ResponseScoreSheetDTo()
+                {score = pagedData,
+                IsAll = query.isAll
+                };
                 // Set the response data
-                res.Data = pagedData;
+                res.Data = resu;
                 res.PageNumber = query.PageNumber;
                 res.PageSize = query.Pagesize;
-                res.TotalCount = result.Count();
+                res.TotalCount = baseQuery.Count();
                 return res;
             }
             catch (Exception ex)

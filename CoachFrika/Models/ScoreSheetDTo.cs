@@ -17,4 +17,11 @@ namespace CoachFrika.Models
         public int? Exam { get; set; }
         public int? Total { get; set; }
     }
+    public class ResponseScoreSheetDTo
+    {
+        public bool IsAll { get; set; }
+        public List<ScoreSheetDTo>? score { get; set; }
+    }
+
+
 }

@@ -23,6 +23,7 @@ namespace CoachFrika.APIs.ViewModel
     {
         public string Subject { get; set; }
         public string SubjectCode { get; set; }
+        //public string ClassId { get; set; }
 
     }
 }
