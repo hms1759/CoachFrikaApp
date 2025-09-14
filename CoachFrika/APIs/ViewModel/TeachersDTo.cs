@@ -1,4 +1,5 @@
-﻿using coachfrikaaaa.APIs.Entity;
+﻿using CoachFrika.Common.Enum;
+using coachfrikaaaa.APIs.Entity;
 using Microsoft.AspNetCore.Identity;
 
 namespace CoachFrika.APIs.ViewModel
@@ -21,8 +22,8 @@ namespace CoachFrika.APIs.ViewModel
     }
     public class SubjectDTO
     {
+        public SchoolSubjectEnum SubjectId { get; set; }
         public string Subject { get; set; }
-        public string SubjectCode { get; set; }
         //public string ClassId { get; set; }
 
     }

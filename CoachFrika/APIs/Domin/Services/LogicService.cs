@@ -237,7 +237,7 @@ namespace CoachFrika.APIs.Domin.Services
                 {
                     var existSub = await _context.Subjects
     .FirstOrDefaultAsync(x => x.TeachersId == userId &&
-                              x.SubjectName.ToLower() == subItem.Subject.ToLower());
+                              x.SubjectId == subItem.SubjectId);
 
                     if (existSub != null)
                     {
@@ -248,8 +248,8 @@ namespace CoachFrika.APIs.Domin.Services
                     }
                     var sub = new Subjects();
                     sub.TeachersId = userId;
-                    sub.SubjectName = subItem.Subject;
-                    sub.SubjectCode = subItem.SubjectCode;
+                    sub.SubjectId = subItem.SubjectId;
+                    sub.Subject = subItem.Subject;
 
                     dtoList.Add(sub);
                 }
@@ -385,13 +385,14 @@ namespace CoachFrika.APIs.Domin.Services
 
         public BaseResponse<List<Subjects>> GetSubject()
         {
+            var schsEmp = new List<Subjects>();
             var id = _webHelpers.CurrentUserId();
             var res = new BaseResponse<List<Subjects>>();
             res.Status = true;
             var schs = from sch in _context.Subjects
                        where sch.TeachersId == id
                        select sch;
-            res.Data = schs.ToList();
+            res.Data = schs.Any()? schs.ToList(): schsEmp;
             return res;
         }
         public BaseResponse<List<Schedule>> GetMySchedule()

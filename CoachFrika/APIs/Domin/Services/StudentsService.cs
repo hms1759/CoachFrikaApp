@@ -168,7 +168,7 @@ namespace CoachFrika.APIs.Domin.Services
         Exam = score.Exam,
         Total = score.Exam + score.FirstCA + score.SecondCA,
 
-        Subject = sub.SubjectName,
+        Subject = sub.Subject,
 
         ClassName = std.Class,
         SubjectId = sub.Id.ToString()
