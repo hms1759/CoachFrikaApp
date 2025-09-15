@@ -72,18 +72,15 @@
     }
 
     @@keyframes fadeIn {
-        from
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
 
-    {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
 
     /* ====== Table Styles ====== */
@@ -216,10 +213,13 @@
             <th>2nd CA</th>
             <th>Exam</th>
             <th>Total</th>
+            <th>No of Course</th>
+            <th>Cumulative Total</th>
         </tr>
     </thead>
     <tbody id="scoreSheetTableBody"></tbody>
 </table>
+
 
 <!-- Pagination -->
 <div class="teacher-pagination" id="studentPagination">
@@ -266,21 +266,13 @@
         </form>
     </div>
 </div>
-
 <script>
     // ================= ENUMS =================
     var ClassRoomEnum = {
-        1: "Primary 1",
-        2: "Primary 2",
-        3: "Primary 3",
-        4: "Primary 4",
-        5: "Primary 5",
-        6: "Primary 6",
-        7: "Junior Secondary School 1",
-        8: "Junior Secondary School 2",
-        9: "Junior Secondary School 3",
-        10: "Senior Secondary School 1",
-        11: "Senior Secondary School 2",
+        1: "Primary 1", 2: "Primary 2", 3: "Primary 3", 4: "Primary 4",
+        5: "Primary 5", 6: "Primary 6", 7: "Junior Secondary School 1",
+        8: "Junior Secondary School 2", 9: "Junior Secondary School 3",
+        10: "Senior Secondary School 1", 11: "Senior Secondary School 2",
         12: "Senior Secondary School 3"
     };
 
@@ -301,9 +293,13 @@
 
     // ================= GLOBAL STATE =================
     var studentPageNumber=1, studentPageSize=10;
-    var selectedSubjectId='', selectedStudentId='', selectedClassId='', isAllClass=false, selectedSubjectName='';
+    var selectedSubjectId='',
+    selectedStudentId='', selectedClassId='', isAllClass=false,isOnlyStudent=false, selectedSubjectId='',selectedSubjectName ='';
     var studentChart;
-
+        function updateIsAllClass() {
+        isAllClass = (!selectedStudentId && !selectedClassId && !selectedSubjectId);
+        isOnlyStudent =(selectedStudentId && !selectedClassId && !selectedSubjectId);
+    }
     // ================= DROPDOWNS =================
     function populateClassDropdown(){
       const classDropdown=document.getElementById("classDropdown");
@@ -312,6 +308,7 @@
         opt.value=id; opt.textContent=name;
         classDropdown.appendChild(opt);
       }
+      updateIsAllClass()
     }
 
     function populateClassFilterDropdown(){
@@ -319,12 +316,7 @@
       $dropdown.empty().append('<option value="">-- Select Class --</option>');
       for(const [id,name] of Object.entries(ClassRoomEnum)){
         $dropdown.append(`<option value="${id}">${name}</option>`);
-      }
-      // $dropdown.select2({
-      //   placeholder:"Search by Class...",
-      //   allowClear:true,
-      //   width:'resolve'
-      // });
+      }updateIsAllClass()
     }
 
     // Populate subject dropdown options
@@ -332,8 +324,25 @@
         $dropdown.empty().append('<option value="">-- Select Subject --</option>');
         for (const key in SchoolSubjectEnum) {
             $dropdown.append(`<option value="${key}">${SchoolSubjectEnum[key]}</option>`);
-        }
+        }updateIsAllClass()
     }
+
+    // ✅ FIXED Add More Subject
+    $("#addMoreSubjectBtn").on("click", function () {
+        let newField = $(`
+            <div class="subject-field">
+                <select class="subjectDropdown" name="SubjectId[]" required></select>
+                <button type="button" class="removeSubjectBtn">Remove</button>
+            </div>
+        `);
+        populateSubjectDropdown(newField.find(".subjectDropdown"));
+        $("#subjectFieldsWrapper").append(newField);
+    });
+
+    // Remove subject field
+    $(document).on("click", ".removeSubjectBtn", function () {
+        $(this).closest(".subject-field").remove();
+    });
 
     // ================= STUDENTS =================
     function loadStudentsDropdown(){
@@ -353,7 +362,7 @@
       }).catch(err=>{console.error(err);toastr.error("Error loading Students.");});
     }
     document.getElementById("studentDropdown").addEventListener("change",function(){
-      selectedStudentId=this.value; studentPageNumber=1;
+      selectedStudentId=this.value; studentPageNumber=1;updateIsAllClass()
     });
 
     // ================= SUBJECTS =================
@@ -378,12 +387,14 @@
       selectedSubjectId=this.value;
       selectedSubjectName=this.options[this.selectedIndex].text;
       studentPageNumber=1;
+      updateIsAllClass()
     });
 
     // ================= SCORES =================
     $("#classFilterDropdown").on("change", function(){
       selectedClassId=this.value;
-      studentPageNumber=1;
+      studentPageNumber=1; 
+      updateIsAllClass()
     });
 
     function handleStudentScoreSearch(){
@@ -404,14 +415,16 @@
         data.data.score.forEach(stu=>{
           const row=document.createElement("tr");
           row.innerHTML=`
-            <td>${stu.studentName||""}</td>
+            <td>${stu.studentName||stu.subject}</td>
             <td>${stu.parentNumber||""}</td>
             <td>${stu.className||""}</td>
             <td>${stu.subject||""}</td>
             <td>${stu.firstCA??""}</td>
             <td>${stu.secondCA??""}</td>
             <td>${stu.exam??""}</td>
-            <td><strong>${stu.total??""}</strong></td>`;
+            <td><strong>${stu.total??""}</strong></td>
+            <td><strong>${stu.noOfCourse??""}</strong></td>
+            <td><strong>${stu.cummulativeTotal??""}</strong></td>`;
           tableBody.appendChild(row);
         });
         updateStudentChart(data.data.score);
@@ -425,8 +438,15 @@
     function updateStudentChart(students=[]){
       if(!Array.isArray(students)) students=[];
       const ctx=document.getElementById("studentChart").getContext("2d");
-      const labels=students.map(s=>s.studentName||"");
-      const values=students.map(s=>s.total||0);
+       // ✅ define labels once
+    let labels = [];
+
+    if (!isOnlyStudent) {
+        labels = students.map(s => s.studentName || "");
+    } else {
+        labels = students.map(s => s.subject || "");
+    }
+      const values=students.map(s=>s.cummulativeTotal||s.total);
       if(studentChart) studentChart.destroy();
       studentChart=new Chart(ctx,{
         type:'bar',
@@ -448,11 +468,11 @@
     };
 
     // ================= FORM SUBMITS =================
-    document.getElementById("createSubjectForm").addEventListener("submit", function (e) {
+     document.getElementById("createSubjectForm").addEventListener("submit", function (e) {
         e.preventDefault();
         const subjects = [];
         document.querySelectorAll("#subjectFieldsWrapper .subjectDropdown").forEach(select => {
-              const id = parseInt(select.value, 10);
+            const id = parseInt(select.value, 10);
             const name = select.options[select.selectedIndex]?.text || "";
             if (id && name) {
                 subjects.push({ SubjectId: id, Subject: name });
@@ -469,9 +489,13 @@
         })
         .then(res => res.json())
         .then(res => {
-            toastr.success("Subjects added successfully!");
-            closeCreateSubjectModal();
-            loadSubjectsDropdown();
+            if (res.status) {
+                toastr.success(res.message || "Subjects added successfully!");
+                closeCreateSubjectModal();
+                loadSubjectsDropdown();
+            } else {
+                toastr.error(res.message || "Error adding subjects.");
+            }
         })
         .catch(err => {
             console.error(err);
@@ -479,9 +503,59 @@
         });
     });
 
+
+    document.getElementById("createStudentForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const classId = parseInt(document.getElementById("classDropdown").value, 10);
+        const classNumber = parseInt(document.querySelector("#createStudentForm [name='ClassNumber']").value, 10);
+        const name = document.querySelector("#createStudentForm [name='Name']").value.trim();
+        const address = document.querySelector("#createStudentForm [name='Address']").value.trim();
+        const parentName = document.querySelector("#createStudentForm [name='ParentName']").value.trim();
+        const parentPhoneNumber = document.querySelector("#createStudentForm [name='ParentPhoneNumber']").value.trim();
+
+        if (!classId || !classNumber || !name || !parentName || !parentPhoneNumber) {
+            toastr.warning("Please fill all required fields.");
+            return;
+        }
+
+        const payload = {
+            ClassId: classId,
+            ClassNumber: classNumber,
+            Name: name,
+            Address: address,
+            ParentName: parentName,
+            ParentPhoneNumber: parentPhoneNumber,
+        };
+
+        fetch("/api/Students/CreateStudent", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${userToken}`
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status) {
+                toastr.success(res.message || "Student added successfully!");
+                closeCreateStudentModal();
+                loadSubjectsDropdown();
+                loadStudentsDropdown();
+                loadStudentsScores();
+            } else {
+                toastr.error(res.message || "Error adding student.");
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            toastr.error("Error adding student.");
+        });
+    });
+
     // ================= INIT =================
-    populateClassDropdown();        // For student creation
-    populateClassFilterDropdown();  // For top bar search
+    populateClassDropdown();
+    populateClassFilterDropdown();
     populateSubjectDropdown($("#subjectFieldsWrapper .subjectDropdown").first());
     loadSubjectsDropdown();
     loadStudentsDropdown();

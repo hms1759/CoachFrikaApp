@@ -65,7 +65,7 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 ClassId = model.ClassId,
                 Name = model.Name,
-                Class = model.Class,
+                Class = model.ClassId.ToString(),
                 ParentName = model.ParentName,
                 ParentPhoneNumber = model.ParentPhoneNumber,
                 Address = model.Address,
@@ -74,6 +74,7 @@ namespace CoachFrika.APIs.Domin.Services
             };
             var subjectList = _context.Subjects.Where(x => x.TeachersId == tchId);
             var listsheet = new List<StudentScoreSheet>();
+            await _context.Students.AddAsync(newEnt);
             if (subjectList.Any())
             {
                 foreach (var sub in subjectList)
@@ -88,7 +89,6 @@ namespace CoachFrika.APIs.Domin.Services
                 }
             }
             await _context.StudentScoreSheet.AddRangeAsync(listsheet);
-            await _context.Students.AddAsync(newEnt);
             _context.SaveChanges();
             res.Message = "Student Successfully Onboarded";
             res.Status = true;
@@ -132,54 +132,85 @@ namespace CoachFrika.APIs.Domin.Services
 
         public BaseResponse<ResponseScoreSheetDTo> GetAllStudentsScores(ScoreSheetsSearch query)
         {
+            var isClassOnly = false;
+            if(query.ClassId != null && query.SubjectId == null && query.SubjectId == null)
+            {
+                isClassOnly = true;
+
+            }
             var userId = _webHelpers.CurrentUserId();
             var res = new BaseResponse<ResponseScoreSheetDTo>();
             res.Status = true;
             try
             {
+                var hassubject = _context.Subjects.Any(x => x.TeachersId == userId);
+                if (!hassubject)
+                {
+                    var base1Query =
+                        from teach in _context.CoachFrikaUsers
+                        join std in _context.Students
+                            on teach.Id equals std.TeachersId
+
+                        where (query.StudentId == null || std.Id.ToString() == query.StudentId)
+                                                       && (query.ClassId == null || std.ClassId == query.ClassId)
+                        select new ScoreSheetDTo
+                        {
+                            StudentId = std.Id.ToString(),
+                            StudentName = std.Name,
+                            ParentNumber = std.ParentPhoneNumber
+                        };
+
+                    // Apply pagination using Skip and Take
+                    var pagedData1 = base1Query.Skip((query.PageNumber - 1) * query.Pagesize)
+                                       .Take(query.Pagesize)
+                                       .ToList();
+                    var resu1 = new ResponseScoreSheetDTo()
+                    {
+                        score = pagedData1,
+                        IsAll = query.isAll
+                    };
+                    // Set the response data
+                    res.Data = resu1;
+                    res.PageNumber = query.PageNumber;
+                    res.PageSize = query.Pagesize;
+                    res.TotalCount = base1Query.Count();
+                    return res;
+
+                }
                 var baseQuery =
-    from teach in _context.CoachFrikaUsers
+                        from score in _context.StudentScoreSheet
+                        join std in _context.Students
+                            on score.StudentId equals std.Id.ToString()
 
-        // LEFT JOIN Subjects
-    join sub in _context.Subjects
-        on teach.Id equals sub.TeachersId into subjGroup
-    from sub in subjGroup.DefaultIfEmpty()
-
-        // LEFT JOIN Students
-    join std in _context.Students
-        on teach.Id equals std.TeachersId
-
-    // LEFT JOIN StudentScoreSheet (composite key)
-    join score in _context.StudentScoreSheet
-        on new { TeacherId = teach.Id, StudentId = std != null ? std.Id.ToString() : null }
-        equals new { TeacherId = score.TeachersId, StudentId = score.StudentId }
-        into scoreGroup
-    from score in scoreGroup.DefaultIfEmpty()
-    where (query.StudentId == null || std.Id.ToString() ==query.StudentId)
-                                   && (query.ClassId == null || std.ClassId == query.ClassId)
-                                   && (query.SubjectId == null || sub.Id.ToString() == query.SubjectId)
-    select new ScoreSheetDTo
-    {
-        StudentId = std.Id.ToString(),
-        StudentName = std.Name,
-        ParentNumber = std.ParentPhoneNumber,
-        FirstCA = score.FirstCA,
-        SecondCA = score.SecondCA,
-        Exam = score.Exam,
-        Total = score.Exam + score.FirstCA + score.SecondCA,
-
-        Subject = sub.Subject,
-
-        ClassName = std.Class,
-        SubjectId = sub.Id.ToString()
-    };
+                            // LEFT JOIN Subjects
+                        join sub in _context.Subjects
+                            on score.SubjectId equals sub.Id.ToString()
+                        where score.TeachersId == userId &&
+                        (query.StudentId == null || std.Id.ToString() == query.StudentId)
+                                                       && (query.ClassId == null || std.ClassId == query.ClassId)
+                                                       && (query.SubjectId == null || sub.SubjectId == query.SubjectId)
+                        select new ScoreSheetDTo
+                        {
+                            StudentId = std.Id.ToString(),
+                            StudentName = std.Name,
+                            ParentNumber = std.ParentPhoneNumber,
+                            FirstCA = score.FirstCA,
+                            SecondCA = score.SecondCA,
+                            Exam = score.Exam,
+                            Total = score.Exam + score.FirstCA + score.SecondCA,
+                            NoOfCourse = 1,
+                            Subject = sub.Subject,
+                            CummulativeTotal = score.Exam + score.FirstCA + score.SecondCA,
+                            ClassName = std.Class,
+                            SubjectId = sub.Id.ToString()
+                        };
 
                 IQueryable<ScoreSheetDTo> result;
                 /// all class group by studentId 
                 /// subject : where the student did the subject
                 /// Student: where student did subject
                 /// 
-                if (query.isAll)
+                if (query.isAll || isClassOnly)
                 {
                     // Group by StudentId and sum scores
                     baseQuery = baseQuery
@@ -194,6 +225,8 @@ namespace CoachFrika.APIs.Domin.Services
                             SecondCA = g.Sum(x => x.SecondCA),
                             Exam = g.Sum(x => x.Exam),
                             Total = g.Sum(x => x.Total),
+                            CummulativeTotal = g.Sum(x => x.Total) / g.Count(),
+                            NoOfCourse = g.Count(),
                             // Replace Subject with ClassName
                             ClassName = g.First().ClassName,
                             Subject = "Over-All"
@@ -207,8 +240,9 @@ namespace CoachFrika.APIs.Domin.Services
                                    .Take(query.Pagesize)
                                    .ToList();
                 var resu = new ResponseScoreSheetDTo()
-                {score = pagedData,
-                IsAll = query.isAll
+                {
+                    score = pagedData,
+                    IsAll = query.isAll
                 };
                 // Set the response data
                 res.Data = resu;

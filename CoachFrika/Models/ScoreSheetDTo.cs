@@ -16,6 +16,8 @@ namespace CoachFrika.Models
         public int? SecondCA { get; set; }
         public int? Exam { get; set; }
         public int? Total { get; set; }
+        public double? CummulativeTotal { get; set; }
+        public int? NoOfCourse { get; set; }
     }
     public class ResponseScoreSheetDTo
     {

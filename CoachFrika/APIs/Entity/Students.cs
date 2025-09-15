@@ -7,7 +7,7 @@ namespace coachfrikaaaa.APIs.Entity
 {
     public class Students : BaseEntity
     {
-        public long? ClassId { get; set; }
+        public ClassRoomEnum? ClassId { get; set; }
         public long? StudentNumber { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
