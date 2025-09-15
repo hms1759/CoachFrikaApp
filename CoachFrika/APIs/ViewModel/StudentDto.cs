@@ -34,4 +34,14 @@ namespace CoachFrika.APIs.ViewModel
         public bool isAll{ get; set; }
 
     }
+    public class StudentScoreDto
+    {
+        public Guid StudentScoreId { get; set; }
+        public Guid StudentId { get; set; }
+        public int FirstCA { get; set; }
+        public int SecondCA { get; set; }
+        public int Exam { get; set; }
+        public int Total { get; set; }
+        
+    }
 }

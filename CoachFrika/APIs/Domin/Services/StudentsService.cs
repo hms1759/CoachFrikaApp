@@ -133,7 +133,12 @@ namespace CoachFrika.APIs.Domin.Services
         public BaseResponse<ResponseScoreSheetDTo> GetAllStudentsScores(ScoreSheetsSearch query)
         {
             var isClassOnly = false;
-            if(query.ClassId != null && query.SubjectId == null && query.SubjectId == null)
+            if (query.ClassId != null && query.SubjectId == null && query.SubjectId == null)
+            {
+                isClassOnly = true;
+
+            }
+            if (query.ClassId == null && query.SubjectId == null && query.SubjectId != null)
             {
                 isClassOnly = true;
 
@@ -182,7 +187,7 @@ namespace CoachFrika.APIs.Domin.Services
                         join std in _context.Students
                             on score.StudentId equals std.Id.ToString()
 
-                            // LEFT JOIN Subjects
+                        // LEFT JOIN Subjects
                         join sub in _context.Subjects
                             on score.SubjectId equals sub.Id.ToString()
                         where score.TeachersId == userId &&
@@ -191,6 +196,7 @@ namespace CoachFrika.APIs.Domin.Services
                                                        && (query.SubjectId == null || sub.SubjectId == query.SubjectId)
                         select new ScoreSheetDTo
                         {
+                            Id = score.Id.ToString(),
                             StudentId = std.Id.ToString(),
                             StudentName = std.Name,
                             ParentNumber = std.ParentPhoneNumber,
@@ -233,17 +239,23 @@ namespace CoachFrika.APIs.Domin.Services
                             // Replace Subject with ClassName
                         });
                 }
-             
+
 
                 // Apply pagination using Skip and Take
                 var pagedData = baseQuery.Skip((query.PageNumber - 1) * query.Pagesize)
                                    .Take(query.Pagesize)
                                    .ToList();
+
                 var resu = new ResponseScoreSheetDTo()
                 {
                     score = pagedData,
                     IsAll = query.isAll
                 };
+                if (query.ClassId == null && query.SubjectId == null && query.SubjectId != null)
+                {
+                    resu.IsAll = true;
+
+                }
                 // Set the response data
                 res.Data = resu;
                 res.PageNumber = query.PageNumber;
@@ -259,5 +271,50 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
         }
+
+        public async Task<BaseResponse<string>> CreateStudentsScores(List<StudentScoreDto> model)
+        {
+            var tchId = _webHelpers.CurrentUserId();
+            var res = new BaseResponse<string> { Status = true };
+
+            if (model == null || !model.Any())
+            {
+                res.Message = "Empty score list";
+                res.Status = false;
+                return res;
+            }
+
+            int updatedCount = 0;
+
+            foreach (var score in model)
+            {
+                var stdscore = await _context.StudentScoreSheet
+                    .FirstOrDefaultAsync(x => x.Id == score.StudentScoreId);
+
+                if (stdscore != null)
+                {
+                    stdscore.FirstCA = score.FirstCA;
+                    stdscore.SecondCA = score.SecondCA;
+                    stdscore.Exam = score.Exam;
+
+                    _context.StudentScoreSheet.Update(stdscore);
+                    updatedCount++;
+                }
+            }
+
+            if (updatedCount > 0)
+            {
+                await _context.SaveChangesAsync();
+                res.Message = $"{updatedCount} score(s) successfully updated";
+            }
+            else
+            {
+                res.Message = "No matching scores found to update";
+                res.Status = false;
+            }
+
+            return res;
+        }
+
     }
 }

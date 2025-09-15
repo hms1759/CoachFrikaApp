@@ -39,6 +39,13 @@ namespace CoachFrika.APIs.Controllerss
             var result = _service.GetAllStudentsScores(query);
             if (result.Status) return Ok(result); return BadRequest(result);
         }
+
+        [HttpPost("UpdateScores")]
+        public async Task<IActionResult> CreateStudentScores(List<StudentScoreDto> model)
+        {
+            var result = await _service.CreateStudentsScores(model);
+            if (result.Status) return Ok(result); return BadRequest(result);
+        }
         ////Get All teacher in the Student by StudentId
         //[HttpGet("GetStudentById/{Id}")]
         //public async Task<IActionResult> GetStudentById(Guid Id)

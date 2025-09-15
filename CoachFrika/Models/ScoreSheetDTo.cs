@@ -6,6 +6,8 @@ namespace CoachFrika.Models
 {
     public class ScoreSheetDTo
     {
+
+        public string? Id { get; set; }
         public string? StudentId { get; set; }
         public string? SubjectId { get; set; }
         public string? StudentName { get; set; }

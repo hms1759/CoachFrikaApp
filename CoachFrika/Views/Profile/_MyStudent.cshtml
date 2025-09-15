@@ -1,4 +1,5 @@
 ﻿<!-- ================== LIBRARIES ================== -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
@@ -153,6 +154,8 @@
         justify-content: space-evenly;
         align-items: center;
         margin-bottom: 3rem;
+        gap: 8px;
+        flex-wrap: wrap;
     }
 
     .subjectDropdown {
@@ -170,6 +173,38 @@
     #studentChart {
         width: 100% !important;
         height: auto !important;
+    }
+
+    /* ===== Editable mode ===== */
+    .edit-buttons {
+        margin-top: 15px;
+        text-align: right;
+    }
+
+        .edit-buttons button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+    #editScoresBtn {
+        background: orange;
+        color: white;
+        display: none;
+    }
+
+    #saveScoresBtn {
+        background: blue;
+        color: white;
+        display: none;
+    }
+
+    #cancelEditBtn {
+        background: red;
+        color: white;
+        display: none;
     }
 </style>
 
@@ -196,11 +231,23 @@
     </div>
 </div>
 
+<div class="space"></div>
 <!-- Chart -->
 <div class="chart-container">
     <canvas id="studentChart"></canvas>
 </div>
 
+<div class="space"></div>
+<div class="space"></div>
+<!-- Editable Controls -->
+<div class="edit-buttons">
+    <button id="editScoresBtn" onclick="enableScoreEditing()">Edit Scores</button>
+    <button id="saveScoresBtn" onclick="saveEditedScores()">Save All Scores</button>
+    <button id="cancelEditBtn" onclick="cancelScoreEditing()">Cancel</button>
+</div>
+
+<div class="space"></div>
+<div class="space"></div>
 <!-- Student Table -->
 <table id="studentScoreTable">
     <thead>
@@ -220,7 +267,8 @@
     <tbody id="scoreSheetTableBody"></tbody>
 </table>
 
-
+<div class="space"></div>
+<div class="space"></div>
 <!-- Pagination -->
 <div class="teacher-pagination" id="studentPagination">
     <button onclick="studentGoToPreviousPage()">Previous</button>
@@ -228,6 +276,8 @@
     <button onclick="studentGoToNextPage()">Next</button>
 </div>
 
+<div class="space"></div>
+<div class="space"></div>
 <!-- ================= MODALS ================= -->
 <div id="createSubjectModal" class="modal">
     <div class="modal-content">
@@ -266,8 +316,11 @@
         </form>
     </div>
 </div>
+
 <script>
-    // ================= ENUMS =================
+    /* ================== FULL SCRIPT ================== */
+
+    /* --------- ENUMS --------- */
     var ClassRoomEnum = {
         1: "Primary 1", 2: "Primary 2", 3: "Primary 3", 4: "Primary 4",
         5: "Primary 5", 6: "Primary 6", 7: "Junior Secondary School 1",
@@ -291,45 +344,64 @@
       50:"IslamicReligiousStudiesSecondary"
     };
 
-    // ================= GLOBAL STATE =================
-    var studentPageNumber=1, studentPageSize=10;
-    var selectedSubjectId='',
-    selectedStudentId='', selectedClassId='', isAllClass=false,isOnlyStudent=false, selectedSubjectId='',selectedSubjectName ='';
-    var studentChart;
-        function updateIsAllClass() {
+    /* --------- STATE --------- */
+    var studentPageNumber = 1, studentPageSize = 10;
+    var selectedSubjectId = '', selectedStudentId = '', selectedClassId = '';
+    var isAllClass = false, isOnlyStudent = false;
+    var selectedSubjectName = '';
+    var studentChart = null;
+    var isEditingScores = false;
+    var lastLoadedScores = [];
+
+    /* --------- HELPERS --------- */
+    function updateIsAllClass() {
         isAllClass = (!selectedStudentId && !selectedClassId && !selectedSubjectId);
-        isOnlyStudent =(selectedStudentId && !selectedClassId && !selectedSubjectId);
+        isOnlyStudent = (selectedStudentId && !selectedClassId && !selectedSubjectId);
+        // Show/hide edit button depending on condition (only show when single-student mode)
+        document.getElementById("editScoresBtn").style.display = isOnlyStudent ? "inline-block" : "none";
+
+        // If we left edit mode because filters changed, cancel editing
+        if (!isOnlyStudent && isEditingScores) {
+            cancelScoreEditing();
+        }
     }
-    // ================= DROPDOWNS =================
-    function populateClassDropdown(){
-      const classDropdown=document.getElementById("classDropdown");
-      for(const [id,name] of Object.entries(ClassRoomEnum)){
-        const opt=document.createElement("option");
-        opt.value=id; opt.textContent=name;
+
+    /* Populate main class dropdown (for create student modal) */
+    function populateClassDropdown() {
+      const classDropdown = document.getElementById("classDropdown");
+      classDropdown.innerHTML = `<option value="">-- Select Class --</option>`;
+      for (const [id, name] of Object.entries(ClassRoomEnum)) {
+        const opt = document.createElement("option");
+        opt.value = id; opt.textContent = name;
         classDropdown.appendChild(opt);
       }
-      updateIsAllClass()
+      updateIsAllClass();
     }
 
-    function populateClassFilterDropdown(){
-      const $dropdown=$("#classFilterDropdown");
+    /* Populate the class filter dropdown (top bar) */
+    function populateClassFilterDropdown() {
+      const $dropdown = $("#classFilterDropdown");
       $dropdown.empty().append('<option value="">-- Select Class --</option>');
-      for(const [id,name] of Object.entries(ClassRoomEnum)){
+      for (const [id, name] of Object.entries(ClassRoomEnum)) {
         $dropdown.append(`<option value="${id}">${name}</option>`);
-      }updateIsAllClass()
+      }
+      updateIsAllClass();
     }
 
-    // Populate subject dropdown options
+    /* Populate subject options into a jQuery select element (works for modal fields too) */
     function populateSubjectDropdown($dropdown) {
-        $dropdown.empty().append('<option value="">-- Select Subject --</option>');
+        // accept either jQuery object or selector or DOM element
+        var $jq = $($dropdown);
+        $jq.empty().append('<option value="">-- Select Subject --</option>');
         for (const key in SchoolSubjectEnum) {
-            $dropdown.append(`<option value="${key}">${SchoolSubjectEnum[key]}</option>`);
-        }updateIsAllClass()
+            $jq.append(`<option value="${key}">${SchoolSubjectEnum[key]}</option>`);
+        }
+        updateIsAllClass();
     }
 
-    // ✅ FIXED Add More Subject
+    /* --------- DYNAMIC SUBJECT FIELDS (modal) --------- */
     $("#addMoreSubjectBtn").on("click", function () {
-        let newField = $(`
+        const newField = $(`
             <div class="subject-field">
                 <select class="subjectDropdown" name="SubjectId[]" required></select>
                 <button type="button" class="removeSubjectBtn">Remove</button>
@@ -339,144 +411,159 @@
         $("#subjectFieldsWrapper").append(newField);
     });
 
-    // Remove subject field
     $(document).on("click", ".removeSubjectBtn", function () {
         $(this).closest(".subject-field").remove();
     });
 
-    // ================= STUDENTS =================
-    function loadStudentsDropdown(){
-      fetch("/api/Students/GetAllStudents",{headers:{Authorization:`Bearer ${userToken}`}})
-      .then(res=>res.json())
-      .then(data=>{
-        const dropdown=document.getElementById("studentDropdown");
-        dropdown.innerHTML=`<option value="">-- Select Student --</option>`;
-        const list=data.data||data;
-        if(Array.isArray(list)){
-          list.forEach(std=>{
-            const opt=document.createElement("option");
-            opt.value=std.id; opt.textContent=std.name;
-            dropdown.appendChild(opt);
-          });
-        } else toastr.warning("No Student found.");
-      }).catch(err=>{console.error(err);toastr.error("Error loading Students.");});
-    }
-    document.getElementById("studentDropdown").addEventListener("change",function(){
-      selectedStudentId=this.value; studentPageNumber=1;updateIsAllClass()
-    });
-
-    // ================= SUBJECTS =================
+    /* --------- LOAD SUBJECTS & STUDENTS DROPDOWNS FROM API --------- */
     function loadSubjectsDropdown(){
-      fetch("/api/Teachers/GetSubject",{headers:{Authorization:`Bearer ${userToken}`}})
-      .then(res=>res.json())
-      .then(data=>{
-        const dropdown=document.getElementById("subjectDropdown");
-        dropdown.innerHTML=`<option value="">-- Select Subject --</option>`;
-        const list=data.data||data;
-        if(Array.isArray(list)){
-          list.forEach(sub=>{
-            const opt=document.createElement("option");
-            opt.value=sub.subjectId;
-            opt.textContent=sub.subject;
-            dropdown.appendChild(opt);
-          });
-        } else toastr.warning("No subjects found.");
-      }).catch(err=>{console.error(err);toastr.error("Error loading subjects.");});
+      fetch("/api/Teachers/GetSubject", { headers: { Authorization: `Bearer ${userToken}` } })
+        .then(res => res.json())
+        .then(data => {
+          const dropdown = document.getElementById("subjectDropdown");
+          dropdown.innerHTML = `<option value="">-- Select Subject --</option>`;
+          const list = data.data || data;
+          if (Array.isArray(list)) {
+            list.forEach(sub => {
+              const opt = document.createElement("option");
+              opt.value = sub.subjectId ?? sub.id ?? "";
+              opt.textContent = sub.subject ?? sub.name ?? "";
+              dropdown.appendChild(opt);
+            });
+          } else {
+            toastr.warning("No subjects found.");
+          }
+        })
+        .catch(err => { console.error(err); toastr.error("Error loading subjects."); });
     }
-    document.getElementById("subjectDropdown").addEventListener("change",function(){
-      selectedSubjectId=this.value;
-      selectedSubjectName=this.options[this.selectedIndex].text;
-      studentPageNumber=1;
-      updateIsAllClass()
-    });
 
-    // ================= SCORES =================
+    function loadStudentsDropdown(){
+      fetch("/api/Students/GetAllStudents", { headers: { Authorization: `Bearer ${userToken}` } })
+        .then(res => res.json())
+        .then(data => {
+          const dropdown = document.getElementById("studentDropdown");
+          dropdown.innerHTML = `<option value="">-- Select Student --</option>`;
+          const list = (data.data && Array.isArray(data.data)) ? data.data : (Array.isArray(data) ? data : []);
+          if (Array.isArray(list)) {
+            list.forEach(std => {
+              const opt = document.createElement("option");
+              opt.value = std.id ?? std.studentId ?? "";
+              opt.textContent = std.name ?? std.studentName ?? "";
+              dropdown.appendChild(opt);
+            });
+          } else {
+            toastr.warning("No Student found.");
+          }
+        })
+        .catch(err => { console.error(err); toastr.error("Error loading Students."); });
+    }
+
+    /* --------- EVENT BINDINGS FOR FILTER CONTROLS --------- */
+    document.getElementById("studentDropdown").addEventListener("change", function(){
+      selectedStudentId = this.value;
+      studentPageNumber = 1;
+      updateIsAllClass();
+    });
+    document.getElementById("subjectDropdown").addEventListener("change", function(){
+      selectedSubjectId = this.value;
+      selectedSubjectName = this.options[this.selectedIndex]?.text || '';
+      studentPageNumber = 1;
+      updateIsAllClass();
+    });
     $("#classFilterDropdown").on("change", function(){
-      selectedClassId=this.value;
-      studentPageNumber=1; 
-      updateIsAllClass()
+      selectedClassId = this.value;
+      studentPageNumber = 1;
+      updateIsAllClass();
     });
 
+    /* --------- SCORES: load, render, pages --------- */
     function handleStudentScoreSearch(){
-      studentPageNumber=1; loadStudentsScores();
+      studentPageNumber = 1; loadStudentsScores();
     }
 
     function loadStudentsScores(){
-      const url=`/api/Students/GetAllStudentsScores?SubjectId=${selectedSubjectId||''}&ClassId=${selectedClassId||''}&StudentId=${encodeURIComponent(selectedStudentId)}&isAll=${isAllClass}&Pagesize=${studentPageSize}&PageNumber=${studentPageNumber}`;
-      fetch(url,{headers:{Authorization:`Bearer ${userToken}`}})
-      .then(res=>res.json())
-      .then(data=>{
-        const tableBody=document.getElementById("scoreSheetTableBody");
-        tableBody.innerHTML="";
-        if(!data?.data?.score?.length){
-          tableBody.innerHTML=`<tr><td colspan="8" style="text-align:center; padding:15px;">No students found.</td></tr>`;
-          updateStudentChart([]); return;
-        }
-        data.data.score.forEach(stu=>{
-          const row=document.createElement("tr");
-          row.innerHTML=`
-            <td>${stu.studentName||stu.subject}</td>
-            <td>${stu.parentNumber||""}</td>
-            <td>${stu.className||""}</td>
-            <td>${stu.subject||""}</td>
-            <td>${stu.firstCA??""}</td>
-            <td>${stu.secondCA??""}</td>
-            <td>${stu.exam??""}</td>
-            <td><strong>${stu.total??""}</strong></td>
-            <td><strong>${stu.noOfCourse??""}</strong></td>
-            <td><strong>${stu.cummulativeTotal??""}</strong></td>`;
-          tableBody.appendChild(row);
-        });
-        updateStudentChart(data.data.score);
-        document.getElementById("studentPageInfo").textContent=`Page ${studentPageNumber}`;
-      }).catch(err=>{console.error(err);toastr.error("Error loading students.");});
-    }
-    function studentGoToNextPage(){ studentPageNumber++; loadStudentsScores();}
-    function studentGoToPreviousPage(){ if(studentPageNumber>1){studentPageNumber--;loadStudentsScores();}}
+      const url = `/api/Students/GetAllStudentsScores?SubjectId=${selectedSubjectId||''}&ClassId=${selectedClassId||''}&StudentId=${encodeURIComponent(selectedStudentId||'')}&isAll=${isAllClass}&Pagesize=${studentPageSize}&PageNumber=${studentPageNumber}`;
+      fetch(url, { headers: { Authorization: `Bearer ${userToken}` } })
+        .then(res => res.json())
+        .then(data => {
+          const tableBody = document.getElementById("scoreSheetTableBody");
+          tableBody.innerHTML = "";
+          const scores = data?.data?.score ?? data?.score ?? [];
+          if (!Array.isArray(scores) || scores.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:15px;">No students found.</td></tr>`;
+            updateStudentChart([]);
+            return;
+          }
+          lastLoadedScores = scores;
+          scores.forEach(stu => {
+            const studentId = stu.studentId ?? stu.id ?? "";
+            const StudentScoreId = stu.id ?? "";
+            const firstCA = (stu.firstCA !== undefined && stu.firstCA !== null) ? stu.firstCA : "";
+            const secondCA = (stu.secondCA !== undefined && stu.secondCA !== null) ? stu.secondCA : "";
+            const exam = (stu.exam !== undefined && stu.exam !== null) ? stu.exam : "";
+            const total = (stu.total !== undefined && stu.total !== null) ? stu.total : ( (parseInt(firstCA||0,10) + parseInt(secondCA||0,10) + parseInt(exam||0,10)) || "" );
 
-    // ================= CHART =================
+            const row = document.createElement("tr");
+            row.setAttribute("data-student-id", studentId);
+            row.setAttribute("data-StudentScore-id", StudentScoreId);
+            row.innerHTML = `
+                <td class="col-studentName">${stu.studentName ?? stu.subject ?? ""}</td>
+                <td class="col-parentNumber">${stu.parentNumber ?? ""}</td>
+                <td class="col-className">${stu.className ?? ""}</td>
+                <td class="col-subject">${stu.subject ?? ""}</td>
+                <td class="score-cell" data-field="firstCA">${firstCA}</td>
+                <td class="score-cell" data-field="secondCA">${secondCA}</td>
+                <td class="score-cell" data-field="exam">${exam}</td>
+                <td class="col-total"><strong>${total}</strong></td>
+                <td class="col-noOfCourse"><strong>${stu.noOfCourse ?? ""}</strong></td>
+                <td class="col-cummulativeTotal"><strong>${stu.cummulativeTotal ?? ""}</strong></td>
+            `;
+            tableBody.appendChild(row);
+          });
+          updateStudentChart(scores);
+          document.getElementById("studentPageInfo").textContent = `Page ${studentPageNumber}`;
+        })
+        .catch(err => { console.error(err); toastr.error("Error loading students."); });
+    }
+
+    function studentGoToNextPage(){ studentPageNumber++; loadStudentsScores(); }
+    function studentGoToPreviousPage(){ if (studentPageNumber > 1) { studentPageNumber--; loadStudentsScores(); } }
+
+    /* --------- CHART --------- */
     function updateStudentChart(students=[]){
-      if(!Array.isArray(students)) students=[];
-      const ctx=document.getElementById("studentChart").getContext("2d");
-       // ✅ define labels once
-    let labels = [];
-
-    if (!isOnlyStudent) {
-        labels = students.map(s => s.studentName || "");
-    } else {
-        labels = students.map(s => s.subject || "");
-    }
-      const values=students.map(s=>s.cummulativeTotal||s.total);
-      if(studentChart) studentChart.destroy();
-      studentChart=new Chart(ctx,{
-        type:'bar',
-        data:{labels,datasets:[{label:selectedSubjectName||"Class Member",data:values,backgroundColor:"green"}]},
-        options:{scales:{y:{min:0,max:100,ticks:{stepSize:10}}}}
+      if (!Array.isArray(students)) students = [];
+      const ctx = document.getElementById("studentChart").getContext("2d");
+      let labels = [];
+      if (!isOnlyStudent) labels = students.map(s => s.studentName || "");
+      else labels = students.map(s => s.subject || "");
+      const values = students.map(s => (s.cummulativeTotal ?? s.total) ? Number(s.cummulativeTotal ?? s.total) : 0);
+      if (studentChart) studentChart.destroy();
+      studentChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [{ label: selectedSubjectName || "Class Member", data: values, backgroundColor: "green" }] },
+        options: { scales: { y: { min: 0, max: 100, ticks: { stepSize: 10 } } } }
       });
     }
 
-    // ================= MODALS =================
-    function openCreateSubjectModal(){document.getElementById("createSubjectModal").style.display="flex";}
-    function closeCreateSubjectModal(){document.getElementById("createSubjectModal").style.display="none";}
-    function openCreateStudentModal(){document.getElementById("createStudentModal").style.display="flex";}
-    function closeCreateStudentModal(){document.getElementById("createStudentModal").style.display="none";}
+    /* --------- MODAL CONTROLS --------- */
+    function openCreateSubjectModal(){ document.getElementById("createSubjectModal").style.display = "flex"; }
+    function closeCreateSubjectModal(){ document.getElementById("createSubjectModal").style.display = "none"; }
+    function openCreateStudentModal(){ document.getElementById("createStudentModal").style.display = "flex"; }
+    function closeCreateStudentModal(){ document.getElementById("createStudentModal").style.display = "none"; }
 
-    // Close modals when clicking outside
-    window.onclick=function(event){
-      if(event.target===document.getElementById("createSubjectModal")) closeCreateSubjectModal();
-      if(event.target===document.getElementById("createStudentModal")) closeCreateStudentModal();
+    window.onclick = function(event){
+      if (event.target === document.getElementById("createSubjectModal")) closeCreateSubjectModal();
+      if (event.target === document.getElementById("createStudentModal")) closeCreateStudentModal();
     };
 
-    // ================= FORM SUBMITS =================
-     document.getElementById("createSubjectForm").addEventListener("submit", function (e) {
+    /* --------- FORM SUBMITS (Subjects + Students) --------- */
+    document.getElementById("createSubjectForm").addEventListener("submit", function (e) {
         e.preventDefault();
         const subjects = [];
         document.querySelectorAll("#subjectFieldsWrapper .subjectDropdown").forEach(select => {
             const id = parseInt(select.value, 10);
             const name = select.options[select.selectedIndex]?.text || "";
-            if (id && name) {
-                subjects.push({ SubjectId: id, Subject: name });
-            }
+            if (id && name) subjects.push({ SubjectId: id, Subject: name });
         });
 
         fetch("/api/Teachers/CreateSubject", {
@@ -497,12 +584,8 @@
                 toastr.error(res.message || "Error adding subjects.");
             }
         })
-        .catch(err => {
-            console.error(err);
-            toastr.error("Error adding subjects.");
-        });
+        .catch(err => { console.error(err); toastr.error("Error adding subjects."); });
     });
-
 
     document.getElementById("createStudentForm").addEventListener("submit", function (e) {
         e.preventDefault();
@@ -518,21 +601,11 @@
             return;
         }
 
-        const payload = {
-            ClassId: classId,
-            ClassNumber: classNumber,
-            Name: name,
-            Address: address,
-            ParentName: parentName,
-            ParentPhoneNumber: parentPhoneNumber,
-        };
+        const payload = { ClassId: classId, ClassNumber: classNumber, Name: name, Address: address, ParentName: parentName, ParentPhoneNumber: parentPhoneNumber };
 
         fetch("/api/Students/CreateStudent", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${userToken}`
-            },
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${userToken}` },
             body: JSON.stringify(payload)
         })
         .then(res => res.json())
@@ -540,6 +613,7 @@
             if (res.status) {
                 toastr.success(res.message || "Student added successfully!");
                 closeCreateStudentModal();
+                populateSubjectDropdown($("#subjectFieldsWrapper .subjectDropdown").first());
                 loadSubjectsDropdown();
                 loadStudentsDropdown();
                 loadStudentsScores();
@@ -547,17 +621,113 @@
                 toastr.error(res.message || "Error adding student.");
             }
         })
-        .catch(err => {
-            console.error(err);
-            toastr.error("Error adding student.");
-        });
+        .catch(err => { console.error(err); toastr.error("Error adding student."); });
     });
 
-    // ================= INIT =================
-    populateClassDropdown();
-    populateClassFilterDropdown();
-    populateSubjectDropdown($("#subjectFieldsWrapper .subjectDropdown").first());
-    loadSubjectsDropdown();
-    loadStudentsDropdown();
-    loadStudentsScores();
+    /* --------- EDIT MODE: enable, cancel, save --------- */
+    function enableScoreEditing() {
+        if (!isOnlyStudent) return toastr.warning("Editing only allowed when a single student is selected.");
+        isEditingScores = true;
+        document.querySelectorAll("#scoreSheetTableBody .score-cell").forEach(td => {
+            const val = td.textContent.trim();
+            td.innerHTML = `<input type="number" min="0" max="100" value="${val}" style="width:60px;" />`;
+        });
+        document.getElementById("saveScoresBtn").style.display = "inline-block";
+        document.getElementById("cancelEditBtn").style.display = "inline-block";
+        document.getElementById("editScoresBtn").style.display = "none";
+    }
+
+    /* when cancelling, just reload original data */
+    function cancelScoreEditing() {
+        isEditingScores = false;
+        document.getElementById("saveScoresBtn").style.display = "none";
+        document.getElementById("cancelEditBtn").style.display = "none";
+        document.getElementById("editScoresBtn").style.display = isOnlyStudent ? "inline-block" : "none";
+        loadStudentsScores();
+    }
+
+    /* calculate row total from inputs */
+    function updateRowTotal(row) {
+        const first = parseInt(row.querySelector('[data-field="firstCA"] input')?.value || 0, 10);
+        const second = parseInt(row.querySelector('[data-field="secondCA"] input')?.value || 0, 10);
+        const exam = parseInt(row.querySelector('[data-field="exam"] input')?.value || 0, 10);
+        const totalCell = row.querySelector('.col-total strong');
+        const tot = (isNaN(first) ? 0 : first) + (isNaN(second) ? 0 : second) + (isNaN(exam) ? 0 : exam);
+        if (totalCell) totalCell.textContent = tot;
+        return tot;
+    }
+
+    /* Save all edited scores to endpoint (bulk) */
+    function saveEditedScores() {
+        const updatedScores = [];
+        document.querySelectorAll("#scoreSheetTableBody tr").forEach(row => {
+            const studentId = row.getAttribute("data-student-id");
+            if (!studentId) return;
+            const StudentScoreId = row.getAttribute("data-StudentScore-id");
+            if (!StudentScoreId) return;
+            const firstCAInput = row.querySelector('[data-field="firstCA"] input');
+            const secondCAInput = row.querySelector('[data-field="secondCA"] input');
+            const examInput = row.querySelector('[data-field="exam"] input');
+            // if inputs aren't present, skip (not in edit-mode)
+            if (!firstCAInput || !secondCAInput || !examInput) return;
+            const firstCA = parseInt(firstCAInput.value || 0, 10);
+            const secondCA = parseInt(secondCAInput.value || 0, 10);
+            const exam = parseInt(examInput.value || 0, 10);
+            const total = updateRowTotal(row);
+            updatedScores.push({StudentScoreId, studentId, firstCA, secondCA, exam, total });
+        });
+
+        if (updatedScores.length === 0) {
+            toastr.warning("No edited scores to save.");
+            return;
+        }
+
+        fetch("/api/Students/UpdateScores", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${userToken}`
+            },
+            body: JSON.stringify(updatedScores)
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status) {
+                toastr.success(res.message || "Scores updated successfully!");
+                cancelScoreEditing();
+                loadStudentsScores();
+            } else {
+                toastr.error(res.message || "Error updating scores.");
+            }
+        })
+        .catch(err => { console.error(err); toastr.error("Error updating scores."); });
+    }
+
+    /* update totals live while editing */
+    document.getElementById("scoreSheetTableBody").addEventListener("input", function (e) {
+        if (!isEditingScores) return;
+        const input = e.target;
+        if (input.tagName !== "INPUT") return;
+        const row = input.closest("tr");
+        if (!row) return;
+        updateRowTotal(row);
+    });
+
+    /* --------- INIT --------- */
+    $(document).ready(function () {
+        // initial population
+        populateClassDropdown();
+        populateClassFilterDropdown();
+        populateSubjectDropdown($("#subjectFieldsWrapper .subjectDropdown").first());
+        loadSubjectsDropdown();
+        loadStudentsDropdown();
+        loadStudentsScores();
+
+        // optional: initialize select2 for nicer selects if you want
+        try {
+          $("#subjectDropdown").select2({ width: '200px' });
+          $("#studentDropdown").select2({ width: '200px' });
+          $("#classFilterDropdown").select2({ width: '200px' });
+        } catch (e) { /* select2 optional */ }
+    });
 </script>
