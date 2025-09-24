@@ -198,6 +198,7 @@
 
         $.ajax({
             url: '/api/BackOfficeAPI/GetAllSchoolApplicant',
+            headers: { "Authorization": "Bearer " + userToken },
             method: 'GET',
             data: {
                 Name: name,
@@ -302,6 +303,7 @@
 
         $.ajax({
             url: '/api/Schools/CreateSchool',
+            headers: { "Authorization": "Bearer " + userToken },
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(formData),

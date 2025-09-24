@@ -120,6 +120,8 @@ namespace CoachFrika.Controllers
                 Stage = stage,
                 token = token,
             };
+            HttpContext.Session.SetString("Token", JsonConvert.SerializeObject(token));
+            HttpContext.Session.SetString("ProfileData", JsonConvert.SerializeObject(profile.Id));
             if (profile.Role == 2)
             {
                 return RedirectToAction( "Index", "BackOffice");
@@ -142,8 +144,6 @@ namespace CoachFrika.Controllers
                 return RedirectToAction("PostPaymentModal");
             }
 
-            HttpContext.Session.SetString("Token", JsonConvert.SerializeObject(token));
-            HttpContext.Session.SetString("ProfileData", JsonConvert.SerializeObject(profile.Id));
             return RedirectToAction("Index", "Profile", profile);
         }
         [HttpPost]

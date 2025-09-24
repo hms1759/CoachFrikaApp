@@ -90,6 +90,7 @@
 
         $.ajax({
             url: '/api/BackOfficeAPI/GetAllApplicant',
+            headers: { "Authorization": "Bearer " + userToken },
             method: 'GET',
             data: {
                 Name: name,
@@ -193,6 +194,7 @@
     function editTeacher(id) {
         $.ajax({
             url: '/api/BackOfficeAPI/ApproveApplication/' + id,
+            headers: { "Authorization": "Bearer " + userToken },
             method: 'PUT',
             success: function () {
                 alert("Application approved.");

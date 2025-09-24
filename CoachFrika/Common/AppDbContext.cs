@@ -32,7 +32,7 @@ namespace coachfrikaaaa.Common
         {
             _webHelpers = webHelpers;
         }
-
+       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);  // Make sure to call base method
@@ -47,34 +47,68 @@ namespace coachfrikaaaa.Common
                 entity.Property(c => c.FacebookUrl).HasMaxLength(250);
             });
 
-            // Soft delete filter for Teachers and Coaches
-            modelBuilder.Entity<Teachers>()
-                .HasQueryFilter(t => !t.IsDeleted);
-
-            modelBuilder.Entity<Coaches>()
-                .HasQueryFilter(c => !c.IsDeleted);
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                {
+                    modelBuilder.Entity(entityType.ClrType)
+                        .HasQueryFilter(ConvertFilterExpression(entityType.ClrType));
+                }
+            }
+            base.OnModelCreating(modelBuilder);
         }
+    
         public override int SaveChanges()
         {
-            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            ApplyAuditInfo();
+            return base.SaveChanges();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ApplyAuditInfo();
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ApplyAuditInfo()
+        {
+            var entries = ChangeTracker
+                .Entries<BaseEntity>()
+                .Where(e => e.State == EntityState.Added ||
+                            e.State == EntityState.Modified ||
+                            e.State == EntityState.Deleted);
+
+            foreach (var entry in entries)
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedBy = _webHelpers.CurrentUser();
                     entry.Entity.CreatedDate = DateTime.UtcNow;
-
-                    // Optionally, you can set ModifiedBy, ModifiedDate, etc.
+                    entry.Entity.CreatedBy = _webHelpers.CurrentUser();
                 }
 
-                // Handle updates or deletions if needed.
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Entity.ModifiedBy = _webHelpers.CurrentUser();
                     entry.Entity.ModifiedDate = DateTime.UtcNow;
+                    entry.Entity.ModifiedBy = _webHelpers.CurrentUser();
+                }
+
+                if (entry.State == EntityState.Deleted)
+                {
+                    entry.State = EntityState.Modified; // soft delete
+                    entry.Entity.IsDeleted = true;
+                    entry.Entity.DeletedDate = DateTime.UtcNow;
+                    entry.Entity.DeletedBy = _webHelpers.CurrentUser();
                 }
             }
+        }
+        
 
-            return base.SaveChanges();
+        private static LambdaExpression ConvertFilterExpression(Type type)
+        {
+            var param = Expression.Parameter(type, "e");
+            var prop = Expression.Property(param, nameof(BaseEntity.IsDeleted));
+            var condition = Expression.Equal(prop, Expression.Constant(false));
+            return Expression.Lambda(condition, param);
         }
     }
 

@@ -42,5 +42,19 @@ namespace CoachFrika.APIs.Controllerss
         }
 
 
+        [HttpPut("EditScheme/{Id}")]
+        public async Task<IActionResult> EditScheme(Guid Id, EditSchemesDto model)
+        {
+            model.Id = Id;
+            var result = await _logicService.EditScheme(model);
+            if (result.Status) return Ok(result); return BadRequest(result);
+        }
+
+        [HttpDelete("DeleteScheme/{Id}")]
+        public async Task<IActionResult> DeleteScheme(Guid Id)
+        {
+            var result = await _logicService.DeleteScheme(Id);
+            if (result.Status) return Ok(result); return BadRequest(result);
+        }
     }
 }

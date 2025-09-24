@@ -20,8 +20,9 @@ namespace CoachFrika.APIs.Domin.IServices
         BaseResponse<List<Schedule>> GetMySchedule();
         Task<BaseResponse<string>> SponsorAchild(SponsorDto modle);
         Task<BaseResponse<string>> CreateScheme(CreateSchemesDto model);
-        BaseResponse<List<Schemes>> GetAllScheme(GetSchemeSearch query);
+        BaseResponse<List<ResponseSchemesDto>> GetAllScheme(GetSchemeSearch query);
         BaseResponse<List<Schemes>> GetAllSchemeByPlan(Subscriptions? plan);
-
+        Task<BaseResponse<string>> EditScheme(EditSchemesDto model);
+        Task<BaseResponse<string>> DeleteScheme(Guid Id);
     }
 }

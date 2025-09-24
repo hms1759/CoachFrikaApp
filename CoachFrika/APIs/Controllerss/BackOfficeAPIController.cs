@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoachFrika.APIs.Controllerss
 {
-    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class BackOfficeAPIController : ControllerBase
@@ -16,15 +15,26 @@ namespace CoachFrika.APIs.Controllerss
         private readonly ISchoolsService _schoolService;
         private readonly IAccountService _accountService;
         private readonly ICousesService _cousesService;
-        public BackOfficeAPIController(ITeacherService teacherService, ISchoolsService schoolService, ICoachesService coachesService, IAccountService accountService, ICousesService cousesService)
+        private readonly ILogicService _publicService;
+        public BackOfficeAPIController(ITeacherService teacherService, ISchoolsService schoolService, ICoachesService coachesService, IAccountService accountService, ICousesService cousesService, ILogicService publicService)
         {
             _teacherService = teacherService;
             _coachesService = coachesService;
             _accountService = accountService;
             _schoolService = schoolService;
             _cousesService = cousesService;
+            _publicService = publicService;
         }
-
+        [HttpGet("GetDashBoardPageCount")]
+        public async Task<IActionResult> GetDashBoardPageCount()
+        {
+            var result = await _publicService.GetPublicCount();
+            if (result.Status)
+            {
+                if (result.Status) return Ok(result); return BadRequest(result);
+            }
+            return BadRequest(result);
+        }
         [HttpGet("GetAllApplicant")]
         public async Task<IActionResult> GetAllApplicant([FromQuery] GetTeachersSearch model)
         {

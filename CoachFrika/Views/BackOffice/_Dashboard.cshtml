@@ -37,6 +37,7 @@
 
     <!-- Enhanced Chart.js Config -->
     <script>
+        const userToken = @Html.Raw(Context.Session.GetString("Token") ?? "");
         const ctx = document.getElementById('bkdashboardChart').getContext('2d');
 
         // Gradient fill (optional enhancement)

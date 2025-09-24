@@ -179,6 +179,7 @@
 
         $.ajax({
             url: '/api/Schools/GetSchoolTeachers',
+            headers: { "Authorization": "Bearer " + userToken },
             method: 'GET',
             data: {
                 SchoolId: schoolId,
@@ -268,6 +269,7 @@
     function approveTeacher(id) {
         $.ajax({
             url: '/api/BackOfficeAPI/ApproveApplication/' + id,
+            headers: { "Authorization": "Bearer " + userToken },
             method: 'PUT',
             success: function () {
                 alert("Teacher approved successfully.");
@@ -294,6 +296,7 @@
 
         $.ajax({
             url: '/api/Schools/InviteSchoolTeacher',
+            headers: { "Authorization": "Bearer " + userToken },
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(formData),

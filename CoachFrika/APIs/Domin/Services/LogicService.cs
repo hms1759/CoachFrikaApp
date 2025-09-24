@@ -508,7 +508,6 @@ namespace CoachFrika.APIs.Domin.Services
 
         public async Task<BaseResponse<string>> CreateScheme(CreateSchemesDto model)
         {
-
             var res = new BaseResponse<string>();
             res.Status = true;
             var existScheme = _context.Schemes.Any(x => x.Plan == model.Plan && x.Title == model.Title && x.WeekNumber == model.WeekNumber);
@@ -523,6 +522,7 @@ namespace CoachFrika.APIs.Domin.Services
                 Title = model.Title,
                 Plan = model.Plan,
                 WeekNumber = model.WeekNumber,
+                Description = model.Description
 
             };
             _context.Schemes.Add(newScheme);
@@ -530,18 +530,27 @@ namespace CoachFrika.APIs.Domin.Services
             return res;
         }
 
-        public BaseResponse<List<Schemes>> GetAllScheme(GetSchemeSearch query)
+        public BaseResponse<List<ResponseSchemesDto>> GetAllScheme(GetSchemeSearch query)
         {
-            var res = new BaseResponse<List<Schemes>>();
+            var res = new BaseResponse<List<ResponseSchemesDto>>();
             res.Status = true;
             try
             {
                 // Apply filters based on the query parameters
                 var cos = from rec in _context.Schemes
                           where (query.Title == null || rec.Title.Contains(query.Title))
-                          && (query.Plan == null || rec.Plan == query.Plan)
+                          && (query.Plans == null || rec.Plan == query.Plans)
                           && (query.WeekNumber == null || rec.WeekNumber == query.WeekNumber )
-                          select rec;
+                          select new ResponseSchemesDto
+                          {
+                              Id = rec.Id,
+                              Description = rec.Description,
+                              Title = rec.Title,
+                              Plan = rec.Plan.ToString(),
+                              CreatedBy =rec.ModifiedBy ?? rec.CreatedBy,
+                              WeekNumber = rec.WeekNumber
+
+                          };
 
                 // Apply pagination using Skip and Take
                 var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
@@ -578,7 +587,7 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 // Apply filters based on the query parameters
                 var cos = from rec in _context.Schemes
-                          where  (plan == null || rec.Plan == plan)
+                          where(plan == null || rec.Plan == plan)
                           select rec;
 
                 // Set the response data
@@ -593,6 +602,45 @@ namespace CoachFrika.APIs.Domin.Services
 
             }
 
+        }
+
+        public async Task<BaseResponse<string>> EditScheme(EditSchemesDto model)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            var existScheme = await _context.Schemes.FirstOrDefaultAsync(x => x.Id == model.Id);
+            if (existScheme is null)
+            {
+                res.Message = "Scheme does not exist ";
+                res.Status = false;
+                return res;
+            }
+
+            existScheme.Title = model.Title;
+            existScheme.Plan = model.Plan;
+            existScheme.WeekNumber = model.WeekNumber;
+            existScheme.Description = model.Description;
+
+            _context.Schemes.Update(existScheme);
+            await _context.SaveChangesAsync();
+            return res;
+        }
+
+        public async Task<BaseResponse<string>> DeleteScheme(Guid Id)
+        {
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            var existScheme = await _context.Schemes.FirstOrDefaultAsync(x => x.Id == Id);
+            if (existScheme is null)
+            {
+                res.Message = "Scheme does not exist ";
+                res.Status = false;
+                return res;
+            }
+
+            _context.Schemes.Remove(existScheme);
+            await _context.SaveChangesAsync();
+            return res;
         }
     }
 }

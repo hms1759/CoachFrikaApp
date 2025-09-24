@@ -83,6 +83,7 @@
 
         $.ajax({
             url: '/api/BackOfficeAPI/GetAllSchedules',
+            headers: { "Authorization": "Bearer " + userToken },
             method: 'GET',
             data: {
                 Name: name,
@@ -194,6 +195,7 @@
     function editCoach(id) {
         $.ajax({
             url: '/api/BackOfficeAPI/ApproveApplication/' + id,
+            headers: { "Authorization": "Bearer " + userToken },
             method: 'PUT',
             success: function () {
                 alert("Application approved.");
