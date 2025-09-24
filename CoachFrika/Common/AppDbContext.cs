@@ -26,6 +26,7 @@ namespace coachfrikaaaa.Common
         public DbSet<Recommendations> Recommendations { get; set; }
         public DbSet<Payment> Payment { get; set; }
         public DbSet<SchoolTeacherRequest> SchoolTeacherRequest { get; set; }
+        public DbSet<Schemes> Schemes { get; set; }
         
         public AppDbContext(DbContextOptions<AppDbContext> options, IWebHelpers webHelpers = null) : base(options)
         {

@@ -27,7 +27,8 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly EmailConfigSettings _emailConfig;
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
-        public LogicService(IUnitOfWork unitOfWork, IOptions<EmailConfigSettings> emailConfig, AppDbContext context, IEmailService emailService, IWebHelpers webHelpers)
+        public LogicService(IUnitOfWork unitOfWork, IOptions<EmailConfigSettings> emailConfig, 
+            AppDbContext context, IEmailService emailService, IWebHelpers webHelpers)
         {
             _unitOfWork = unitOfWork;
             _context = context;
@@ -503,6 +504,95 @@ namespace CoachFrika.APIs.Domin.Services
             var lookup = new DnsClient.LookupClient();
             var result = await lookup.QueryAsync(domain, DnsClient.QueryType.MX);
             return result.Answers.MxRecords().Any();
+        }
+
+        public async Task<BaseResponse<string>> CreateScheme(CreateSchemesDto model)
+        {
+
+            var res = new BaseResponse<string>();
+            res.Status = true;
+            var existScheme = _context.Schemes.Any(x => x.Plan == model.Plan && x.Title == model.Title && x.WeekNumber == model.WeekNumber);
+            if (existScheme)
+            {
+                res.Message = "Scheme Already created";
+                res.Status = false;
+                return res;
+            }
+            var newScheme = new Schemes
+            {
+                Title = model.Title,
+                Plan = model.Plan,
+                WeekNumber = model.WeekNumber,
+
+            };
+            _context.Schemes.Add(newScheme);
+            await _context.SaveChangesAsync();
+            return res;
+        }
+
+        public BaseResponse<List<Schemes>> GetAllScheme(GetSchemeSearch query)
+        {
+            var res = new BaseResponse<List<Schemes>>();
+            res.Status = true;
+            try
+            {
+                // Apply filters based on the query parameters
+                var cos = from rec in _context.Schemes
+                          where (query.Title == null || rec.Title.Contains(query.Title))
+                          && (query.Plan == null || rec.Plan == query.Plan)
+                          && (query.WeekNumber == null || rec.WeekNumber == query.WeekNumber )
+                          select rec;
+
+                // Apply pagination using Skip and Take
+                var pagedData = cos.Skip((query.PageNumber - 1) * query.Pagesize)
+                                   .Take(query.Pagesize)
+                                   .ToList();
+
+                // Set the response data
+                res.Data = pagedData;
+                res.PageNumber = query.PageNumber;
+                res.PageSize = query.Pagesize;
+                res.TotalCount = cos.Count();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
+        }
+
+        /// <summary>
+        /// this will be use by coach
+        /// </summary>
+        /// <param name="plan"></param>
+        /// <returns></returns>
+        public BaseResponse<List<Schemes>> GetAllSchemeByPlan(Subscriptions? plan)
+        {
+            var res = new BaseResponse<List<Schemes>>();
+            res.Status = true;
+            try
+            {
+                // Apply filters based on the query parameters
+                var cos = from rec in _context.Schemes
+                          where  (plan == null || rec.Plan == plan)
+                          select rec;
+
+                // Set the response data
+                res.Data = cos != null ? cos.ToList() : null;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.Message = ex.Message;
+                res.Status = false;
+                return res;
+
+            }
+
         }
     }
 }

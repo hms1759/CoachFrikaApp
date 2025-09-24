@@ -1,5 +1,6 @@
 ﻿using CoachFrika.APIs.ViewModel;
 using CoachFrika.Common;
+using CoachFrika.Common.Enum;
 using coachfrikaaaa.APIs.Entity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,9 @@ namespace CoachFrika.APIs.Domin.IServices
         BaseResponse<List<Subjects>> GetSubject();
         BaseResponse<List<Schedule>> GetMySchedule();
         Task<BaseResponse<string>> SponsorAchild(SponsorDto modle);
+        Task<BaseResponse<string>> CreateScheme(CreateSchemesDto model);
+        BaseResponse<List<Schemes>> GetAllScheme(GetSchemeSearch query);
+        BaseResponse<List<Schemes>> GetAllSchemeByPlan(Subscriptions? plan);
 
     }
 }

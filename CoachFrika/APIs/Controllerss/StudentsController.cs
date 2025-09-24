@@ -22,7 +22,7 @@ namespace CoachFrika.APIs.Controllerss
             _logicService = logicService;
         }
         [HttpPost("CreateStudent")]
-        public async Task<IActionResult> CreateSchedule(CreateStudentsDto model)
+        public async Task<IActionResult> CreateStudent(CreateStudentsDto model)
         {
             var result = await _service.CreateStudents(model);
             if (result.Status) return Ok(result); return BadRequest(result);

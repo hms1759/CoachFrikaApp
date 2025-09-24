@@ -340,24 +340,37 @@ namespace CoachFrika.APIs.Domin.Services
                 res.Status = true;
 
                 var bankName = "Access Bank";
-                var accountNumber = "0045072769";
-                var accountName = "Iyiola Afeez";
-                var contactEmail = "Iyiola@gmail.com";
+                var accountNumber = "1815769418";
+                var accountName = "Coachfrika Limited ";
+                var contactEmail = "coachfrika@gmail.com";
                 var WhatsApp = "08164124811";
-                var admin = "Iyiola@gmail.com";
                 var subject = "Payment Invoice";
-                var userbody = $@"Your request to pay for the {sub} has been received.
-                                   Kindly proceed with your payment using the bank details
-                                below, and use your reference code as the payment description:
+                var userbody =  $@"
+                                <h2>Welcome to Coachfrika! 🌟</h2>
 
-                                Bank Name: {bankName}
-                                Account Number: {accountNumber}
-                                Account Name: {accountName}
+                                <p>Hi {user.FullName},</p>
 
-                                Once payment is made, please send proof of payment 
-                                to {contactEmail} or {WhatsApp} to complete your subscription.
+                                <p>We are excited you've taken the first step towards unlocking your potential with our <strong>Intentional program</strong>!</p>
 
-                                 Thank you for choosing us!";
+                                <p>To complete your registration, kindly proceed with payment using the details below:</p>
+
+                                <p><strong>Payment Details</strong><br/>
+                                - Bank Name: {bankName}<br/>
+                                - Account Number: {accountNumber} <br/>
+                                - Account Name: {accountName} 
+                                </p>
+
+                                <p><strong>Next Steps</strong><br/>
+                                - Send proof of payment to <a href='mailto:coachfrika@gmail.com'>{contactEmail}</a> or WhatsApp: <a href='tel:08164124811'>{WhatsApp}</a> <br/>
+                                - Don't forget to update your password for a seamless experience! 🔒
+                                </p>
+
+                                <p>Thank You! 🙏</p>
+
+                                <p>We are thrilled to have you on board! If you need any assistance, feel free to reach out.</p>
+
+                                <p>Warm regards,<br/>
+                                Coachfrika Team</p>";
 
                 var bodyTemplate = await _emailService.ReadTemplate("paymentRequest");
                 //inserting variable
@@ -398,7 +411,7 @@ namespace CoachFrika.APIs.Domin.Services
 
                 //  email notification
                 var messageBody = bodyTemplate.ParseTemplate(messageToParse);
-                var adminmessage = new Message(new List<string> { admin }, Adminsubject, messageBody);
+                var adminmessage = new Message(new List<string> { contactEmail }, Adminsubject, messageBody);
 
                 await _emailService.SendEmail(adminmessage);
                 return res;
