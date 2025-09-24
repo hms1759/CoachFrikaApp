@@ -27,7 +27,7 @@ namespace CoachFrika.APIs.Domin.Services
         private readonly EmailConfigSettings _emailConfig;
         public readonly IEmailService _emailService;
         public readonly IWebHelpers _webHelpers;
-        public LogicService(IUnitOfWork unitOfWork, IOptions<EmailConfigSettings> emailConfig, 
+        public LogicService(IUnitOfWork unitOfWork, IOptions<EmailConfigSettings> emailConfig,
             AppDbContext context, IEmailService emailService, IWebHelpers webHelpers)
         {
             _unitOfWork = unitOfWork;
@@ -393,7 +393,7 @@ namespace CoachFrika.APIs.Domin.Services
             var schs = from sch in _context.Subjects
                        where sch.TeachersId == id
                        select sch;
-            res.Data = schs.Any()? schs.ToList(): schsEmp;
+            res.Data = schs.Any() ? schs.ToList() : schsEmp;
             return res;
         }
         public BaseResponse<List<Schedule>> GetMySchedule()
@@ -540,14 +540,14 @@ namespace CoachFrika.APIs.Domin.Services
                 var cos = from rec in _context.Schemes
                           where (query.Title == null || rec.Title.Contains(query.Title))
                           && (query.Plans == null || rec.Plan == query.Plans)
-                          && (query.WeekNumber == null || rec.WeekNumber == query.WeekNumber )
+                          && (query.WeekNumber == null || rec.WeekNumber == query.WeekNumber)
                           select new ResponseSchemesDto
                           {
                               Id = rec.Id,
                               Description = rec.Description,
                               Title = rec.Title,
                               Plan = rec.Plan.ToString(),
-                              CreatedBy =rec.ModifiedBy ?? rec.CreatedBy,
+                              CreatedBy = rec.ModifiedBy ?? rec.CreatedBy,
                               WeekNumber = rec.WeekNumber
 
                           };
@@ -587,7 +587,7 @@ namespace CoachFrika.APIs.Domin.Services
             {
                 // Apply filters based on the query parameters
                 var cos = from rec in _context.Schemes
-                          where(plan == null || rec.Plan == plan)
+                          where (plan == null || rec.Plan == plan)
                           select rec;
 
                 // Set the response data
@@ -640,6 +640,107 @@ namespace CoachFrika.APIs.Domin.Services
 
             _context.Schemes.Remove(existScheme);
             await _context.SaveChangesAsync();
+            return res;
+        }
+        public async Task<BaseResponse<List<UserTrendDto>>> GetUserTrend(TrendRequest trendRequest)
+        {
+            var res = new BaseResponse<List<UserTrendDto>> { Status = true };
+            var query = _context.CoachFrikaUsers.AsQueryable();
+
+            DateTime today = DateTime.UtcNow.Date;
+            DateTime startDate = today, endDate = today;
+
+            switch (trendRequest.PeriodType)
+            {
+                case PeriodType.Week:
+                    startDate = today.AddDays(-(int)today.DayOfWeek);
+                    endDate = startDate.AddDays(7);
+                    query = query.Where(u => u.CreatedDate >= startDate && u.CreatedDate < endDate);
+                    break;
+
+                case PeriodType.Month:
+                    startDate = new DateTime(today.Year, today.Month, 1);
+                    endDate = startDate.AddMonths(1);
+                    query = query.Where(u => u.CreatedDate >= startDate && u.CreatedDate < endDate);
+                    break;
+
+                case PeriodType.Year:
+                    startDate = new DateTime(today.Year, 1, 1);
+                    endDate = startDate.AddYears(1);
+                    query = query.Where(u => u.CreatedDate >= startDate && u.CreatedDate < endDate);
+                    break;
+
+                case PeriodType.Range:
+                    if (trendRequest.StartDate.HasValue && trendRequest.EndDate.HasValue)
+                    {
+                        startDate = trendRequest.StartDate.Value.Date;
+                        endDate = trendRequest.EndDate.Value.Date.AddDays(1);
+                        query = query.Where(u => u.CreatedDate >= startDate && u.CreatedDate < endDate);
+                    }
+                    break;
+            }
+
+            List<UserTrendDto> result;
+
+            if (trendRequest.PeriodType == PeriodType.Year)
+            {
+                // Group by month
+                var grouped = await query
+                    .GroupBy(u => new { u.CreatedDate.Year, u.CreatedDate.Month })
+                    .Select(g => new
+                    {
+                        g.Key.Year,
+                        g.Key.Month,
+                        Teachers = g.Count(x => x.Role == Roles.Teacher),
+                        Coaches = g.Count(x => x.Role == Roles.Coach)
+                    })
+                    .ToListAsync();
+
+                // Fill all months Jan–Dec
+                result = Enumerable.Range(1, 12)
+                    .Select(m =>
+                    {
+                        var found = grouped.FirstOrDefault(x => x.Month == m && x.Year == startDate.Year);
+                        return new UserTrendDto
+                        {
+                            Label = $"{startDate.Year}-{m:D2}", // 2025-01
+                            Teachers = found?.Teachers ?? 0,
+                            Coaches = found?.Coaches ?? 0
+                        };
+                    })
+                    .ToList();
+            }
+            else
+            {
+                // Group by day
+                var grouped = await query
+                    .GroupBy(u => u.CreatedDate.Date)
+                    .Select(g => new
+                    {
+                        Date = g.Key,
+                        Teachers = g.Count(x => x.Role == Roles.Teacher),
+                        Coaches = g.Count(x => x.Role == Roles.Coach)
+                    })
+                    .ToListAsync();
+
+                // Fill all days in range
+                result = Enumerable.Range(0, (endDate - startDate).Days)
+                    .Select(offset =>
+                    {
+                        var date = startDate.AddDays(offset);
+                        var found = grouped.FirstOrDefault(x => x.Date == date);
+                        return new UserTrendDto
+                        {
+                            Label = date.ToString("yyyy-MM-dd"),
+                            Teachers = found?.Teachers ?? 0,
+                            Coaches = found?.Coaches ?? 0
+                        };
+                    })
+                    .ToList();
+            }
+
+            res.Data = result;
+            res.Message = "Successful";
             return res;
         }
     }

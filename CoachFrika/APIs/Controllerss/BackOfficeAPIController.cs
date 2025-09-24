@@ -15,7 +15,7 @@ namespace CoachFrika.APIs.Controllerss
         private readonly ISchoolsService _schoolService;
         private readonly IAccountService _accountService;
         private readonly ICousesService _cousesService;
-        private readonly ILogicService _publicService;
+        private readonly ILogicService _logicService;
         public BackOfficeAPIController(ITeacherService teacherService, ISchoolsService schoolService, ICoachesService coachesService, IAccountService accountService, ICousesService cousesService, ILogicService publicService)
         {
             _teacherService = teacherService;
@@ -23,12 +23,12 @@ namespace CoachFrika.APIs.Controllerss
             _accountService = accountService;
             _schoolService = schoolService;
             _cousesService = cousesService;
-            _publicService = publicService;
+            _logicService = publicService;
         }
         [HttpGet("GetDashBoardPageCount")]
         public async Task<IActionResult> GetDashBoardPageCount()
         {
-            var result = await _publicService.GetPublicCount();
+            var result = await _logicService.GetPublicCount();
             if (result.Status)
             {
                 if (result.Status) return Ok(result); return BadRequest(result);
@@ -77,7 +77,17 @@ namespace CoachFrika.APIs.Controllerss
             var result = _cousesService.GetBackOfficeScheduleList(model);
             if (result.Status) return Ok(result); return BadRequest(result);
         }
-
+        [AllowAnonymous]
+        [HttpGet("GetUserTrend")]
+        public async Task<IActionResult> GetUserTrend([FromQuery] TrendRequest trendRequest)
+        {
+            var result = await _logicService.GetUserTrend(trendRequest);
+            if (result.Status)
+            {
+                if (result.Status) return Ok(result); return BadRequest(result);
+            }
+            return BadRequest(result);
+        }
     }
     
 }

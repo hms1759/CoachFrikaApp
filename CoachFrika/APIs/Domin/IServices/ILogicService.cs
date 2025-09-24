@@ -2,6 +2,7 @@
 using CoachFrika.Common;
 using CoachFrika.Common.Enum;
 using coachfrikaaaa.APIs.Entity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoachFrika.APIs.Domin.IServices
@@ -24,5 +25,6 @@ namespace CoachFrika.APIs.Domin.IServices
         BaseResponse<List<Schemes>> GetAllSchemeByPlan(Subscriptions? plan);
         Task<BaseResponse<string>> EditScheme(EditSchemesDto model);
         Task<BaseResponse<string>> DeleteScheme(Guid Id);
+        Task<BaseResponse<List<UserTrendDto>>> GetUserTrend(TrendRequest trendRequest);
     }
 }

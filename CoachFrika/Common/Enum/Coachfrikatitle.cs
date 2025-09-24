@@ -46,6 +46,10 @@
     {
         Ongoing,
         PendindApproval,
-        Approved 
+        Approved
+    }
+    public enum PeriodType
+    {
+        Range, Week, Month, Year
     }
 }

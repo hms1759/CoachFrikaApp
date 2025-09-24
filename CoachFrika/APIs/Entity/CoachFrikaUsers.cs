@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace coachfrikaaaa.APIs.Entity
 {
-    public class CoachFrikaUsers : IdentityUser
+    public class CoachFrikaUsers :IdentityUser 
     {
         public string? FullName { get; set; }
         public string? TweeterUrl { get; set; }
@@ -37,5 +37,11 @@ namespace coachfrikaaaa.APIs.Entity
         public Guid? SchoolId { get; set; }
         public SchoolEnrollmentRequest? School { get; set; }
         public bool IsPasswordDefault { get; set; }
+        public string? CreatedBy { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string? ModifiedBy { get; set; }
+        public DateTime ModifiedDate { get; set; }
+        public string? DeletedBy { get; set; }
+        public DateTime DeletedDate { get; set; }
     }
 }
